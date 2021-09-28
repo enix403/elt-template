@@ -1,0 +1,10 @@
+{
+    "extends": "../tsconfig.json",
+
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@shared/*": ["./*"], // don't change the alias
+        },
+    },
+}

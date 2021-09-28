@@ -1,0 +1,22 @@
+{
+    "name": "@application/root",
+    "private": true,
+    "version": "1.0.0",
+    "license": "UNLICENSED",
+    "workspaces": {
+        "packages": [
+            "units/*"
+        ],
+        "nohoist": [
+            "electron"
+        ]
+    },
+    "scripts": {
+        "a:m": "yarn workspace @application/main add",
+        "a:r": "yarn workspace @application/renderer add",
+
+        "r:m": "yarn workspace @application/main run",
+        "r:r": "yarn workspace @application/renderer run"
+    },
+    "devDependencies": {}
+}

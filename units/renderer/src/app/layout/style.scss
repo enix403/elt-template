@@ -1,0 +1,27 @@
+@import 'styles/global_variables';
+
+.content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 100vh;
+    margin-left: 0;
+    margin-left: $sidebar-width;
+
+    .content-body {
+        flex: 1;
+        overflow: auto;
+        padding: 0px;
+        background-color: $content-body-background;
+        padding-bottom: $statusbar-height + 10px;
+    }
+}
+
+.content-body-header-main {
+    border-bottom: 1px solid #ececec;
+    display: flex;
+    align-items: center;
+    height: 80px;
+    padding: 10px 30px;
+    margin-bottom: 10px;
+}

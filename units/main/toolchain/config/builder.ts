@@ -7,9 +7,9 @@ import {
     RP_BUILD_RELEASE,
     RP_MAIN_UNIT
 } from '@shared/app_paths';
+
 import {
-    app_id,
-    executable_name
+    app_id
 } from './buildconfig.json';
 import {
     app_name,
@@ -64,14 +64,24 @@ const config = {
         "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}"
     ],
 
-    artifactName: `${executable_name}-v\${version}-\${os}-\${arch}.\${ext}`,
     linux: {
-        executableName: executable_name,
+        artifactName: `${app_name}-v\${version}-\${os}-\${arch}.\${ext}`,
+        executableName: app_name,
         target: [
             "AppImage",
         ],
         compression: "normal",
         category: "Office",
+    },
+
+    win: {
+        artifactName: `${app_name}-v\${version}-\${os}-\${arch}_Setup.\${ext}`,
+        compression: "normal",
+        target: ['nsis']
+    },
+    nsis: {
+        oneClick: false,
+        allowToChangeInstallationDirectory: true
     }
 };
 

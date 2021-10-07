@@ -84,6 +84,7 @@ export const renderItem: ItemRenderer<IFilm> = (film, { handleClick, modifiers, 
 const FilmSelect = Select.ofType<IFilm>();
 export const SelectExample = () => {
     const [selectedItem, setSelectedItem] = React.useState<IFilm | undefined>();
+    const [activeItem, setActiveItem] = React.useState<IFilm | null>();
     const [filterQuery, setFilterQuery] = React.useState<string>();
     return (
         <FilmSelect
@@ -107,19 +108,26 @@ export const SelectExample = () => {
                 intent: "primary",
             }}
             popoverProps={{
-                // minimal: true,
                 popoverClassName: 'pop-temp',
                 interactionKind: PopoverInteractionKind.CLICK,
-                position: 'bottom-left'
+                position: 'bottom-left',
+
+                minimal: false,
+                transitionDuration: 100,
+                onClosed: () => {setFilterQuery('')},
+                onOpening: () => {setActiveItem(selectedItem)},
             }}
             onItemSelect={setSelectedItem}
             filterable={true}
             itemsEqual='rank'
-            resetOnSelect={true}
+            resetOnSelect={false}
             resetOnQuery={true}
-            resetOnClose={true}
+            resetOnClose={false}
             onQueryChange={setFilterQuery}
             query={filterQuery}
+            activeItem={activeItem || selectedItem}
+            onActiveItemChange={setActiveItem}
+            scrollToActiveItem={true}
         >
             <Button
                 icon="film"

@@ -1,11 +1,11 @@
 import { Button, HTMLSelect } from "@blueprintjs/core";
 import { NavPageView } from "app/layout/views";
-import { SelectExample } from 'app/components/country_select';
+import { CountrySelectWrapper } from 'app/components/country_select';
 
 const MySelect = () => {
     return (
         <>
-            <SelectExample />
+            <CountrySelectWrapper />
         </>
     );
 };

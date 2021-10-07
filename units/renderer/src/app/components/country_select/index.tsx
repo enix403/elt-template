@@ -1,94 +1,47 @@
 import * as React from "react";
 
-import { Button, Menu, Position, PopoverInteractionKind, MenuItem } from "@blueprintjs/core";
-import { Select, ItemRenderer, IItemListRendererProps, ItemPredicate } from '@blueprintjs/select';
-import { IFilm, TOP_100_FILMS } from './films';
+import {
+    Button,
+    Menu,
+    PopoverInteractionKind,
+    MenuItem
+} from "@blueprintjs/core";
+import { Select, ItemRenderer } from '@blueprintjs/select';
+import { ICountry, ALL_COUNTRIES, CountryCode, ALL_COUNTRIES_MAPPING_ARRAY, ALL_COUNTRIES_MAPPING } from './countries';
+import {
+    highlightText,
+    renderFilteredItems,
+    filterItem
+} from './util';
 
-function renderFilteredItems(
-    listProps: IItemListRendererProps<any>,
-    noResults?: React.ReactNode,
-    initialContent?: React.ReactNode | null,
-): React.ReactNode {
-    if (listProps.query.length === 0 && initialContent !== undefined) {
-        return initialContent;
-    }
-    const items = listProps.filteredItems.map(listProps.renderItem).filter(item => item != null);
-    return items.length > 0 ? items : noResults;
-}
-
-export const filterFilm: ItemPredicate<IFilm> = (query, film, _index, exactMatch) => {
-    const normalizedTitle = film.title.toLowerCase();
-    const normalizedQuery = query.toLowerCase();
-
-    if (exactMatch) {
-        return normalizedTitle === normalizedQuery;
-    } else {
-        return `${film.rank}. ${normalizedTitle} ${film.year}`.indexOf(normalizedQuery) >= 0;
-    }
-};
-
-function highlightText(text: string, query: string) {
-    let lastIndex = 0;
-    const words = query
-        .split(/\s+/)
-        .filter(word => word.length > 0)
-        .map(escapeRegExpChars);
-    if (words.length === 0) {
-        return [text];
-    }
-    const regexp = new RegExp(words.join("|"), "gi");
-    const tokens: React.ReactNode[] = [];
-    while (true) {
-        const match = regexp.exec(text);
-        if (!match) {
-            break;
-        }
-        const length = match[0].length;
-        const before = text.slice(lastIndex, regexp.lastIndex - length);
-        if (before.length > 0) {
-            tokens.push(before);
-        }
-        lastIndex = regexp.lastIndex;
-        tokens.push(<strong key={lastIndex}>{match[0]}</strong>);
-    }
-    const rest = text.slice(lastIndex);
-    if (rest.length > 0) {
-        tokens.push(rest);
-    }
-    return tokens;
-}
-
-function escapeRegExpChars(text: string) {
-    return text.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
-}
-
-
-export const renderItem: ItemRenderer<IFilm> = (film, { handleClick, modifiers, query }) => {
+export const renderItem: ItemRenderer<ICountry> = (item, { handleClick, modifiers, query }) => {
     if (!modifiers.matchesPredicate) {
         return null;
     }
-    const text = `${film.rank}. ${film.title}`;
     return (
         <MenuItem
             active={modifiers.active}
             disabled={modifiers.disabled}
-            label={film.year.toString()}
-            key={film.rank}
+            labelElement={highlightText(item.code, query)}
+            key={item.code}
             onClick={handleClick}
-            text={highlightText(text, query)}
+            text={highlightText(item.name, query)}
         />
     );
 };
 
 
-const FilmSelect = Select.ofType<IFilm>();
-export const SelectExample = () => {
-    const [selectedItem, setSelectedItem] = React.useState<IFilm | undefined>();
-    const [activeItem, setActiveItem] = React.useState<IFilm | null>();
+const CountrySelect = Select.ofType<ICountry>();
+const DEFAULT_COUNTRY = ALL_COUNTRIES_MAPPING_ARRAY['PK'];
+export const CountrySelectWrapper = () => {
     const [filterQuery, setFilterQuery] = React.useState<string>();
+
+    const [activeItem, setActiveItem] = React.useState<ICountry | null>();
+    const [selectedCountry, setSelectedCountry] = React.useState<ICountry | undefined>(DEFAULT_COUNTRY);
+
     return (
-        <FilmSelect
-            items={TOP_100_FILMS}
+        <CountrySelect
+            items={ALL_COUNTRIES}
             itemRenderer={renderItem}
             itemListRenderer={itemListProps => {
                 return (
@@ -103,7 +56,7 @@ export const SelectExample = () => {
                     </Menu>
                 );
             }}
-            itemPredicate={filterFilm}
+            itemPredicate={filterItem}
             inputProps={{
                 intent: "primary",
             }}
@@ -115,25 +68,30 @@ export const SelectExample = () => {
                 minimal: false,
                 transitionDuration: 100,
                 onClosed: () => {setFilterQuery('')},
-                onOpening: () => {setActiveItem(selectedItem)},
+                onOpening: () => {setActiveItem(selectedCountry)},
             }}
-            onItemSelect={setSelectedItem}
+            onItemSelect={setSelectedCountry}
             filterable={true}
-            itemsEqual='rank'
+            itemsEqual='code'
             resetOnSelect={false}
             resetOnQuery={true}
             resetOnClose={false}
-            onQueryChange={setFilterQuery}
             query={filterQuery}
-            activeItem={activeItem || selectedItem}
+            onQueryChange={setFilterQuery}
+            activeItem={activeItem}
             onActiveItemChange={setActiveItem}
             scrollToActiveItem={true}
         >
             <Button
-                icon="film"
+                icon="globe"
                 rightIcon="caret-down"
-                text={selectedItem ? `${selectedItem.title} (${selectedItem.year})` : "(No selection)"}
+                intent="primary"
+                text={
+                    selectedCountry ?
+                        `${selectedCountry.name} (${selectedCountry.code})`
+                        : "(No selection)"
+                }
             />
-        </FilmSelect>
+        </CountrySelect>
     );
 }

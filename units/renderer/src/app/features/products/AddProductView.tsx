@@ -69,16 +69,19 @@ const ProductProps = () => {
             </GridColumn>
             <GridColumn colSize={5}>
                 <FormGroup
-                    label="Weight"
+                    label="Stock Keeping Unit"
                 >
                     <ControlGroup>
-                        <HTMLSelect fill={true}>
-                            <option value="1">Kilograms (kg)</option>
-                            <option value="1">Grams (gm)</option>
+                        <HTMLSelect>
+                            <option value="1">Single Item</option>
+                            <option value="1">Crate Of</option>
+                            <option value="1">Container Of</option>
                         </HTMLSelect>
                         <NumericInput
-                            style={{ maxWidth: 130 }}
-                            leftIcon="shopping-cart"
+                            fill={true}
+                            // style={{ maxWidth: 130 }}
+                            buttonPosition='none'
+                            // leftIcon="shopping-cart"
                             placeholder="Enter weight"
                         />
                     </ControlGroup>
@@ -163,7 +166,7 @@ export const AddProductView = React.memo(() => {
                 padding: "10px 40px"
             }}>
                 <GridRow>
-                    <GridColumn colSize='auto'>
+                    <GridColumn colSize={12}>
                         <FormGroup
                             label="Product Name"
                             inline={false}

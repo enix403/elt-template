@@ -13,3 +13,7 @@ body {
 html, body {
     overflow: hidden;
 }
+
+.pop-temp {
+    padding: 5px;
+}

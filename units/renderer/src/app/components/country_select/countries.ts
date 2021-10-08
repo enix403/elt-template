@@ -1,4 +1,4 @@
-import data from './countries_list.json';
+import data from './_countries_list.json';
 
 export type CountryCode = keyof typeof data;
 

@@ -21,6 +21,9 @@ export const filterItem: ItemPredicate<ICountry> = (query, item, _index, exactMa
     }
 };
 
+
+export const formatTargetText = (country: ICountry) => `${country.name} (${country.code})`;
+
 export function highlightText(text: string, query: string) {
     let lastIndex = 0;
     const words = query

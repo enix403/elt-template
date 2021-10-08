@@ -4,45 +4,53 @@ import {
     Button,
     Menu,
     PopoverInteractionKind,
-    MenuItem
+    MenuItem,
+    Intent,
 } from "@blueprintjs/core";
-import { Select, ItemRenderer } from '@blueprintjs/select';
-import { ICountry, ALL_COUNTRIES, CountryCode, ALL_COUNTRIES_MAPPING_ARRAY, ALL_COUNTRIES_MAPPING } from './countries';
+import { Select } from '@blueprintjs/select';
+import {
+    ICountry,
+    ALL_COUNTRIES,
+} from './countries';
 import {
     highlightText,
     renderFilteredItems,
-    filterItem
+    filterItem,
+    formatTargetText
 } from './util';
 
-export const renderItem: ItemRenderer<ICountry> = (item, { handleClick, modifiers, query }) => {
-    if (!modifiers.matchesPredicate) {
-        return null;
-    }
-    return (
-        <MenuItem
-            active={modifiers.active}
-            disabled={modifiers.disabled}
-            labelElement={highlightText(item.code, query)}
-            key={item.code}
-            onClick={handleClick}
-            text={highlightText(item.name, query)}
-        />
-    );
+
+interface CountrySelectProps {
+    selectedCountry: ICountry;
+    onCountryChange?: (country: ICountry) => void;
+    intent?: Intent;
+    fill?: boolean;
 };
 
-
 const CountrySelect = Select.ofType<ICountry>();
-const DEFAULT_COUNTRY = ALL_COUNTRIES_MAPPING_ARRAY['PK'];
-export const CountrySelectWrapper = () => {
-    const [filterQuery, setFilterQuery] = React.useState<string>();
+export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
+    const { intent = 'none', fill = false } = props;
 
+    const [filterQuery, setFilterQuery] = React.useState<string>();
     const [activeItem, setActiveItem] = React.useState<ICountry | null>();
-    const [selectedCountry, setSelectedCountry] = React.useState<ICountry | undefined>(DEFAULT_COUNTRY);
 
     return (
         <CountrySelect
             items={ALL_COUNTRIES}
-            itemRenderer={renderItem}
+            itemRenderer={(item, { handleClick, modifiers, query }) => {
+                if (!modifiers.matchesPredicate) return null;
+                return (
+                    <MenuItem
+                        active={modifiers.active}
+                        disabled={modifiers.disabled}
+                        labelElement={highlightText(item.code, query)}
+                        key={item.code}
+                        onClick={handleClick}
+                        intent={modifiers.active ? intent : 'none'}
+                        text={highlightText(item.name, query)}
+                    />
+                );
+            }}
             itemListRenderer={itemListProps => {
                 return (
                     <Menu
@@ -58,7 +66,7 @@ export const CountrySelectWrapper = () => {
             }}
             itemPredicate={filterItem}
             inputProps={{
-                intent: "primary",
+                intent: intent,
             }}
             popoverProps={{
                 popoverClassName: 'pop-temp',
@@ -67,10 +75,10 @@ export const CountrySelectWrapper = () => {
 
                 minimal: false,
                 transitionDuration: 100,
-                onClosed: () => {setFilterQuery('')},
-                onOpening: () => {setActiveItem(selectedCountry)},
+                onClosed: () => { setFilterQuery(''); },
+                onOpening: () => { setActiveItem(props.selectedCountry); },
             }}
-            onItemSelect={setSelectedCountry}
+            onItemSelect={props.onCountryChange || (_ => {})}
             filterable={true}
             itemsEqual='code'
             resetOnSelect={false}
@@ -81,16 +89,19 @@ export const CountrySelectWrapper = () => {
             activeItem={activeItem}
             onActiveItemChange={setActiveItem}
             scrollToActiveItem={true}
+            fill={fill}
         >
             <Button
                 icon="globe"
                 rightIcon="caret-down"
-                intent="primary"
+                intent='none'
+                outlined={true}
                 text={
-                    selectedCountry ?
-                        `${selectedCountry.name} (${selectedCountry.code})`
+                    props.selectedCountry ?
+                        formatTargetText(props.selectedCountry)
                         : "(No selection)"
                 }
+                fill={fill}
             />
         </CountrySelect>
     );

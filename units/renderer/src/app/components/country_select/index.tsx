@@ -1,42 +1,35 @@
 import * as React from "react";
 
-import {
-    Button,
-    Menu,
-    PopoverInteractionKind,
-    MenuItem,
-    Intent,
-} from "@blueprintjs/core";
-import { Select, IItemListRendererProps } from '@blueprintjs/select';
-import {
-    ICountry,
-    ALL_COUNTRIES,
-    countrySearch
-} from './countries';
-import {
-    highlightText,
-    formatTargetText
-} from './util';
+import { Intent, Button, ButtonProps, Menu, MenuItem, PopoverInteractionKind } from "@blueprintjs/core";
+import { Select } from '@blueprintjs/select';
+import { ICountry, countrySearch, ALL_COUNTRIES } from './countries';
+import { highlightText, formatTargetText } from './util';
 
+import { List, AutoSizer } from 'react-virtualized';
+import { getReactElementSize } from 'app/helpers';
 
 interface CountrySelectProps {
-    selectedCountry: ICountry;
+    selectedCountry?: ICountry;
     onCountryChange?: (country: ICountry) => void;
     intent?: Intent;
+    targetButtonProps?: ButtonProps;
     fill?: boolean;
+    placeholder?: string;
 };
 
-export function renderFilteredItems<T>(
-    listProps: IItemListRendererProps<T>,
-    noResults?: React.ReactNode,
-): React.ReactNode {
-    const filteredRows = listProps.filteredItems.map(listProps.renderItem);
-    return filteredRows.length > 0 ? filteredRows : noResults;
-}
+const COUNTRIES_COUNT = ALL_COUNTRIES.length;
+const POPOVER_MENU_HEIGHT = 305;
+const NO_RESULTS = <MenuItem disabled={true} text="No results." />;
+const MENU_ROW_HEIGHT = getReactElementSize(NO_RESULTS).height;
 
 const CountrySelect = Select.ofType<ICountry>();
 export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
-    const { intent = 'none', fill = false } = props;
+    const {
+        intent = 'none',
+        fill = false,
+        targetButtonProps = {},
+        placeholder = '( Select Country )'
+    } = props;
 
     const [filterQuery, setFilterQuery] = React.useState<string>();
     const [activeItem, setActiveItem] = React.useState<ICountry | null>();
@@ -45,13 +38,11 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
         <CountrySelect
             items={ALL_COUNTRIES}
             itemRenderer={(item, { handleClick, modifiers, query }) => {
-                // if (!modifiers.matchesPredicate) return null;
                 return (
                     <MenuItem
                         active={modifiers.active}
                         disabled={modifiers.disabled}
                         labelElement={highlightText(item.code, query)}
-                        key={item.code}
                         onClick={handleClick}
                         intent={modifiers.active ? intent : 'none'}
                         text={highlightText(item.name, query)}
@@ -59,29 +50,47 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                 );
             }}
             itemListRenderer={itemListProps => {
+                let rows: React.ReactNode;
+                if (itemListProps.filteredItems.length > 0) {
+                    const activeItemIndex = itemListProps.filteredItems
+                                            .findIndex(item => item.code == activeItem?.code);
+                    rows = renderVirtualList(itemListProps.filteredItems, activeItemIndex, itemListProps.renderItem);
+                }
+                else {
+                    rows = NO_RESULTS;
+                }
+
                 return (
                     <Menu
                         ulRef={itemListProps.itemsParentRef}
-                        style={{ maxHeight: 305, overflowY: 'auto', padding: '5px 0 0' }}
+                        style={{
+                            height: POPOVER_MENU_HEIGHT,
+                            maxHeight: POPOVER_MENU_HEIGHT,
+                            overflowY: 'hidden',
+                            margin: '5px 0 0',
+                            padding: '0'
+                        }}
                     >
-                        {renderFilteredItems(
-                            itemListProps,
-                            <MenuItem disabled={true} text="No results." />
-                        )}
+                        {rows}
                     </Menu>
                 );
             }}
             itemListPredicate={(query, items) => query ? countrySearch(query) : items}
             inputProps={{
                 intent: intent,
+                placeholder: `Filter ${COUNTRIES_COUNT} countries...`
             }}
             popoverProps={{
-                popoverClassName: 'pop-temp',
+                popoverClassName: 'general-popover',
                 interactionKind: PopoverInteractionKind.CLICK,
                 position: 'bottom-left',
 
                 minimal: false,
                 transitionDuration: 100,
+                modifiers: {
+                    flip: {enabled: false},
+                    // preventOverflow: {enabled: false},
+                },
                 onClosed: () => { setFilterQuery(''); },
                 onOpening: () => { setActiveItem(props.selectedCountry); },
             }}
@@ -97,22 +106,49 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
             query={filterQuery}
             onQueryChange={setFilterQuery}
             activeItem={activeItem}
-            onActiveItemChange={(item) => { setActiveItem(item); }}
-            scrollToActiveItem={true}
+            onActiveItemChange={setActiveItem}
             fill={fill}
         >
             <Button
                 icon="globe"
-                rightIcon="caret-down"
+                rightIcon="double-caret-vertical"
                 intent='none'
                 outlined={true}
                 text={
                     props.selectedCountry ?
                         formatTargetText(props.selectedCountry)
-                        : "(No selection)"
+                        : placeholder
                 }
+                {...targetButtonProps}
                 fill={fill}
             />
         </CountrySelect>
     );
 }
+
+
+function renderVirtualList<T>(
+    rows: T[],
+    activeItemIndex: number,
+    renderItem: (item: T, index: number) => JSX.Element | null
+)
+{
+    return (
+        <AutoSizer>
+            {({ width, height }) =>
+                <List
+                    width={width}
+                    height={height}
+                    rowHeight={MENU_ROW_HEIGHT}
+                    rowRenderer={({ index, style, key }) =>
+                        // @ts-ignore
+                        React.cloneElement(renderItem(rows[index], index), {style, key})}
+                    rowCount={rows.length}
+                    overscanRowCount={20}
+                    scrollToIndex={activeItemIndex}
+                    scrollToRow={activeItemIndex}
+                />
+            }
+        </AutoSizer>
+    );
+};

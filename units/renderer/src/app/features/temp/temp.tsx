@@ -11,9 +11,9 @@ export const ScratchPlace = () => {
         <NavPageView title="Scratch Place">
             <div style={{ padding: "10px 40px" }}>
                 <CountrySelectWrapper
-                    intent="warning"
                     selectedCountry={country}
                     onCountryChange={setCountry}
+                    intent="success"
                 />
             </div>
         </NavPageView>

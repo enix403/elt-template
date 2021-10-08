@@ -11,8 +11,13 @@ import {
 } from '@blueprintjs/core';
 import { HeaderIcon } from 'app/components/icons_utils';
 import { SectionHeading, HorizontalSectionDivider } from 'app/components/misc_utils';
+import { CountrySelectWrapper } from 'app/components/country_select';
+import { ALL_COUNTRIES_MAPPING_ARRAY, ICountry } from 'app/components/country_select/countries';
 
 const SupplierPersonalInformationForm = () => {
+    const [country, setCountry] =
+        // React.useState<ICountry>(ALL_COUNTRIES_MAPPING_ARRAY['PK']);
+        React.useState<ICountry>();
     return (
         <React.Fragment>
             <GridRow>
@@ -76,14 +81,21 @@ const SupplierPersonalInformationForm = () => {
                         leftIcon="map"
                     />
                 </GridColumn>
-                <GridColumn colSize={3}>
+                <GridColumn colSize={2}>
                     <InputGroup
                         placeholder="Zip Code"
                         fill={true}
                         leftIcon="geolocation"
                     />
                 </GridColumn>
-
+                <GridColumn colSize={4}>
+                    <CountrySelectWrapper
+                        selectedCountry={country}
+                        onCountryChange={setCountry}
+                        intent="success"
+                        fill={true}
+                    />
+                </GridColumn>
             </GridRow>
             <br />
             <GridRow>

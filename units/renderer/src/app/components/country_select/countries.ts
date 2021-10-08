@@ -1,4 +1,4 @@
-import data from './_countries_list.json';
+import data from './_all_countries_list.json';
 import TrieSearch from 'trie-search';
 
 export type CountryCode = keyof typeof data;
@@ -8,6 +8,7 @@ export interface ICountry {
     name: string;
 };
 type CountryMappingArray = Record<CountryCode, ICountry>;
+
 
 export const ALL_COUNTRIES_MAPPING = data;
 export const ALL_COUNTRIES: ICountry[] = Object.entries(data).map(([code, name]) =>

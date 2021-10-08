@@ -1,20 +1,6 @@
 // import { IItemListRendererProps, ItemPredicate } from "@blueprintjs/select";
 import { ICountry } from './countries';
 
-// export const filterItem: ItemPredicate<ICountry> = (query, item, _index, exactMatch) => {
-//     const normalizedName = item.name.toLowerCase();
-//     const normalizedCode = item.code.toLowerCase();
-//     const normalizedQuery = query.toLowerCase();
-
-//     if (exactMatch) {
-//         console.log("Found exactMatch");
-//         return normalizedName === normalizedQuery;
-//     } else {
-//         return `${normalizedCode}. ${normalizedName}`.indexOf(normalizedQuery) >= 0;
-//     }
-// };
-
-
 export const formatTargetText = (country: ICountry) => `${country.name} (${country.code})`;
 
 export function highlightText(text: string, query: string) {

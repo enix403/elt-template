@@ -6,3 +6,4 @@ contextBridge.exposeInMainWorld('system', {
         return 'pong';
     }
 });
+

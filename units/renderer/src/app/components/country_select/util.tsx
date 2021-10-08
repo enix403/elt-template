@@ -1,25 +1,18 @@
-import { IItemListRendererProps, ItemPredicate } from "@blueprintjs/select";
+// import { IItemListRendererProps, ItemPredicate } from "@blueprintjs/select";
 import { ICountry } from './countries';
 
-export function renderFilteredItems(
-    listProps: IItemListRendererProps<any>,
-    noResults?: React.ReactNode,
-): React.ReactNode {
-    const items = listProps.filteredItems.map(listProps.renderItem).filter(item => item != null);
-    return items.length > 0 ? items : noResults;
-}
+// export const filterItem: ItemPredicate<ICountry> = (query, item, _index, exactMatch) => {
+//     const normalizedName = item.name.toLowerCase();
+//     const normalizedCode = item.code.toLowerCase();
+//     const normalizedQuery = query.toLowerCase();
 
-export const filterItem: ItemPredicate<ICountry> = (query, item, _index, exactMatch) => {
-    const normalizedName = item.name.toLowerCase();
-    const normalizedCode = item.code.toLowerCase();
-    const normalizedQuery = query.toLowerCase();
-
-    if (exactMatch) {
-        return normalizedName === normalizedQuery;
-    } else {
-        return`${normalizedCode}. ${normalizedName}`.indexOf(normalizedQuery) >= 0;
-    }
-};
+//     if (exactMatch) {
+//         console.log("Found exactMatch");
+//         return normalizedName === normalizedQuery;
+//     } else {
+//         return `${normalizedCode}. ${normalizedName}`.indexOf(normalizedQuery) >= 0;
+//     }
+// };
 
 
 export const formatTargetText = (country: ICountry) => `${country.name} (${country.code})`;

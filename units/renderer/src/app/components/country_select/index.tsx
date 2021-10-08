@@ -7,15 +7,14 @@ import {
     MenuItem,
     Intent,
 } from "@blueprintjs/core";
-import { Select } from '@blueprintjs/select';
+import { Select, IItemListRendererProps } from '@blueprintjs/select';
 import {
     ICountry,
     ALL_COUNTRIES,
+    countrySearch
 } from './countries';
 import {
     highlightText,
-    renderFilteredItems,
-    filterItem,
     formatTargetText
 } from './util';
 
@@ -26,6 +25,14 @@ interface CountrySelectProps {
     intent?: Intent;
     fill?: boolean;
 };
+
+export function renderFilteredItems<T>(
+    listProps: IItemListRendererProps<T>,
+    noResults?: React.ReactNode,
+): React.ReactNode {
+    const filteredRows = listProps.filteredItems.map(listProps.renderItem);
+    return filteredRows.length > 0 ? filteredRows : noResults;
+}
 
 const CountrySelect = Select.ofType<ICountry>();
 export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
@@ -38,7 +45,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
         <CountrySelect
             items={ALL_COUNTRIES}
             itemRenderer={(item, { handleClick, modifiers, query }) => {
-                if (!modifiers.matchesPredicate) return null;
+                // if (!modifiers.matchesPredicate) return null;
                 return (
                     <MenuItem
                         active={modifiers.active}
@@ -64,7 +71,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                     </Menu>
                 );
             }}
-            itemPredicate={filterItem}
+            itemListPredicate={(query, items) => query ? countrySearch(query) : items}
             inputProps={{
                 intent: intent,
             }}
@@ -81,13 +88,16 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
             onItemSelect={props.onCountryChange || (_ => {})}
             filterable={true}
             itemsEqual='code'
+
+            // The following 3 props MUST be false (resetOnSelect, resetOnQuery, resetOnClose)
             resetOnSelect={false}
-            resetOnQuery={true}
+            resetOnQuery={false}
             resetOnClose={false}
+
             query={filterQuery}
             onQueryChange={setFilterQuery}
             activeItem={activeItem}
-            onActiveItemChange={setActiveItem}
+            onActiveItemChange={(item) => { setActiveItem(item); }}
             scrollToActiveItem={true}
             fill={fill}
         >

@@ -1,7 +1,11 @@
 // import { IItemListRendererProps, ItemPredicate } from "@blueprintjs/select";
 import { ICountry } from './countries';
+import Flags from 'country-flag-icons/react/3x2';
 
-export const formatTargetText = (country: ICountry) => `${country.name} (${country.code})`;
+
+export const formatTargetText = (country: ICountry) => {
+    return `${country.name} (${country.code})`;
+};
 
 export function highlightText(text: string, query: string) {
     let lastIndex = 0;

@@ -2,7 +2,6 @@ import * as React from 'react';
 import 'styles/grid.min.css';
 
 interface GridRowProps extends React.PropsWithChildren<{}> {
-    // small?: boolean;
     extraClasses?: string;
 }
 
@@ -21,8 +20,7 @@ interface GridColumnProps extends React.PropsWithChildren<{}> {
     extraClasses?: string;
 }
 
-export const GridColumn = React.memo((props: GridColumnProps) => {
-    // const screenSpec = props.screenSize ? (props.screenSize as string) + '-' : '';
+export const GridColumn: React.FC<GridColumnProps> = React.memo(props => {
     let screenSize: ScreenSize = props.screenSize ? props.screenSize : 'sm';
     let screenSpec = screenSize == 'none' ? '' : screenSize + '-';
 

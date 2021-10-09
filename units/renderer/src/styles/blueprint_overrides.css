@@ -18,9 +18,10 @@
 
 
 /* These are only for the dev dark mode */
-textarea.bp3-input:not([class*="bp3-intent-"]),
+/*textarea.bp3-input:not([class*="bp3-intent-"]),
 .bp3-input-group:not([class*="bp3-intent-"]) .bp3-input {
     border: 1px solid #bbbbbb;
     box-shadow: none;
 }
 
+*/

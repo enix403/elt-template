@@ -9,7 +9,6 @@ export interface ICountry {
 };
 type CountryMappingArray = Record<CountryCode, ICountry>;
 
-
 export const ALL_COUNTRIES_MAPPING = data;
 export const ALL_COUNTRIES: ICountry[] = Object.entries(data).map(([code, name]) =>
     ({code: code as CountryCode, name})
@@ -25,7 +24,3 @@ const countryTrieSearch = new TrieSearch(['code', 'name'] as (keyof ICountry)[])
 countryTrieSearch.addAll(ALL_COUNTRIES);
 
 export const countrySearch = (q: any) => countryTrieSearch.search(q);
-
-window['ALL_COUNTRIES'] = ALL_COUNTRIES;
-window['ALL_COUNTRIES_MAPPING'] = ALL_COUNTRIES_MAPPING;
-window['ALL_COUNTRIES_MAPPING_ARRAY'] = ALL_COUNTRIES_MAPPING_ARRAY;

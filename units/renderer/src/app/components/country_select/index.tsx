@@ -1,12 +1,15 @@
 import * as React from "react";
 
-import { Intent, Button, ButtonProps, Menu, MenuItem, PopoverInteractionKind } from "@blueprintjs/core";
+import { Intent, Icon, Button, ButtonProps, Menu, MenuItem, PopoverInteractionKind } from "@blueprintjs/core";
 import { Select } from '@blueprintjs/select';
 import { ICountry, countrySearch, ALL_COUNTRIES } from './countries';
 import { highlightText, formatTargetText } from './util';
 
 import { List, AutoSizer } from 'react-virtualized';
 import { getReactElementSize } from 'app/helpers';
+import { hasFlag } from 'country-flag-icons';
+import Flags from 'country-flag-icons/react/3x2';
+
 
 interface CountrySelectProps {
     selectedCountry?: ICountry;
@@ -21,6 +24,11 @@ const COUNTRIES_COUNT = ALL_COUNTRIES.length;
 const POPOVER_MENU_HEIGHT = 305;
 const NO_RESULTS = <MenuItem disabled={true} text="No results." />;
 const MENU_ROW_HEIGHT = getReactElementSize(NO_RESULTS).height;
+const FLAG_STYLES: React.CSSProperties = {
+    height: MENU_ROW_HEIGHT / 2 - 2,
+    marginRight: 7
+};
+const PLACEHOLDER_FLAG = <Icon icon="help" style={{ marginRight: 13 }} />
 
 const CountrySelect = Select.ofType<ICountry>();
 export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
@@ -38,22 +46,37 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
         <CountrySelect
             items={ALL_COUNTRIES}
             itemRenderer={(item, { handleClick, modifiers, query }) => {
+                const cname = highlightText(item.name, query);
+                const ccode = highlightText(item.code, query);
+
+                const FlagComponent = hasFlag(item.code) ? Flags[item.code]: null;
+                const flag = FlagComponent ? <FlagComponent style={FLAG_STYLES}/> : PLACEHOLDER_FLAG;
                 return (
                     <MenuItem
                         active={modifiers.active}
                         disabled={modifiers.disabled}
-                        labelElement={highlightText(item.code, query)}
+                        labelElement={ccode}
                         onClick={handleClick}
                         intent={modifiers.active ? intent : 'none'}
-                        text={highlightText(item.name, query)}
+                        // TODO: extract in class
+                        text={
+                            <span style={{
+                                display: 'inline-flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}>
+                                {flag} <span>{cname}</span>
+                            </span>
+                        }
                     />
                 );
             }}
             itemListRenderer={itemListProps => {
                 let rows: React.ReactNode;
                 if (itemListProps.filteredItems.length > 0) {
-                    const activeItemIndex = itemListProps.filteredItems
-                                            .findIndex(item => item.code == activeItem?.code);
+                    const activeItemIndex = activeItem ? itemListProps.filteredItems
+                                            .findIndex(item => item.code == activeItem.code) : -1;
                     rows = renderVirtualList(itemListProps.filteredItems, activeItemIndex, itemListProps.renderItem);
                 }
                 else {
@@ -66,6 +89,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                         style={{
                             height: POPOVER_MENU_HEIGHT,
                             maxHeight: POPOVER_MENU_HEIGHT,
+                            minWidth: 300,
                             overflowY: 'hidden',
                             margin: '5px 0 0',
                             padding: '0'
@@ -84,6 +108,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                 popoverClassName: 'general-popover',
                 interactionKind: PopoverInteractionKind.CLICK,
                 position: 'bottom-left',
+                lazy: true,
 
                 minimal: false,
                 transitionDuration: 100,
@@ -92,7 +117,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                     // preventOverflow: {enabled: false},
                 },
                 onClosed: () => { setFilterQuery(''); },
-                onOpening: () => { setActiveItem(props.selectedCountry); },
+                onOpening: () => { setActiveItem(props.selectedCountry); }
             }}
             onItemSelect={props.onCountryChange || (_ => {})}
             filterable={true}
@@ -146,9 +171,7 @@ function renderVirtualList<T>(
                     rowCount={rows.length}
                     overscanRowCount={20}
                     scrollToIndex={activeItemIndex}
-                    scrollToRow={activeItemIndex}
-                />
-            }
+                />}
         </AutoSizer>
     );
 };

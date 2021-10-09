@@ -1,23 +1,55 @@
 import React from 'react';
+import classNames from 'classnames';
 import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
+import ReactPhoneInput from 'react-phone-number-input/input';
+import { E164Number } from 'libphonenumber-js/types';
+
 import {
     Button,
     FormGroup,
     HTMLSelect,
     InputGroup,
     TextArea,
+    Classes,
+    InputGroupProps,
     Icon
 } from '@blueprintjs/core';
 import { HeaderIcon } from 'app/components/icons_utils';
 import { SectionHeading, HorizontalSectionDivider } from 'app/components/misc_utils';
 import { CountrySelectWrapper } from 'app/components/country_select';
-import { ALL_COUNTRIES_MAPPING_ARRAY, ICountry } from 'app/components/country_select/countries';
+import { ICountry } from 'app/components/country_select/countries';
+
+const phone_input_factory = (inputProps: InputGroupProps, otherProps?: any) => {
+    return React.forwardRef((phoneProps: any, ref) =>
+        <InputGroup
+            {...inputProps}
+            {...otherProps}
+            value={phoneProps.value}
+            onChange={phoneProps.onChange}
+            inputRef={ref as any} />
+    );
+};
+
+const CellphoneInput = phone_input_factory({
+    placeholder: "Enter Cellphone Number",
+    fill: true,
+    leftIcon: "mobile-phone",
+});
+const TelephoneInput = phone_input_factory({
+    placeholder: "Enter Telephone Number",
+    fill: true,
+    leftIcon: "phone"
+});
 
 const SupplierPersonalInformationForm = () => {
     const [country, setCountry] =
         // React.useState<ICountry>(ALL_COUNTRIES_MAPPING_ARRAY['PK']);
         React.useState<ICountry>();
+
+    const [cellphone, setCellphone] = React.useState<E164Number | null>();
+    const [telephone, setTelephone] = React.useState<E164Number | null>();
+
     return (
         <React.Fragment>
             <GridRow>
@@ -33,100 +65,116 @@ const SupplierPersonalInformationForm = () => {
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={6}>
-                    <InputGroup
-                        placeholder="Company Name"
-                        fill={true}
-                        leftIcon="app-header"
-                    />
+                    <FormGroup label="Company Name">
+                        <InputGroup
+                            placeholder="Company Name"
+                            fill={true}
+                            leftIcon="app-header"
+                        />
+                    </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={6}>
-                    <InputGroup
-                        placeholder="Email Address"
-                        fill={true}
-                        leftIcon="envelope"
-                    />
+                    <FormGroup label="Email Address">
+                        <InputGroup
+                            placeholder="Enter Email Address"
+                            fill={true}
+                            leftIcon="envelope"
+                        />
+                    </FormGroup>
                 </GridColumn>
             </GridRow>
-            <br />
-            <GridRow>
-                <GridColumn colSize={6}>
-                    <InputGroup
-                        placeholder="Cellphone Number"
-                        fill={true}
-                        leftIcon="mobile-phone"
-                    />
-                </GridColumn>
-                <GridColumn colSize={6}>
-                    <InputGroup
-                        placeholder="Office Telephone Number"
-                        fill={true}
-                        leftIcon="phone"
-                    />
-                </GridColumn>
-            </GridRow>
-
-            <br />
             <GridRow>
                 <GridColumn colSize={3}>
-                    <InputGroup
-                        placeholder="City"
-                        fill={true}
-                        leftIcon="map-marker"
-                    />
+                    <FormGroup label="City">
+                        <InputGroup
+                            placeholder="Enter City"
+                            fill={true}
+                            leftIcon="map-marker"
+                        />
+                    </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={3}>
-                    <InputGroup
-                        placeholder="State"
-                        fill={true}
-                        leftIcon="map"
-                    />
+                    <FormGroup label="State">
+                        <InputGroup
+                            placeholder="Enter State"
+                            fill={true}
+                            leftIcon="map"
+                        />
+                    </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={2}>
-                    <InputGroup
-                        placeholder="Zip Code"
-                        fill={true}
-                        leftIcon="geolocation"
-                    />
+                    <FormGroup label="Enter Code">
+                        <InputGroup
+                            placeholder="Zip Code"
+                            fill={true}
+                            leftIcon="geolocation"
+                        />
+                    </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={4}>
-                    <CountrySelectWrapper
-                        selectedCountry={country}
-                        onCountryChange={setCountry}
-                        intent="success"
-                        fill={true}
-                    />
+                    <FormGroup label="Country">
+                        <CountrySelectWrapper
+                            selectedCountry={country}
+                            onCountryChange={setCountry}
+                            intent="primary"
+                            fill={true}
+                        />
+                    </FormGroup>
                 </GridColumn>
             </GridRow>
-            <br />
             <GridRow>
                 <GridColumn colSize={6}>
-                    <TextArea
-                        placeholder="Mailing Address"
-                        fill={true}
-                        growVertically={true}
-                        style={{ resize: 'vertical' }}
-                    />
+                    <FormGroup label="Cellphone Number">
+                        <ReactPhoneInput
+                            value={cellphone ?? undefined}
+                            onChange={setCellphone}
+                            inputComponent={CellphoneInput as any}
+                            defaultCountry={country?.code}
+                        />
+                    </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={6}>
-                    <TextArea
-                        placeholder="Permanent/Office Address"
-                        fill={true}
-                        growVertically={true}
-                        style={{ resize: 'vertical' }}
-                    />
+                    <FormGroup label="Office Telephone Number">
+                        <ReactPhoneInput
+                            value={telephone ?? undefined}
+                            onChange={setTelephone}
+                            inputComponent={TelephoneInput as any}
+                            defaultCountry={country?.code}
+                        />
+                    </FormGroup>
                 </GridColumn>
             </GridRow>
-
-
-            <br />
             <GridRow>
                 <GridColumn colSize={6}>
-                    <TextArea
-                        placeholder="Remarks"
-                        fill={true}
-                        growVertically={true}
-                        style={{ resize: 'vertical' }}
-                    />
+                    <FormGroup label="Mailing Address">
+                        <TextArea
+                            placeholder="Enter Address"
+                            fill={true}
+                            style={{ resize: 'vertical' }}
+                        />
+                    </FormGroup>
+                </GridColumn>
+                <GridColumn colSize={6}>
+                    <FormGroup label="Permanent/Office Address">
+                        <TextArea
+                            placeholder="Enter Address"
+                            fill={true}
+                            style={{ resize: 'vertical' }}
+                        />
+                    </FormGroup>
+                </GridColumn>
+            </GridRow>
+            <GridRow>
+                <GridColumn colSize={6}>
+                    <FormGroup
+                        label={<>Remarks <span className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>(Optional)</span></>}
+                    >
+                        <TextArea
+                            placeholder="None..."
+                            fill={true}
+                            style={{ resize: 'vertical' }}
+                        />
+                    </FormGroup>
                 </GridColumn>
             </GridRow>
             <br />
@@ -139,6 +187,7 @@ const RawMaterialInformationForm = () => {
         <React.Fragment>
             <FormGroup
                 label="Select Raw Material"
+                helperText="The raw material that this vendor supplies"
             >
                 <HTMLSelect fill={true}>
                     <option value='0'>Material 1</option>

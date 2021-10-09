@@ -9,13 +9,14 @@ import { StatusBar } from 'app/components/StatusBar';
 // import { AddProductView } from './features/products/AddProductView';
 // import { AddRawMaterial } from './features/inventory/AddRawMaterial';
 import { AddSupplierView } from './features/suppliers/AddSupplierView';
-// import { ScratchPlace } from './features/temp/temp';
+import { ScratchPlace } from './features/temp/temp';
 
 export const App = () => {
     return (
         <React.Fragment>
             <Sidebar />
             <AddSupplierView />
+            {/*<ScratchPlace />*/}
             <StatusBar />
         </React.Fragment>
     );

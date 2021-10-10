@@ -14,7 +14,7 @@ export const ALL_COUNTRIES: ICountry[] = Object.entries(data).map(([code, name])
     ({code: code as CountryCode, name})
 );
 
-export const ALL_COUNTRIES_MAPPING_ARRAY = ALL_COUNTRIES.reduce<CountryMappingArray>((acc, item) => {
+export const ALL_COUNTRIES_MAPPING_ARRAY = ALL_COUNTRIES.reduce((acc, item) => {
     acc[item.code] = item;
     return acc;
 }, {} as CountryMappingArray);
@@ -24,3 +24,4 @@ const countryTrieSearch = new TrieSearch(['code', 'name'] as (keyof ICountry)[])
 countryTrieSearch.addAll(ALL_COUNTRIES);
 
 export const countrySearch = (q: any) => countryTrieSearch.search(q);
+window['ALL_COUNTRIES_CODES'] = ALL_COUNTRIES.map(c => c.code);

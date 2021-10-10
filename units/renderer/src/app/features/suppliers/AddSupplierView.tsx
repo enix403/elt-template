@@ -4,6 +4,7 @@ import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
 import ReactPhoneInput from 'react-phone-number-input/input';
 import { E164Number } from 'libphonenumber-js/types';
+import { phone_input_factory, maybeGetCallingCountryCode } from 'app/components/phone_input_utils';
 
 import {
     Button,
@@ -12,24 +13,12 @@ import {
     InputGroup,
     TextArea,
     Classes,
-    InputGroupProps,
-    Icon
+    Card
 } from '@blueprintjs/core';
 import { HeaderIcon } from 'app/components/icons_utils';
 import { SectionHeading, HorizontalSectionDivider } from 'app/components/misc_utils';
 import { CountrySelectWrapper } from 'app/components/country_select';
 import { ICountry } from 'app/components/country_select/countries';
-
-const phone_input_factory = (inputProps: InputGroupProps, otherProps?: any) => {
-    return React.forwardRef((phoneProps: any, ref) =>
-        <InputGroup
-            {...inputProps}
-            {...otherProps}
-            value={phoneProps.value}
-            onChange={phoneProps.onChange}
-            inputRef={ref as any} />
-    );
-};
 
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",
@@ -129,7 +118,12 @@ const SupplierPersonalInformationForm = () => {
                             value={cellphone ?? undefined}
                             onChange={setCellphone}
                             inputComponent={CellphoneInput as any}
-                            defaultCountry={country?.code}
+
+                            // country={maybeGetCallingCountryCode(country?.code)}
+                            // international
+                            // withCountryCallingCode
+                            // or
+                            defaultCountry={maybeGetCallingCountryCode(country?.code)}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -223,14 +217,16 @@ const ViewContent = React.memo(() => {
 export const AddSupplierView = React.memo(() => {
     return (
         <NavPageView title="Add a New Supplier">
-            <div style={{ padding: "10px 40px" }}>
-                <ViewContent />
-                <br />
-                <Button
-                    text="Add Vendor"
-                    rightIcon="chevron-right"
-                    intent="primary"
-                />
+            <div style={{ padding: "15px 25px" }}>
+                <Card elevation={2}>
+                    <ViewContent />
+                    <br />
+                    <Button
+                        text="Add Vendor"
+                        rightIcon="chevron-right"
+                        intent="primary"
+                    />
+                </Card>
             </div>
         </NavPageView>
     );

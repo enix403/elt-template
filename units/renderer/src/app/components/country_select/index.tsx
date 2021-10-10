@@ -7,9 +7,7 @@ import { highlightText, formatTargetText } from './util';
 
 import { List, AutoSizer } from 'react-virtualized';
 import { getReactElementSize } from 'app/helpers';
-import { hasFlag } from 'country-flag-icons';
 import Flags from 'country-flag-icons/react/3x2';
-
 
 interface CountrySelectProps {
     selectedCountry?: ICountry;
@@ -49,7 +47,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                 const cname = highlightText(item.name, query);
                 const ccode = highlightText(item.code, query);
 
-                const FlagComponent = hasFlag(item.code) ? Flags[item.code]: null;
+                const FlagComponent = Flags[item.code];
                 const flag = FlagComponent ? <FlagComponent style={FLAG_STYLES}/> : PLACEHOLDER_FLAG;
                 return (
                     <MenuItem

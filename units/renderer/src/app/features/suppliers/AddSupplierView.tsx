@@ -3,8 +3,7 @@ import classNames from 'classnames';
 import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
 import ReactPhoneInput from 'react-phone-number-input/input';
-import { E164Number } from 'libphonenumber-js/types';
-import { phone_input_factory, maybeGetCallingCountryCode } from 'app/components/phone_input_utils';
+import { phone_input_factory, maybeGetCallingCountryCode, ReactPhoneInputState } from 'app/components/phone_input_utils';
 
 import {
     Button,
@@ -23,7 +22,7 @@ import { ICountry } from 'app/components/country_select/countries';
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",
     fill: true,
-    leftIcon: "mobile-phone",
+    leftIcon: "mobile-phone"
 });
 const TelephoneInput = phone_input_factory({
     placeholder: "Enter Telephone Number",
@@ -32,12 +31,10 @@ const TelephoneInput = phone_input_factory({
 });
 
 const SupplierPersonalInformationForm = () => {
-    const [country, setCountry] =
-        // React.useState<ICountry>(ALL_COUNTRIES_MAPPING_ARRAY['PK']);
-        React.useState<ICountry>();
+    const [country, setCountry] = React.useState<ICountry>();
 
-    const [cellphone, setCellphone] = React.useState<E164Number | null>();
-    const [telephone, setTelephone] = React.useState<E164Number | null>();
+    const [cellphone, setCellphone] = React.useState<ReactPhoneInputState>();
+    const [telephone, setTelephone] = React.useState<ReactPhoneInputState>();
 
     return (
         <React.Fragment>
@@ -50,6 +47,7 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter supplier name"
                             fill={true}
                             leftIcon="layers"
+                            intent='success'
                         />
                     </FormGroup>
                 </GridColumn>
@@ -83,7 +81,7 @@ const SupplierPersonalInformationForm = () => {
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={3}>
-                    <FormGroup label="State">
+                    <FormGroup label="State / Province">
                         <InputGroup
                             placeholder="Enter State"
                             fill={true}
@@ -105,7 +103,7 @@ const SupplierPersonalInformationForm = () => {
                         <CountrySelectWrapper
                             selectedCountry={country}
                             onCountryChange={setCountry}
-                            intent="primary"
+                            intent="success"
                             fill={true}
                         />
                     </FormGroup>
@@ -113,7 +111,11 @@ const SupplierPersonalInformationForm = () => {
             </GridRow>
             <GridRow>
                 <GridColumn colSize={6}>
-                    <FormGroup label="Cellphone Number">
+                    <FormGroup
+                        label="Cellphone Number"
+                        helperText={`Start the number with a country calling code if it is not
+                                    from the country selected previouly. `}
+                    >
                         <ReactPhoneInput
                             value={cellphone ?? undefined}
                             onChange={setCellphone}

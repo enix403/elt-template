@@ -1,7 +1,7 @@
 import React from 'react';
 import './style.scss'
 
-import { Icon } from '@blueprintjs/core';
+import { Icon, Card } from '@blueprintjs/core';
 
 export const MockChildBlock = (props: React.PropsWithChildren<{ color?: string }>) => {
     return (
@@ -27,12 +27,12 @@ interface NavPageViewProps {
 
 const NavPageViewHeader = ({title}) => {
     return (
-        <div className='content-body-header-main'>
+        <Card elevation={1} className='content-body-header-main'>
             <Icon icon="full-circle" color="#E936C2" />
-            <span style={{ fontSize: 20, fontWeight: 500, marginLeft: 7 }}>
+            <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 7 }}>
                 {title}
             </span>
-        </div>
+        </Card>
     );
 };
 

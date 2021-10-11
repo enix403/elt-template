@@ -1,9 +1,10 @@
-import { NavPageView } from 'app/layout/views';
 import React from 'react';
+import { NavPageView } from 'app/layout/views';
+import { Card, FormGroup, InputGroup } from '@blueprintjs/core';
 
 const _Content: React.FC<{}> = React.memo(_props => {
     return (
-        <code>Hello</code>
+        null
     );
 });
 
@@ -14,3 +15,4 @@ export const SupplierListView: React.FC<{}> = React.memo(_props => {
         </NavPageView>
     );
 });
+

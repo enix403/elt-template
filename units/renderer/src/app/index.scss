@@ -3,13 +3,14 @@
 @import '@fontsource/roboto/400.css';
 @import '@fontsource/roboto/500.css';
 @import '@fontsource/roboto/700.css';
+// @import '@fontsource/roboto';
 
 @import 'normalize.css';
 
 @import '@blueprintjs/icons/lib/css/blueprint-icons.css';
 @import '@blueprintjs/core/lib/css/blueprint.css';
-@import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
+// @import "@blueprintjs/popover2/lib/css/blueprint-popover2.css";
 
 @import 'styles/normalize_elements.css';
 @import 'styles/blueprint_overrides.css';
-@import 'styles/global.css';
+@import 'styles/global.scss';

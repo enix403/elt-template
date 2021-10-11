@@ -2,9 +2,25 @@
 import { ICountry } from './countries';
 import Flags from 'country-flag-icons/react/3x2';
 
+const FLAG_STYLES: React.CSSProperties = {
+    height: 16,
+    margin: '0 10px'
+};
 
 export const formatTargetText = (country: ICountry) => {
-    return `${country.name} (${country.code})`;
+    const FlagComponent = Flags[country.code];
+    const flag = FlagComponent && <FlagComponent style={FLAG_STYLES} />;
+
+    return (
+        <span style={{
+            display: 'inline-flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between'
+        }}>
+            <span>{country.name} ({country.code})</span> {flag}
+        </span>
+    );
 };
 
 export function highlightText(text: string, query: string) {

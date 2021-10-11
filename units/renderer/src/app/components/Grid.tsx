@@ -21,7 +21,7 @@ interface GridColumnProps extends React.PropsWithChildren<{}> {
 }
 
 export const GridColumn: React.FC<GridColumnProps> = React.memo(props => {
-    let screenSize: ScreenSize = props.screenSize ? props.screenSize : 'sm';
+    let screenSize: ScreenSize = props.screenSize ? props.screenSize : 'md';
     let screenSpec = screenSize == 'none' ? '' : screenSize + '-';
 
     return (

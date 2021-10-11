@@ -1,0 +1,124 @@
+$blue:    #007bff;
+$indigo:  #6610f2;
+$purple:  #6f42c1;
+$pink:    #e83e8c;
+$red:     #dc3545;
+$orange:  #fd7e14;
+$yellow:  #ffc107;
+$green:   #28a745;
+$teal:    #20c997;
+$cyan:    #17a2b8;
+
+$primary: $blue;
+
+.table-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    flex-basis: 100%;
+    overflow-x: auto;
+}
+
+.table-header {
+    margin: 0;
+    padding: 14px 14px;
+    border-color: #e9ecef;
+    border-style: solid;
+    border-width: 1px 0 1px 0;
+    background-color: #f8f9fa;
+    color: #495057;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+
+    > .title {
+        font-weight: 400;
+        font-size: 21px;
+    }
+}
+
+.table {
+    margin: 0 0 1rem 0;
+    border-collapse: collapse;
+
+    th, td {
+        // border-color: #c8c8c8;
+        border-color: #e9ecef;
+
+        border-style: solid;
+        // border-width: 1px;
+        border-width: 0 0 1px 0;
+        text-align: center;
+        color: #495057;
+    }
+
+
+    th {
+        // background-color: #f4f4f4;
+        background-color: #f8f9fa;
+        font-weight: 500;
+        padding: 14px 10px;
+        cursor: default;
+        &:hover {
+            background-color: #e9ecef;
+        }
+    }
+
+    td {
+        padding: 5px 10px;
+    }
+
+    tbody tr {
+        cursor: default;
+        &:hover {
+            background-color: #e9ecef;
+        }
+    }
+
+}
+
+
+/*
+Inside .table
+animation
+tbody {
+    tr {
+        th,
+        td {
+            position: relative;
+            transition: 0.3s all ease;
+            &:before, &:after {
+                transition: 0.3s all ease;
+                content: "";
+                left: 0;
+                right: 0;
+                position: absolute;
+                height: 1px;
+                background: $primary;
+                width: 100%;
+                opacity: 0;
+                visibility: hidden;
+            }
+            &:before { top: -1px; }
+            &:after  { bottom: -1px; }
+        }
+        &:hover, &.active {
+            th,
+            td {
+                background: rgba($primary, 0.03);
+                &:before,
+                &:after {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+        }
+    }
+}
+
+*/

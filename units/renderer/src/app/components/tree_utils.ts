@@ -4,14 +4,25 @@ export type NodePath = number[];
 
 export const nodeFromPath = Tree.nodeFromPath;
 
-export function forEachNode(nodes: TreeNodeInfo[] | undefined, callback: (node: TreeNodeInfo) => void) {
+export function forEachNode(
+    nodes: TreeNodeInfo[] | undefined,
+    callback: (node: TreeNodeInfo) => void,
+    reversed: boolean = false
+) {
     if (nodes === undefined) {
         return;
     }
-
-    for (const node of nodes) {
-        callback(node);
-        forEachNode(node.childNodes, callback);
+    if (reversed) {
+        for (const node of nodes) {
+            forEachNode(node.childNodes, callback);
+            callback(node);
+        }
+    }
+    else {
+        for (const node of nodes) {
+            callback(node);
+            forEachNode(node.childNodes, callback);
+        }
     }
 }
 

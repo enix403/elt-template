@@ -17,22 +17,7 @@ import {
 
 import { GridColumn, GridRow } from "app/components/Grid";
 import { NodePath, forEachNode, forNodeAtPath, nodeFromPath } from 'app/components/tree_utils';
-
-/*
-id
-childNodes
-nodeData
-
-disabled
-isExpanded
-isSelected
-
-label
-icon
-hasCaret: true;
-secondaryLabel
-
-*/
+import { FormGroupWithoutLabel } from 'app/components/form_group_utils';
 
 interface ICategoryInfo {
     id: string | number;
@@ -114,8 +99,23 @@ const createInitialState = (data: ICategoryInfo[]): TreeNodeInfo[] =>
 const getFreshData = () => createInitialState(FAKE_CATEGORIES_DATA);
 
 
+/**
+ * Returns true if nodeB is child of nodeA, false otherwise
+ * */
+function isNodeChild(nodeA: NodePath, nodeB: NodePath) {
+    if (nodeA.length >= nodeB.length)
+        return false;
+
+    for (let i = 0; i < nodeA.length; i++) {
+        if (nodeA[i] != nodeB[i])
+            return false;
+    }
+
+    return true;
+}
+
 type TreeAction =
-    | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean } }
+    | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean, recursive?: boolean } }
     | { type: "SET_IS_SELECTED"; payload: { path: NodePath; isSelected: boolean } }
     | { type: "DESELECT_ALL" }
     | { type: "RELOAD_STATE" };
@@ -132,7 +132,22 @@ function treeExampleReducer(state: TreeNodeInfo[], action: TreeAction) {
                 forEachNode(newState, node => (node.isSelected = false));
                 break;
             case "SET_IS_EXPANDED":
-                forNodeAtPath(newState, action.payload.path, node => (node.isExpanded = action.payload.isExpanded));
+                if (action.payload.recursive) {
+                    const nodeAtPath = nodeFromPath(action.payload.path, newState);
+                    forEachNode(
+                        [nodeAtPath],
+                        node => (node.isExpanded = action.payload.isExpanded),
+                        // if recursively collapsing, do it from bottom to top
+                        !action.payload.isExpanded
+                    );
+                }
+                else {
+                    forNodeAtPath(
+                        newState,
+                        action.payload.path,
+                        node => (node.isExpanded = action.payload.isExpanded)
+                    );
+                }
                 break;
             case "SET_IS_SELECTED":
                 forNodeAtPath(newState, action.payload.path, node => (node.isSelected = action.payload.isSelected));
@@ -143,6 +158,7 @@ function treeExampleReducer(state: TreeNodeInfo[], action: TreeAction) {
     });
 }
 
+
 const ParentCatergorySelection = () => {
     const [nodes, dispatch] = React.useReducer(
         treeExampleReducer, getFreshData()
@@ -150,7 +166,7 @@ const ParentCatergorySelection = () => {
     const [selectedNodePath, setSelectedNodePath] = React.useState<NodePath | null>();
 
     const handleNodeClick = React.useCallback(
-        (node: TreeNodeInfo, nodePath: NodePath, e: React.MouseEvent<HTMLElement>) => {
+        (node: TreeNodeInfo, nodePath: NodePath) => {
             const targetSelected = !node.isSelected;
             dispatch({ type: "DESELECT_ALL" });
             dispatch({
@@ -164,39 +180,37 @@ const ParentCatergorySelection = () => {
     );
 
     const handleNodeCollapse = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
-        dispatch({
-            payload: { path: nodePath, isExpanded: false },
-            type: "SET_IS_EXPANDED",
-        });
-    }, []);
+        if (selectedNodePath && isNodeChild(nodePath, selectedNodePath)) {
+            dispatch({ type: "DESELECT_ALL" });
+            setSelectedNodePath(null);
+        }
 
-    const handleNodeExpand = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
         dispatch({
-            payload: { path: nodePath, isExpanded: true },
             type: "SET_IS_EXPANDED",
+            payload: { path: nodePath, isExpanded: false, recursive: true },
         });
-    }, []);
+    }, [selectedNodePath]);
+
+    const handleNodeExpand = React.useCallback(
+        (_node: TreeNodeInfo, nodePath: NodePath, e: React.MouseEvent<HTMLElement>) => {
+            dispatch({
+                type: "SET_IS_EXPANDED",
+                payload: {
+                    path: nodePath,
+                    isExpanded: true,
+                    recursive: e.altKey
+                },
+            });
+        }, []);
 
     return (
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 20, width: '100%' }}>
             <Tree
                 contents={nodes}
                 onNodeClick={handleNodeClick}
                 onNodeCollapse={handleNodeCollapse}
                 onNodeExpand={handleNodeExpand}
                 className={Classes.ELEVATION_0}
-            />
-            <br />
-            <p>Selected node: {!selectedNodePath ? "-none-" : nodeFromPath(selectedNodePath, nodes).label}</p>
-            <p>Selected node path: <code>[{selectedNodePath?.join(', ')}]</code></p>
-            <Button
-                text="Reload"
-                intent="primary"
-                fill={true}
-                onClick={() => {
-                    dispatch({ type: 'RELOAD_STATE' });
-                    setSelectedNodePath(null);
-                }}
             />
         </div>
     );
@@ -206,12 +220,14 @@ export const ScratchPlace = () => {
     return (
         <NavPageView title="Define New Category (Scratch Place)">
             <Card elevation={2} style={{ margin: "15px 25px" }}>
+
+                <div style={{ margin: '0 0 15px' }}>
+                    <h5 className="bp3-heading">Select Parent Category</h5>
+                </div>
+                <ParentCatergorySelection />
+
                 <GridRow>
-                    <GridColumn colSize={6}>
-                        <div style={{ margin: '0 0 15px' }}>
-                            <h5 className="bp3-heading">Select Parent Category</h5>
-                        </div>
-                        <ParentCatergorySelection />
+                    <GridColumn colSize={4}>
                         <FormGroup label="New Category Name">
                             <InputGroup
                                 placeholder="Enter category name"
@@ -220,14 +236,15 @@ export const ScratchPlace = () => {
                             />
                         </FormGroup>
                     </GridColumn>
-                    <GridColumn colSize={6}>
-                        <Button
-                            style={{ marginTop: 30 }}
-                            text="Add Category"
-                            intent="success"
-                            fill={true}
-                            rightIcon="group-objects"
-                        />
+                    <GridColumn colSize={4}>
+                        <FormGroupWithoutLabel>
+                            <Button
+                                text="Add Category"
+                                intent="success"
+                                fill={false}
+                                rightIcon="group-objects"
+                            />
+                        </FormGroupWithoutLabel>
                     </GridColumn>
                 </GridRow>
             </Card>

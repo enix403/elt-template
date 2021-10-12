@@ -9,55 +9,46 @@ import {
     HTMLSelect,
     InputGroup,
     ControlGroup,
-    Icon
+    Card,
+    Icon,
+    Classes
 } from '@blueprintjs/core';
+
+import { CatergorySelect } from 'app/components/CategorySelect';
 
 const ProductProps = () => {
     return (
         <GridRow>
-            <GridColumn colSize={3}>
-                <FormGroup
-                    label="Measurement Unit"
-                >
+            <GridColumn colSize='auto'>
+                <FormGroup style={{minWidth: 200}} label="Measurement Unit">
                     <HTMLSelect fill={true}>
+                        <option value="1">Individual Item</option>
                         <option value="1">Meters</option>
                         <option value="1">Inches</option>
                         <option value="1">Kilograms</option>
                         <option value="1">Grams</option>
                         <option value="1">Litres</option>
                         <option value="1">Ounces</option>
-                        <option value="1">Quantity</option>
                     </HTMLSelect>
                 </FormGroup>
             </GridColumn>
-            <GridColumn colSize={5}>
-                <FormGroup
-                    label="Weight"
-                >
+            <GridColumn colSize='auto'>
+                <FormGroup label="Stock Keeping Unit">
                     <ControlGroup>
                         <HTMLSelect fill={true}>
-                            <option value="1">Kilograms (kg)</option>
-                            <option value="1">Grams (gm)</option>
+                            <option value="1">Group Of</option>
+                            <option value="1">Carton Of</option>
+                            <option value="1">Tank Of</option>
+                            <option value="1">Individual Item</option>
                         </HTMLSelect>
                         <NumericInput
-                            style={{ maxWidth: 130 }}
-                            leftIcon="shopping-cart"
-                            placeholder="Enter weight"
+                            style={{ maxWidth: 150 }}
+                            placeholder="Enter Amount"
+                            min={0}
                         />
                     </ControlGroup>
                 </FormGroup>
             </GridColumn>
-            <GridColumn colSize={4}>
-                <FormGroup
-                    label="Type"
-                >
-                    <HTMLSelect fill={true}>
-                        <option value="1">Single Item</option>
-                        <option value="1">Container Of Items</option>
-                    </HTMLSelect>
-                </FormGroup>
-            </GridColumn>
-
         </GridRow>
     );
 };
@@ -66,29 +57,30 @@ const ProductProps = () => {
 
 export const AddRawMaterial = React.memo(() => {
     return (
-        <NavPageView title="Add a New Product">
-            <div style={{
-                padding: "10px 40px"
-            }}>
-                <GridRow>
-                    <GridColumn colSize={12}>
-                        <FormGroup
-                            label="Material Name"
-                            inline={false}
-                        >
-                            <InputGroup
-                                placeholder="Enter the material name"
-                                fill={true}
-                                leftIcon='layers'
-                            />
-                        </FormGroup>
-                    </GridColumn>
-                </GridRow>
+        <NavPageView title="Add New Raw Material">
+            <Card elevation={2} style={{ margin: "15px 25px" }}>
+                <FormGroup
+                    label="Material Name"
+                    inline={false}
+                >
+                    <InputGroup
+                        placeholder="Enter the material name"
+                        fill={true}
+                        leftIcon='layers'
+                    />
+                </FormGroup>
+                <Divider style={{ marginBottom: 10 }} />
 
-
-                <Divider style={{ marginBottom: 20 }} />
+                <label className={Classes.LABEL}>Select Category</label>
+                <CatergorySelect />
                 <ProductProps />
-            </div>
+
+                <Button
+                    text="Add Raw Material"
+                    intent="success"
+                    icon="new-grid-item"
+                />
+            </Card>
         </NavPageView>
     );
 });

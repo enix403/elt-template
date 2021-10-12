@@ -222,17 +222,15 @@ const ViewContent = React.memo(() => {
 export const AddSupplierView = React.memo(() => {
     return (
         <NavPageView title="Add a New Supplier">
-            <div style={{ padding: "15px 25px" }}>
-                <Card elevation={2}>
-                    <ViewContent />
-                    <br />
-                    <Button
-                        text="Add Vendor"
-                        rightIcon="chevron-right"
-                        intent="primary"
-                    />
-                </Card>
-            </div>
+            <Card elevation={2} style={{ margin: "15px 25px" }}>
+                <ViewContent />
+                <br />
+                <Button
+                    text="Add Vendor"
+                    rightIcon="chevron-right"
+                    intent="primary"
+                />
+            </Card>
         </NavPageView>
     );
 });

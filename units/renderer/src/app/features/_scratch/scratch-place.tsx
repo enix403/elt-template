@@ -1,175 +1,235 @@
 import React from 'react';
-import { NavPageView } from "app/layout/views";
-import { Card, Icon, Button, Checkbox } from '@blueprintjs/core';
-import Flags from 'country-flag-icons/react/3x2';
-
 import './style.scss';
 
-const TableColumnHeader: React.FC<any> = ({ children, ...restProps }) => {
+
+import immer from "immer";
+import { NavPageView } from "app/layout/views";
+import {
+    Card,
+    Tree,
+    Icon,
+    FormGroup,
+    InputGroup,
+    Button,
+    Classes,
+    TreeNodeInfo
+} from '@blueprintjs/core';
+
+import { GridColumn, GridRow } from "app/components/Grid";
+import { NodePath, forEachNode, forNodeAtPath, nodeFromPath } from 'app/components/tree_utils';
+
+/*
+id
+childNodes
+nodeData
+
+disabled
+isExpanded
+isSelected
+
+label
+icon
+hasCaret: true;
+secondaryLabel
+
+*/
+
+interface ICategoryInfo {
+    id: string | number;
+    name: string;
+    subcategories?: ICategoryInfo[];
+};
+
+const FAKE_CATEGORIES_DATA: ICategoryInfo[] = [
+    {
+        id: 1,
+        name: "Electronic Accessories",
+        subcategories: [
+            { id: 0, name: "E Sub-Category 1" },
+            { id: 1, name: "E Sub-Category 2" },
+            { id: 2, name: "E Sub-Category 3" },
+        ]
+    },
+    { id: 4, name: "Groceries & Pets" },
+    {
+        id: 2, name: "Home & Lifestyle",
+        subcategories: [
+            { id: 0, name: "H Sub-Category 1" },
+            {
+                id: 1,
+                name: "H Sub-Category 2",
+                subcategories: [
+                    { id: 0, name: "Sub H Sub-Category 1" },
+                ]
+            },
+            { id: 2, name: "H Sub-Category 3" },
+        ]
+    },
+    {
+        id: 3, name: "Sports & Outdoor",
+        subcategories: [
+            { id: 0, name: "S Sub-Category 1" },
+            { id: 1, name: "S Sub-Category 2" },
+            { id: 2, name: "S Sub-Category 3" },
+        ]
+    },
+];
+
+function createTreeNodes(data: ICategoryInfo[]): TreeNodeInfo[] {
+    const nodes: TreeNodeInfo[] = [];
+
+    for (const cat of data) {
+        const { subcategories } = cat;
+        const hasChildren = subcategories && subcategories.length > 0;
+        const targetNode: TreeNodeInfo = {
+            id: cat.id,
+            label: cat.name,
+            icon: 'folder-close',
+            hasCaret: hasChildren,
+            isExpanded: false,
+        };
+
+        if (hasChildren) {
+            const children = createTreeNodes(subcategories);
+            targetNode.childNodes = children;
+        }
+
+        nodes.push(targetNode);
+    }
+
+    return nodes;
+}
+
+const createInitialState = (data: ICategoryInfo[]): TreeNodeInfo[] =>
+    [{
+        id: 0,
+        label: "All Categories",
+        icon: 'flash',
+        isExpanded: true,
+        hasCaret: true,
+
+        childNodes: createTreeNodes(data)
+    }];
+
+const getFreshData = () => createInitialState(FAKE_CATEGORIES_DATA);
+
+
+type TreeAction =
+    | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean } }
+    | { type: "SET_IS_SELECTED"; payload: { path: NodePath; isSelected: boolean } }
+    | { type: "DESELECT_ALL" }
+    | { type: "RELOAD_STATE" };
+
+
+function treeExampleReducer(state: TreeNodeInfo[], action: TreeAction) {
+
+    if (action.type == 'RELOAD_STATE')
+        return getFreshData();
+
+    return immer(state, newState => {
+        switch (action.type) {
+            case "DESELECT_ALL":
+                forEachNode(newState, node => (node.isSelected = false));
+                break;
+            case "SET_IS_EXPANDED":
+                forNodeAtPath(newState, action.payload.path, node => (node.isExpanded = action.payload.isExpanded));
+                break;
+            case "SET_IS_SELECTED":
+                forNodeAtPath(newState, action.payload.path, node => (node.isSelected = action.payload.isSelected));
+                break;
+            default:
+                return;
+        }
+    });
+}
+
+const ParentCatergorySelection = () => {
+    const [nodes, dispatch] = React.useReducer(
+        treeExampleReducer, getFreshData()
+    );
+    const [selectedNodePath, setSelectedNodePath] = React.useState<NodePath | null>();
+
+    const handleNodeClick = React.useCallback(
+        (node: TreeNodeInfo, nodePath: NodePath, e: React.MouseEvent<HTMLElement>) => {
+            const targetSelected = !node.isSelected;
+            dispatch({ type: "DESELECT_ALL" });
+            dispatch({
+                payload: { path: nodePath, isSelected: targetSelected },
+                type: "SET_IS_SELECTED",
+            });
+
+            setSelectedNodePath(targetSelected ? nodePath : null);
+        },
+        [],
+    );
+
+    const handleNodeCollapse = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
+        dispatch({
+            payload: { path: nodePath, isExpanded: false },
+            type: "SET_IS_EXPANDED",
+        });
+    }, []);
+
+    const handleNodeExpand = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
+        dispatch({
+            payload: { path: nodePath, isExpanded: true },
+            type: "SET_IS_EXPANDED",
+        });
+    }, []);
+
     return (
-        <th {...restProps}>
-            <div className="center-text-flow" style={{ margin: '0 10px' }}>
-                <span>{children}</span>
-                <Icon intent="danger" style={{ marginLeft: 6 }} icon="filter" />
-                <Icon intent="danger" style={{ marginLeft: 6 }} icon="sort" />
-            </div>
-        </th>
+        <div style={{ marginBottom: 20 }}>
+            <Tree
+                contents={nodes}
+                onNodeClick={handleNodeClick}
+                onNodeCollapse={handleNodeCollapse}
+                onNodeExpand={handleNodeExpand}
+                className={Classes.ELEVATION_0}
+            />
+            <br />
+            <p>Selected node: {!selectedNodePath ? "-none-" : nodeFromPath(selectedNodePath, nodes).label}</p>
+            <p>Selected node path: <code>[{selectedNodePath?.join(', ')}]</code></p>
+            <Button
+                text="Reload"
+                intent="primary"
+                fill={true}
+                onClick={() => {
+                    dispatch({ type: 'RELOAD_STATE' });
+                    setSelectedNodePath(null);
+                }}
+            />
+        </div>
     );
 };
 
-const MyTable = React.memo(() => {
-    return (
-        <div className="table-wrapper">
-            <div className="table-header">
-                <span className="title center-text-flow">
-                    <Icon icon='heatmap' size={20} style={{ color: '#ffc107' }} />
-                    <span className="icon-text-lg">List of Customers</span>
-                </span>
-                <Button
-                    text="Export To Excel"
-                    rightIcon="export"
-                    intent="success"
-                    outlined={true}
-                />
-            </div>
-            <div className="table-responsive">
-                <table className="table">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <TableColumnHeader>Name</TableColumnHeader>
-                            <TableColumnHeader>Country</TableColumnHeader>
-                            <TableColumnHeader>Date</TableColumnHeader>
-                            <TableColumnHeader>Agent</TableColumnHeader>
-                            <TableColumnHeader>Balance</TableColumnHeader>
-                            <TableColumnHeader>Status</TableColumnHeader>
-                            <TableColumnHeader>Activity</TableColumnHeader>
-                        </tr>
-                        <tr>
-
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><div className="center-everything"><Checkbox/></div></td>
-                            <td>James Match</td>
-                            <td>
-                                <div className="no-idea">
-                                    <div className="flag-holder">
-                                        <Flags.US style={{ height: 20 }} />
-                                    </div>
-                                    United States
-                                </div>
-                            </td>
-                            <td>Toni Bowcher</td>
-                            <td>09/13/2015</td>
-                            <td>$70,663.00</td>
-                            <td>Unqualified</td>
-                            <td>14%</td>
-                        </tr>
-                        <tr>
-                            <td><div className="center-everything"><Checkbox/></div></td>
-                            <td>James Match</td>
-                            <td>
-                                <div className="no-idea">
-                                    <div className="flag-holder">
-                                        <Flags.AR style={{ height: 20 }} />
-                                    </div>
-                                    Argentina
-                                </div>
-                            </td>
-                            <td>Toni Bowcher</td>
-                            <td>09/13/2015</td>
-                            <td>$70,663.00</td>
-                            <td>Unqualified</td>
-                            <td>14%</td>
-                        </tr>
-
-                        <tr>
-                            <td><div className="center-everything"><Checkbox/></div></td>
-                            <td>James Match</td>
-                            <td>
-                                <div className="no-idea">
-                                    <div className="flag-holder">
-                                        <Flags.BS style={{ height: 20 }} />
-                                    </div>
-                                    Algeria
-                                </div>
-                            </td>
-                            <td>Toni Bowcher</td>
-                            <td>09/13/2015</td>
-                            <td>$70,663.00</td>
-                            <td>Unqualified</td>
-                            <td>14%</td>
-                        </tr>
-
-                        <tr>
-
-                            <td><div className="center-everything"><Checkbox/></div></td>
-                            <td>James Match</td>
-                            <td>
-                                <div className="no-idea">
-                                    <div className="flag-holder">
-                                        <Flags.AG style={{ height: 20 }} />
-                                    </div>
-                                    Antigua and Barbuda
-                                </div>
-                            </td>
-                            <td>Toni Bowcher</td>
-                            <td>09/13/2015</td>
-                            <td>$70,663.00</td>
-                            <td>Unqualified</td>
-                            <td>14%</td>
-                        </tr>
-
-                        <tr>
-                            <td><Checkbox/></td>
-                            <td>James Match</td>
-                            <td>Canada</td>
-                           {/* <td>
-                                <div className="no-idea">
-                                    <div className="flag-holder">
-                                        <Flags.CA style={{ height: 20 }} />
-                                    </div>
-                                    Canada
-                                </div>
-                            </td>*/}
-                            <td>Toni Bowcher</td>
-                            <td>09/13/2015</td>
-                            <td>$70,663.00</td>
-                            <td>Unqualified</td>
-                            <td>14%</td>
-                        </tr>
-                        <tr>
-                            <td><div className="center-everything"><Checkbox/></div></td>
-                            <td>James Match</td>
-                            <td>
-                                <div className="no-idea">
-                                    <div className="flag-holder">
-                                        <Flags.SV style={{ height: 20 }} />
-                                    </div>
-                                    El Salvador
-                                </div>
-                            </td>
-                            <td>Toni Bowcher</td>
-                            <td>09/13/2015</td>
-                            <td>$70,663.00</td>
-                            <td>Unqualified</td>
-                            <td>14%</td>
-                        </tr>
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    );
-});
-
 export const ScratchPlace = () => {
     return (
-        <NavPageView title="Scratch Place">
+        <NavPageView title="Define New Category (Scratch Place)">
             <Card elevation={2} style={{ margin: "15px 25px" }}>
-                <MyTable />
+                <GridRow>
+                    <GridColumn colSize={6}>
+                        <div style={{ margin: '0 0 15px' }}>
+                            <h5 className="bp3-heading">Select Parent Category</h5>
+                        </div>
+                        <ParentCatergorySelection />
+                        <FormGroup label="New Category Name">
+                            <InputGroup
+                                placeholder="Enter category name"
+                                fill={true}
+                                leftIcon="merge-columns"
+                            />
+                        </FormGroup>
+                    </GridColumn>
+                    <GridColumn colSize={6}>
+                        <Button
+                            style={{ marginTop: 30 }}
+                            text="Add Category"
+                            intent="success"
+                            fill={true}
+                            rightIcon="group-objects"
+                        />
+                    </GridColumn>
+                </GridRow>
             </Card>
         </NavPageView>
     );

@@ -6,7 +6,7 @@ import { E164Number } from 'libphonenumber-js/types';
 
 export type ReactPhoneInputState = E164Number | null;
 
-// Now this is some convoluted logic you do not need to read
+// Now this is some convoluted logic that you don't need to read
 
 // Some places like Antartica and some islands usually do not have a calling code
 const countries = getCountries();

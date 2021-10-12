@@ -1,3 +1,7 @@
+// Regular CSS imports do not work with relative path
+@import 'styles/normalize_elements.css';
+@import 'styles/blueprint_overrides.css';
+
 * {
     font-family: 'Roboto', sans-serif;
 }
@@ -26,8 +30,16 @@ html, body {
     align-items: center;
 }
 
-.icon-text {
-    margin: 0 10px
+.center-everything {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
+
+.icon-text-sm { margin: 0  3px; }
+.icon-text-md { margin: 0  6px; }
+.icon-text-lg { margin: 0 10px; }
+
 
 @import './tables';

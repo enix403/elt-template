@@ -9,6 +9,7 @@ import { List, AutoSizer } from 'react-virtualized';
 import { getReactElementSize } from 'app/helpers';
 import Flags from 'country-flag-icons/react/3x2';
 
+
 interface CountrySelectProps {
     selectedCountry?: ICountry;
     onCountryChange?: (country: ICountry) => void;
@@ -26,7 +27,7 @@ const FLAG_STYLES: React.CSSProperties = {
     height: MENU_ROW_HEIGHT / 2 - 2,
     marginRight: 7
 };
-const PLACEHOLDER_FLAG = <Icon icon="help" style={{ marginRight: 13 }} />
+const PLACEHOLDER_FLAG = <Icon icon="help" style={{ marginRight: 10 }} />
 
 const CountrySelect = Select.ofType<ICountry>();
 export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
@@ -56,15 +57,9 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                         labelElement={ccode}
                         onClick={handleClick}
                         intent={modifiers.active ? intent : 'none'}
-                        // TODO: extract in class
                         text={
-                            <span style={{
-                                display: 'inline-flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}>
-                                {flag} <span>{cname}</span>
+                            <span className="center-text-flow">
+                                {flag} <span className="icon-text-sm">{cname}</span>
                             </span>
                         }
                     />
@@ -111,8 +106,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                 minimal: false,
                 transitionDuration: 100,
                 modifiers: {
-                    flip: {enabled: false},
-                    // preventOverflow: {enabled: false},
+                    flip: {enabled: false}
                 },
                 onClosed: () => { setFilterQuery(''); },
                 onOpening: () => { setActiveItem(props.selectedCountry); }

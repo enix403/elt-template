@@ -1,24 +1,19 @@
-/*.bp3-input-group:not([class*="bp3-intent-"]) .bp3-input {
-    border: 1px solid #dddddd;
-    box-shadow: none;
-}
-
-
-.bp3-input-group:not([class*="bp3-intent-"]) .bp3-input:focus {
-    box-shadow:  0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3), inset 0 0px 0px rgba(16, 22, 26, 0.2);
-}
-*/
 .bp3-heading {
     font-weight: 500;
 }
-/* This one is permanent */
 .bp3-html-select:not(.bp3-minimal) select {
     background-image: none !important;
 }
 
+.bp3-heading {
+    margin: 0;
+    padding: 0;
+}
 
-/* These are only for the dev dark mode */
-/*textarea.bp3-input:not([class*="bp3-intent-"]),
+/*
+These are only for the dev dark mode
+
+textarea.bp3-input:not([class*="bp3-intent-"]),
 .bp3-input-group:not([class*="bp3-intent-"]) .bp3-input {
     border: 1px solid #bbbbbb;
 }
@@ -27,4 +22,5 @@ textarea.bp3-input:not([class*="bp3-intent-"]):not(:focus),
 .bp3-input-group:not([class*="bp3-intent-"]) .bp3-input:not(:focus) {
     box-shadow: none;
 }
+
 */

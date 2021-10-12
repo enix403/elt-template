@@ -1,29 +1,16 @@
 import ReactDOMServer from "react-dom/server";
 
-/**
- * @description Retrieve the width and/or heigh of a React element without rendering and committing the element to the DOM.
- *
- * @param {object} elementJSX - The target React element written in JSX.
- * @return {object}
- * @public
- * @function
- *
- * @example
- *
- * const { width, height } = getReactElementSize( <div style={{ width: "20px", height: "40px" }} ...props /> );
- * console.log(`W: ${width}, H: ${height});  // W: 20, H: 40
- *
- */
-export const getReactElementSize = (elementJSX) => {
+
+export const getReactElementSize = (elementJSX: React.ReactElement) => {
 
     const elementString = ReactDOMServer.renderToStaticMarkup(elementJSX);
     const elementDocument = new DOMParser().parseFromString(elementString, "text/html");
+
     // @ts-ignore
     const elementNode = elementDocument.getRootNode().body.firstChild;
 
     const container = document.createElement("div");
     const containerStyle = {
-
         display: "block",
         position: "absolute",
         boxSizing: "border-box",

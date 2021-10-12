@@ -5,7 +5,6 @@ import { Icon, IconName } from '@blueprintjs/core';
 
 import { InputGroup } from '@blueprintjs/core';
 
-
 const cx = classnames.bind(styles);
 
 const SidebarHome = React.memo(() => {

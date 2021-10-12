@@ -1,5 +1,5 @@
 import * as React from 'react';
-import 'styles/grid.min.css';
+import './grid.min.css';
 
 interface GridRowProps extends React.PropsWithChildren<{}> {
     extraClasses?: string;

@@ -3,7 +3,11 @@ import classNames from 'classnames';
 import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
 import ReactPhoneInput from 'react-phone-number-input/input';
-import { phone_input_factory, maybeGetCallingCountryCode, ReactPhoneInputState } from 'app/components/phone_input_utils';
+import {
+    phone_input_factory,
+    maybeGetCallingCountryCode,
+    ReactPhoneInputState
+} from 'app/components/phone_input_utils';
 
 import {
     Button,
@@ -12,12 +16,12 @@ import {
     InputGroup,
     TextArea,
     Classes,
-    Card
+    Card,
+    Icon,
 } from '@blueprintjs/core';
-import { HeaderIcon } from 'app/components/icons_utils';
-import { SectionHeading, HorizontalSectionDivider } from 'app/components/misc_utils';
-import { CountrySelectWrapper } from 'app/components/country_select';
-import { ICountry } from 'app/components/country_select/countries';
+import { HorizontalSectionDivider } from 'app/components/misc_utils';
+import { CountrySelectWrapper } from 'app/components/CountrySelect';
+import { ICountry } from 'app/components/CountrySelect/countries';
 
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",
@@ -120,11 +124,6 @@ const SupplierPersonalInformationForm = () => {
                             value={cellphone ?? undefined}
                             onChange={setCellphone}
                             inputComponent={CellphoneInput as any}
-
-                            // country={maybeGetCallingCountryCode(country?.code)}
-                            // international
-                            // withCountryCallingCode
-                            // or
                             defaultCountry={maybeGetCallingCountryCode(country?.code)}
                         />
                     </FormGroup>
@@ -163,7 +162,9 @@ const SupplierPersonalInformationForm = () => {
             <GridRow>
                 <GridColumn colSize={6}>
                     <FormGroup
-                        label={<>Remarks <span className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>(Optional)</span></>}
+                        label={
+                            <>Remarks <span className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>(Optional)</span></>
+                        }
                     >
                         <TextArea
                             placeholder="None..."
@@ -201,15 +202,17 @@ const RawMaterialInformationForm = () => {
 const ViewContent = React.memo(() => {
     return (
         <React.Fragment>
-            <SectionHeading>
-                <HeaderIcon icon="user" size={16} /> Personal Information
-            </SectionHeading>
+            <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
+                <Icon size={16} icon="user" />
+                <h5 className="bp3-heading icon-text-md">Personal Information</h5>
+            </div>
             <SupplierPersonalInformationForm />
             <HorizontalSectionDivider />
 
-            <SectionHeading>
-                <HeaderIcon icon="duplicate" size={16} /> Product/Raw Material Information
-            </SectionHeading>
+            <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
+                <Icon size={16} icon="duplicate" />
+                <h5 className="bp3-heading icon-text-md">Product/Raw Material Information</h5>
+            </div>
             <RawMaterialInformationForm />
         </React.Fragment>
     );

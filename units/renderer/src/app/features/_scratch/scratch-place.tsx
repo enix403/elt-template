@@ -18,6 +18,7 @@ import {
 import { GridColumn, GridRow } from "app/components/Grid";
 import { NodePath, forEachNode, forNodeAtPath, nodeFromPath } from 'app/components/tree_utils';
 import { FormGroupWithoutLabel } from 'app/components/form_group_utils';
+import classNames from 'classnames';
 
 interface ICategoryInfo {
     id: string | number;
@@ -210,7 +211,7 @@ const ParentCatergorySelection = () => {
                 onNodeClick={handleNodeClick}
                 onNodeCollapse={handleNodeCollapse}
                 onNodeExpand={handleNodeExpand}
-                className={Classes.ELEVATION_0}
+                className={classNames(Classes.ELEVATION_0, 'rounded-tree')}
             />
         </div>
     );
@@ -227,7 +228,7 @@ export const ScratchPlace = () => {
                 <ParentCatergorySelection />
 
                 <GridRow>
-                    <GridColumn colSize={4}>
+                    <GridColumn colSize={5}>
                         <FormGroup label="New Category Name">
                             <InputGroup
                                 placeholder="Enter category name"
@@ -236,7 +237,7 @@ export const ScratchPlace = () => {
                             />
                         </FormGroup>
                     </GridColumn>
-                    <GridColumn colSize={4}>
+                    <GridColumn colSize={7}>
                         <FormGroupWithoutLabel>
                             <Button
                                 text="Add Category"

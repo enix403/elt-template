@@ -8,8 +8,8 @@ import { StatusBar } from 'app/components/StatusBar';
 import { ScratchPlace } from './features/_scratch/scratch-place';
 // import { AddCustomerView } from './features/customers/AddCustomerView';
 // import { AddProductView } from './features/products/AddProductView';
-import { AddRawMaterial } from './features/inventory/AddRawMaterial';
-// import { AddSupplierView } from './features/suppliers/AddSupplierView';
+// import { AddRawMaterial } from './features/inventory/AddRawMaterial';
+import { AddSupplierView } from './features/suppliers/AddSupplierView';
 // import { SupplierListView } from './features/suppliers/SupplierListView';
 
 export const App = React.memo(() => {
@@ -17,7 +17,7 @@ export const App = React.memo(() => {
         <React.Fragment>
             <Sidebar />
             {/*<ScratchPlace />*/}
-            <AddRawMaterial />
+            <AddSupplierView />
             <StatusBar />
         </React.Fragment>
     );

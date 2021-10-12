@@ -13,6 +13,7 @@ import {
     Button,
     FormGroup,
     HTMLSelect,
+    NumericInput,
     InputGroup,
     TextArea,
     Classes,
@@ -94,9 +95,9 @@ const SupplierPersonalInformationForm = () => {
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={2}>
-                    <FormGroup label="Enter Code">
+                    <FormGroup label="Zip Code">
                         <InputGroup
-                            placeholder="Zip Code"
+                            placeholder="Enter Code"
                             fill={true}
                             leftIcon="geolocation"
                         />
@@ -181,21 +182,35 @@ const SupplierPersonalInformationForm = () => {
 
 const RawMaterialInformationForm = () => {
     return (
-        <React.Fragment>
-            <FormGroup
-                label="Select Raw Material"
-                helperText="The raw material that this vendor supplies"
-            >
-                <HTMLSelect fill={true}>
-                    <option value='0'>Material 1</option>
-                    <option value='0'>Material 2</option>
-                    <option value='0'>Material 3</option>
-                    <option value='0'>Material 4</option>
-                    <option value='0'>Material 5</option>
-                    <option value='0'>Material 6</option>
-                </HTMLSelect>
-            </FormGroup>
-        </React.Fragment>
+        <GridRow>
+            <GridColumn colSize={6}>
+                <FormGroup
+                    label="Select Raw Material"
+                    helperText="The raw material that this vendor supplies"
+                >
+                    <HTMLSelect fill={true}>
+                        <option value='0'>Material 1</option>
+                        <option value='0'>Material 2</option>
+                        <option value='0'>Material 3</option>
+                        <option value='0'>Material 4</option>
+                        <option value='0'>Material 5</option>
+                        <option value='0'>Material 6</option>
+                    </HTMLSelect>
+                </FormGroup>
+            </GridColumn>
+            <GridColumn colSize={6}>
+                <FormGroup
+                    label="Monthly Capacity"
+                    helperText={<>Capacity measured in the defined <strong>"Measurement Unit"</strong> of the selected raw material"</>}
+                >
+                    <NumericInput
+                        placeholder="Enter Amount"
+                        fill={true}
+                        min={0}
+                    />
+                </FormGroup>
+            </GridColumn>
+        </GridRow>
     );
 };
 

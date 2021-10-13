@@ -1,6 +1,14 @@
 {
     "extends": "./../../tsconfig.json",
-    
+
+    "ts-node": {
+        "files": true,
+        "compilerOptions": {
+            "target": "ES2017",
+            "module": "CommonJS"
+        },
+    },
+
     "compilerOptions": {
         // The output syntax version
         "target": "ES2021",

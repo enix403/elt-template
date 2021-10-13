@@ -1,9 +1,11 @@
 import { contextBridge } from 'electron';
+import { ISystemBackendAPI } from '@shared/system_api';
 
-contextBridge.exposeInMainWorld('system', {
-    ping() {
-        console.log("In preload");
-        return 'pong';
+const api: ISystemBackendAPI = {
+    sendPrefs: (cname: string): Promise<void> => {
+        return Promise.resolve();
     }
-});
+};
+
+contextBridge.exposeInMainWorld('SystemBackend', api);
 

@@ -1,12 +1,4 @@
 {
-    "ts-node": {
-        "transpileOnly": true,
-        "files": true,
-        "compilerOptions": {
-            "target": "ES2017",
-            "module": "CommonJS"
-        },
-    },
     "compilerOptions": {
         "noEmit": true,
         "skipLibCheck": true,

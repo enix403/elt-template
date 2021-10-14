@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 
-import { ChannelResponse, invokeChannel, IpcChannel } from '~/core/index';
+import { invokeChannel, IpcChannel } from '~/core/index';
 import { DataOpChannel } from '~/core/channels/operations';
 import { CommResultType } from '@shared/communication';
+import { ChannelResponse } from '@shared/system_api';
 
 
 const app = express();

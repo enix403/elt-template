@@ -55,7 +55,7 @@ const PRELOAD_SCRIPT_ENTRY_NAME = 'preload';
 export const inputOptions: InputOptions = {
     input: {
         main: resolveMainRoot('src', 'main', 'index.ts'),
-        [PRELOAD_SCRIPT_ENTRY_NAME]: resolveMainRoot('src', 'preload', 'index.ts'),
+        [PRELOAD_SCRIPT_ENTRY_NAME]: resolveMainRoot('src', 'preload.ts'),
     },
     watch: {
         exclude: excludedFiles, include: [

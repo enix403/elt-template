@@ -9,8 +9,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { App } from 'app';
+import { setupDevSystemApi } from './devapi';
 
 import reportWebVitals from 'reportWebVitals';
+
+setupDevSystemApi();
 
 const MOUNT_NODE = document.getElementById('root') as HTMLElement;
 

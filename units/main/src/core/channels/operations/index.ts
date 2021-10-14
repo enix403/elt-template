@@ -5,13 +5,15 @@ export class DataOpChannel implements IpcChannel {
     channelName = AppChannel.DataOperations;
 
     handle(message: any) {
-        if (message.action == 'ping-1') {
+        const action = message && message.action || null;
+
+        if (action == 'ping-1') {
             return 'pong-1';
         }
-        else if (message.action == 'ping-2') {
+        else if (action == 'ping-2') {
             return 'pong-2';
         }
-        else if (message.action == 'die') {
+        else if (action == 'die') {
             throw new Error("I died");
         }
 

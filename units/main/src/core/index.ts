@@ -13,7 +13,7 @@ export class ChannelError extends Error {
     }
 }
 
-type ChannelResponse = { type: CommResultType, data?: any, error?: string };
+export type ChannelResponse<T = any> = { type: CommResultType, data?: T, error?: string };
 
 export async function invokeChannel(ipcChannel: IpcChannel, message: object): Promise<ChannelResponse> {
     try {

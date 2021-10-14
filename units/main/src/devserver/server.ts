@@ -1,40 +1,57 @@
 import express from 'express';
 import cors from 'cors';
 
+import { ChannelResponse, invokeChannel, IpcChannel } from '~/core/index';
+import { DataOpChannel } from '~/core/channels/operations';
+import { CommResultType } from '@shared/communication';
+
+
 const app = express();
 const PORT = process.env.DEV_MOCK_SERVER_PORT || 7050;
 
-app.set('etag', false);
+function setupApp() {
+    app.set('etag', false);
 
-app.use(express.json({
-    limit: '50mb',
-    type: ["application/json"],
-    strict: true
-}));
+    app.use(express.json({
+        limit: '50mb',
+        type: ["application/json"],
+        strict: true // accept only toplevel objecs and arrays
+    }));
 
-app.use(cors({
-    origin: true,
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    credentials: true,
-    maxAge: 1000,
-    preflightContinue: false
-}));
+    app.use(cors({
+        origin: true,
+        methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+        credentials: true,
+        maxAge: 1000,
+        preflightContinue: false
+    }));
 
-app.all('/', (req, res) => {
-    res.status(200);
+    app.all('/', async (req, res) => {
+        res.status(200);
 
-    res.header('Surrogate-Control', 'no-store');
-    res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    res.header('Pragma', 'no-cache');
-    res.header('Expires', '0');
+        res.header('Surrogate-Control', 'no-store');
+        res.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.header('Pragma', 'no-cache');
+        res.header('Expires', '0');
 
-    res.json({
-        title: 'Hello World, not from edawdaxpress',
-        YourStuff: req.body
+        res.json(await processRequest(req.body || {}));
     });
-});
+}
 
+const registeredChannels: IpcChannel[] = [new DataOpChannel()];
 
+async function processRequest(payload: any): Promise<ChannelResponse> {
+    const targetChannelName = payload.channel;
+    const targetChannel = registeredChannels.find(c => c.channelName == targetChannelName);
+
+    if (!targetChannel) {
+        return { type: CommResultType.InvalidChannel };
+    }
+
+    return await invokeChannel(targetChannel, payload.message || null);
+}
+
+setupApp();
 app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
 
 

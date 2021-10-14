@@ -20,6 +20,7 @@ export const createWindow = async () => {
         width: 1024,
         height: 728,
         title: default_win_title,
+        backgroundColor: '#fff',
         webPreferences: {
             nodeIntegration: false,
             preload: getPreloadScriptPath(),

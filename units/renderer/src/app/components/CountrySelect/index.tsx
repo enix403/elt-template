@@ -6,9 +6,7 @@ import { ICountry, countrySearch, ALL_COUNTRIES } from './countries';
 import { highlightText, formatTargetText } from './util';
 
 import { List, AutoSizer } from 'react-virtualized';
-import { getReactElementSize } from 'app/helpers';
 import Flags from 'country-flag-icons/react/3x2';
-
 
 interface CountrySelectProps {
     selectedCountry?: ICountry;
@@ -22,7 +20,17 @@ interface CountrySelectProps {
 const COUNTRIES_COUNT = ALL_COUNTRIES.length;
 const POPOVER_MENU_HEIGHT = 305;
 const NO_RESULTS = <MenuItem disabled={true} text="No results." />;
-const MENU_ROW_HEIGHT = getReactElementSize(NO_RESULTS).height;
+
+// The following does not work in chrome (and electron)
+// Thus until we find a way to make it work, we will use the manually computed
+// constant height (taken from css stylesheet)
+//
+// import { getReactElementSize } from "app/helpers";
+// const MENU_ROW_HEIGHT = getReactElementSize(NO_RESULTS).height;
+
+const MENU_ROW_HEIGHT = 30;
+
+window['MENU_ROW_HEIGHT'] = MENU_ROW_HEIGHT;
 const FLAG_STYLES: React.CSSProperties = {
     height: MENU_ROW_HEIGHT / 2 - 2,
     marginRight: 7
@@ -104,7 +112,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                 lazy: true,
 
                 minimal: false,
-                transitionDuration: 100,
+                transitionDuration: 250,
                 modifiers: {
                     flip: {enabled: false}
                 },

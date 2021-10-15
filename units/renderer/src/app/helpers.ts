@@ -32,3 +32,4 @@ export const getReactElementSize = (elementJSX: React.ReactElement) => {
 
     return { width, height };
 };
+

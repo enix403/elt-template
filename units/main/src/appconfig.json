@@ -2,7 +2,7 @@
     "app_name": "MyAwesomeApp",
     "app_name_long": "My Awesome App",
 
-    "default_win_title": "App Main Window",
+    "default_win_title": "Hourglass POS",
 
     "electron_data_directory_name": "myapp-electron-cache",
     "app_data_directory_name": "myapp-data"

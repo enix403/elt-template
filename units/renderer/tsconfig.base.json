@@ -9,7 +9,7 @@
     },
     "compilerOptions": {
         "paths": {
-            "~": ["."],
+            "~/*": ["./*"],
             "@shared/*": ["../../../shared/*" ]
         },
         "isolatedModules": false

@@ -15,6 +15,9 @@
         "a:m": "yarn workspace @application/main add",
         "a:r": "yarn workspace @application/renderer add",
 
+        "rd:m": "yarn workspace @application/main remove",
+        "rd:r": "yarn workspace @application/renderer remove",
+
         "r:m": "yarn workspace @application/main run",
         "r:r": "yarn workspace @application/renderer run"
     },

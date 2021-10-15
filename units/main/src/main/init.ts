@@ -32,7 +32,7 @@ export const initApp = async () => {
 
     try {
         await app.whenReady();
-        console.log("Application Ready");
+        console.log("Application Ready [Electron]");
         console.log("Asset Paths: " + getPath('assets'));
         console.log("Data Paths: " + getPath('data'));
         console.log("Config Paths: " + getPath('config'));

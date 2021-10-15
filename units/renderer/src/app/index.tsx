@@ -16,9 +16,11 @@ export const App = React.memo(() => {
     return (
         <React.Fragment>
             <Sidebar />
+
             {/*<ScratchPlace />*/}
             {/*<AddRawMaterial />*/}
             <AddSupplierView />
+
             <StatusBar />
         </React.Fragment>
     );

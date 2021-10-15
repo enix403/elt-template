@@ -21,6 +21,9 @@
         // we need to emit import/export syntax)
         "module": "ES2020",
 
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+
         "baseUrl": "./src",
         "paths": {
             "~/*": ["./*"],

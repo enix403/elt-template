@@ -1,8 +1,8 @@
-import { configure } from '~/pathutils';
+import { configure as configurePath } from '~/pathutils';
 import { IS_RUNNING_DEV } from '~/utils';
 import { initApp } from './init';
 
-configure();
+configurePath();
 
 if (IS_RUNNING_DEV) {
     console.log("Application is running with NODE_ENV=development. Development features are enabled");

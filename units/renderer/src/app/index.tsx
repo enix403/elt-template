@@ -5,7 +5,7 @@ import './index.scss';
 import { Sidebar } from './components/Sidebar';
 import { StatusBar } from 'app/components/StatusBar';
 
-import { ScratchPlace } from './features/_scratch/scratch-place';
+// import { ScratchPlace } from './features/_scratch/scratch-place';
 // import { AddCustomerView } from './features/customers/AddCustomerView';
 // import { AddProductView } from './features/products/AddProductView';
 // import { AddRawMaterial } from './features/inventory/AddRawMaterial';
@@ -17,6 +17,7 @@ export const App = React.memo(() => {
         <React.Fragment>
             <Sidebar />
             {/*<ScratchPlace />*/}
+            {/*<AddRawMaterial />*/}
             <AddSupplierView />
             <StatusBar />
         </React.Fragment>

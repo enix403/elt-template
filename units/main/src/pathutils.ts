@@ -69,7 +69,7 @@ export const configure = () => {
 
     if (app.isPackaged) {
         // If the app is packaged than the assets live in the electron-provided resources folder
-        // (See .toolchain/config/build.ts)
+        // (See toolchain/config/build.ts)
         runtimePaths.assetsPath = path.join(process.resourcesPath, 'assets');
     }
     else if (IS_RUNNING_DEV) {

@@ -1,4 +1,4 @@
-import { AppChannel, CommResultType } from "@shared/communication";
+import { AppChannel } from "@shared/communication";
 import { ChannelResponse } from "@shared/system_api";
 
 export function setupDevSystemApi() {
@@ -9,7 +9,7 @@ export function setupDevSystemApi() {
                     const rawResponse = await fetch('http://localhost:4201', {
                         method: 'POST',
                         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ channel: channel.toString(), message })
+                        body: JSON.stringify({ channel, message })
                     });
                     return await rawResponse.json();
                 }

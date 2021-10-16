@@ -28,6 +28,7 @@ export async function invokeChannel(ipcChannel: IpcChannel, message: object): Pr
                 error: err.toString()
             };
         }
+        // TODO: Use a real logging library
         console.log(err);
         return { type: CommResultType.SystemError };
     }

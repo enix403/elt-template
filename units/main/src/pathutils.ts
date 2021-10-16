@@ -95,7 +95,7 @@ export function configureAssetsPath(isAppPackaged: boolean) {
     }
 };
 
-export const getPath = (spec: PathSpec): string | undefined => {
+export const getPath = (spec: PathSpec): string => {
     if (spec == 'userData')
         return runtimePaths.userDataDir;
     if (spec == 'data')
@@ -104,8 +104,6 @@ export const getPath = (spec: PathSpec): string | undefined => {
         return runtimePaths.appConfigDir;
     if (spec == 'cache')
         return runtimePaths.appCacheDir;
-    if (spec == 'assets')
-        return runtimePaths.assetsPath;
-
-    return;
+    // if (spec == 'assets')
+    return runtimePaths.assetsPath;
 }

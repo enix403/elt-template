@@ -13,20 +13,16 @@
         "build": "cross-env NODE_ENV=production yarn run tscript ./toolchain/scripts/build-self-contained.ts",
         "build:dev": "rollup -c --environment NODE_ENV:development",
         "build-native-deps": "electron-builder install-app-deps",
-        "pack": "electron-builder build",
-
-        "orm": "mikro-orm"
+        "pack": "electron-builder build"
     },
     "dependencies": {
-        "@mikro-orm/core": "^4.5.9",
-        "@mikro-orm/sqlite": "^4.5.9",
         "cors": "^2.8.5",
         "express": "^4.17.1",
-        "sqlite3": "^5.0.2"
+        "reflect-metadata": "^0.1.13",
+        "sqlite3": "^5.0.2",
+        "typeorm": "^0.2.38"
     },
     "devDependencies": {
-        "@mikro-orm/cli": "^4.5.9",
-        "@mikro-orm/migrations": "^4.5.9",
         "@rollup/plugin-commonjs": "^20.0.0",
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-replace": "^3.0.0",

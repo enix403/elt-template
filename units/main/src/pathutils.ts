@@ -38,7 +38,7 @@ function createDirectoryIfNotExists(path: string) {
     }
 }
 
-export function configureApplicationPaths(osAppDataRoot: string, createMissingFolders = true) {
+export function configureApplicationPaths(osAppDataRoot: string | null, createMissingFolders = true) {
     /**
       * Use a different and easily accessible userdata directory during development
       *
@@ -61,7 +61,7 @@ export function configureApplicationPaths(osAppDataRoot: string, createMissingFo
         sysData = path.join(mainUnitDir, 'runtime-dev');
     }
     else {
-        sysData = osAppDataRoot;
+        sysData = osAppDataRoot || __dirname;
     }
 
     runtimePaths.userDataDir = path.join(sysData, app_data_directory_name);

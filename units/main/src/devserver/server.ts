@@ -1,19 +1,25 @@
 process.env.NODE_ENV = 'development';
 
+// -- imports
+
+import path from 'path';
+
 import express from 'express';
 import cors from 'cors';
 
 import { configureApplicationPaths, getPath } from '~/pathutils';
-
 import { invokeChannel, IpcChannel } from '~/core/index';
+import { createDBConnection } from '~/core/db';
 import { DataOpChannel } from '~/core/channels/operations';
 import { CommResultType } from '@shared/communication';
 import { ChannelResponse } from '@shared/system_api';
 
+// -- code body
+
 const app = express();
 const PORT = process.env.DEV_MOCK_SERVER_PORT || 7050;
 
-function setupApp() {
+function setupExpressApp() {
     app.set('etag', false);
 
     app.use(express.json({
@@ -40,13 +46,6 @@ function setupApp() {
 
         res.json(await processRequest(req.body || {}));
     });
-
-    configureApplicationPaths('', false);
-    console.log("Application Ready [Node]");
-    console.log("Data Paths: " + getPath('data'));
-    console.log("Config Paths: " + getPath('config'));
-    console.log("Cache Paths: " + getPath('cache'));
-    console.log();
 }
 
 const registeredChannels: IpcChannel[] = [new DataOpChannel()];
@@ -62,7 +61,18 @@ async function processRequest(payload: any): Promise<ChannelResponse> {
     return await invokeChannel(targetChannel, payload.message || null);
 }
 
-setupApp();
-app.listen(PORT, () => console.log(`listening on http://localhost:${PORT}`))
+async function main() {
+    configureApplicationPaths(null, false);
+    console.log("Application Ready [NodeJS]:");
+    console.log("    Data Paths: " + getPath('data'));
+    console.log("    Config Paths: " + getPath('config'));
+    console.log("    Cache Paths: " + getPath('cache'));
+    console.log();
+
+    await createDBConnection(path.join(getPath('data'), 'storage.sqlite3'));
+    setupExpressApp();
+    app.listen(PORT, () => console.log(`\nlistening on http://localhost:${PORT}\n`))
+}
 
 
+main()

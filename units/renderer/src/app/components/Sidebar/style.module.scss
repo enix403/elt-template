@@ -123,7 +123,8 @@ ul.sidebar-nav {
 
     li.nav-item {
         padding-left: 25px;
-        margin-bottom: 2px;
+        padding-top: 1px;
+        padding-bottom: 1px;
 
         a {
             text-decoration: none;
@@ -136,10 +137,8 @@ ul.sidebar-nav {
         }
     }
 
-    li.nav-item.active {
-        a {
-            font-weight: 500;
-            color: rgb(9, 83, 255);
-        }
+    li.nav-item.active > a {
+        font-weight: 500;
+        color: rgb(9, 83, 255);
     }
 }

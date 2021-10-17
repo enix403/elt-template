@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Switch, Route, Router, Redirect } from 'react-router-dom';
-import { history } from './history'
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { appRoutes, RouteConf } from './route_list';
 
 import { NotFoundView } from '~/app/components/NotFoundView';
@@ -12,7 +11,7 @@ import { AddCustomerView } from '~/app/features/customers/AddCustomerView';
 
 export const AppRouter: React.FC<{}> = React.memo(_ => {
     return (
-        <Router history={history}>
+        <React.Fragment>
             <Switch>
                 <Redirect exact from="/" to={appRoutes.inventory.rawMaterial.path} />
 
@@ -23,6 +22,6 @@ export const AppRouter: React.FC<{}> = React.memo(_ => {
 
                 <Route component={NotFoundView} />
             </Switch>
-        </Router>
+        </React.Fragment>
     );
 });

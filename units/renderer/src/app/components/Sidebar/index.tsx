@@ -2,8 +2,9 @@ import React from 'react';
 import styles from './style.module.scss';
 import classnames from 'classnames/bind';
 import { Icon, IconName } from '@blueprintjs/core';
-import { RouteConf } from '~/app/routing/route_list';
+import { appRoutes, RouteConf } from '~/app/routing/route_list';
 import { InputGroup } from '@blueprintjs/core';
+import { Link, useLocation } from 'react-router-dom';
 
 const cx = classnames.bind(styles);
 
@@ -25,7 +26,8 @@ interface SidebarNavSectionProps {
     label: string;
 }
 
-const SidebarNavSection = (props: React.PropsWithChildren<SidebarNavSectionProps>) => {
+const SidebarNavSection: React.FC<SidebarNavSectionProps> = props =>
+{
     const [isCollapsed, setIsCollapsed] = React.useState(false);
     return (
         <React.Fragment>
@@ -46,20 +48,33 @@ const SidebarNavSection = (props: React.PropsWithChildren<SidebarNavSectionProps
 interface SidebarNavLinkProps {
     label: string;
     active?: boolean;
-    target?: string
+    target: string
 };
 
 const SidebarNavLink = React.memo((props: SidebarNavLinkProps) => {
     return (
         <li className={cx('nav-item', { 'active': props.active })}>
-            <a href={props.target || '#'}>{props.label}</a>
+            <Link to={props.target}>
+                {props.label}
+            </Link>
         </li>
     );
 });
 
-const SidebarRouteEntry: React.FC<{routeConf: RouteConf}> = React.memo(props => {
-    return null;
-});
+const SidebarRouteEntry: React.FC<{
+    conf: RouteConf
+}> = ({ conf }) => {
+    const location = useLocation();
+    const active = location.pathname.startsWith(conf.path)
+
+    return (
+        <SidebarNavLink
+            active={active}
+            label={conf.name}
+            target={conf.path}
+        />
+    );
+};
 
 const SidebarBody = () => {
     return (
@@ -68,46 +83,11 @@ const SidebarBody = () => {
                 icon="oil-field"
                 label="Inventory"
             >
-                <SidebarNavLink label='Items Management' />
-                <SidebarNavLink label='Reporting' />
-                <SidebarNavLink label='Items History' />
-                <SidebarNavLink label='Suppliers' />
-                <SidebarNavLink active={true} label='Add Products' />
-                <SidebarNavLink label='Receipts & Tracking' />
-                <SidebarNavLink label='Orders' />
-                <SidebarNavLink label='Stocks Schedule' />
+                <SidebarRouteEntry conf={appRoutes.inventory.rawMaterial} />
+                <SidebarRouteEntry conf={appRoutes.inventory.products} />
+                <SidebarRouteEntry conf={appRoutes.suppliers.add} />
+                <SidebarRouteEntry conf={appRoutes.customers.add} />
             </SidebarNavSection>
-
-            <SidebarNavSection
-                icon="group-objects"
-                label="Assets & Liabilities"
-            >
-                <SidebarNavLink label='Fixed Assets' />
-                <SidebarNavLink label='Cash and Equivalent' />
-                <SidebarNavLink label='Receivables' />
-                <SidebarNavLink label='Payables' />
-                <SidebarNavLink label='Liabilities' />
-                <SidebarNavLink label='Balance Sheet' />
-                <SidebarNavLink label='Profit and Loss Statement' />
-            </SidebarNavSection>
-
-            <SidebarNavSection
-                icon="layout-sorted-clusters"
-                label="Customers"
-            >
-                <SidebarNavLink label='Add new customer' />
-                <SidebarNavLink label='Customers list' />
-            </SidebarNavSection>
-
-            <SidebarNavSection
-                icon="satellite"
-                label="System"
-            >
-                <SidebarNavLink label='General Settings' />
-                <SidebarNavLink label='Accounts' />
-                <SidebarNavLink label='Data and Backup' />
-            </SidebarNavSection>
-
 
 
         </div>

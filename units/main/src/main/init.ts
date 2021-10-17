@@ -1,10 +1,11 @@
+import path from 'path';
 import { app, ipcMain } from 'electron';
 import {
     createWindow,
     recreateWindow
 } from 'main/window';
 import { getPath } from '~/pathutils';
-
+import { createDBConnection } from '~/core/db';
 import { IpcChannel, invokeChannel } from '~/core/index';
 import { DataOpChannel } from '~/core/channels/operations';
 
@@ -13,6 +14,8 @@ const registeredChannels: IpcChannel[] = [
 ];
 
 export const initApp = async () => {
+    await createDBConnection(path.join(getPath('data'), 'storage.sqlite3'));
+
     // setup ipc communication channels
     for (const channel of registeredChannels) {
         ipcMain.handle(channel.channelName, (_event, arg) => invokeChannel(channel, arg));

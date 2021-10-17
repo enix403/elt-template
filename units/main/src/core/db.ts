@@ -10,7 +10,8 @@ export async function createDBConnection(storagePath: string) {
         type: 'sqlite',
         database: storagePath,
 
-        logging: IS_RUNNING_DEV,
+        // logging: IS_RUNNING_DEV,
+        logging: false,
         synchronize: IS_RUNNING_DEV,
 
         entities: allEntities

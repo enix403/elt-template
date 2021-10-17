@@ -5,7 +5,7 @@ import { resolveProjectRoot, RP_BUILD_COMPILED_RENDERER } from '@shared/app_path
 
 spawnSync(
     'yarn',
-    ['run', 'react-app-rewired', 'build'],
+    ['run', 'cmd:build'],
     {
         env: {
             BUILD_PATH: resolveProjectRoot(RP_BUILD_COMPILED_RENDERER)

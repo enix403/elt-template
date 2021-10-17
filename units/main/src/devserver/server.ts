@@ -63,14 +63,10 @@ async function processRequest(payload: any): Promise<ChannelResponse> {
 
 async function main() {
     configureApplicationPaths(null, false);
-    console.log("Application Ready [NodeJS]:");
-    console.log("    Data Paths: " + getPath('data'));
-    console.log("    Config Paths: " + getPath('config'));
-    console.log("    Cache Paths: " + getPath('cache'));
-    console.log();
-
     await createDBConnection(path.join(getPath('data'), 'storage.sqlite3'));
     setupExpressApp();
+
+    console.log("Application Ready [NodeJS]:");
     app.listen(PORT, () => console.log(`\nlistening on http://localhost:${PORT}\n`))
 }
 

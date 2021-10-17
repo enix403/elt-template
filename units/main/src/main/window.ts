@@ -39,6 +39,10 @@ export const createWindow = async () => {
         mainWindow.focus();
     });
 
+    mainWindow.on('page-title-updated', (evt) => {
+        evt.preventDefault();
+    });
+
     mainWindow.on("closed", () => {
         console.log("Main window closed");
         mainWindow = null;

@@ -2,6 +2,9 @@ import { AppChannel } from "@shared/communication";
 import { ChannelResponse } from "@shared/system_api";
 
 export function setupDevSystemApi() {
+    if (typeof window.SystemBackend == 'object')
+        return
+
     if (process.env.NODE_ENV === 'development') {
         window['AppChannel'] = AppChannel;
         if (!window.SystemBackend) {

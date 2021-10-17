@@ -54,7 +54,7 @@ const ProductProps = () => {
 };
 
 
-export const AddRawMaterial = React.memo(() => {
+export const AddRawMaterialView = React.memo(() => {
     return (
         <NavPageView title="Add New Raw Material">
             <Card elevation={2} style={{ margin: "15px 25px" }}>

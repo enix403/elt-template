@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './style.module.scss';
 import classnames from 'classnames/bind';
 import { Icon, IconName } from '@blueprintjs/core';
-
+import { RouteConf } from '~/app/routing/route_list';
 import { InputGroup } from '@blueprintjs/core';
 
 const cx = classnames.bind(styles);
@@ -55,6 +55,10 @@ const SidebarNavLink = React.memo((props: SidebarNavLinkProps) => {
             <a href={props.target || '#'}>{props.label}</a>
         </li>
     );
+});
+
+const SidebarRouteEntry: React.FC<{routeConf: RouteConf}> = React.memo(props => {
+    return null;
 });
 
 const SidebarBody = () => {

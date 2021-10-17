@@ -5,22 +5,13 @@ import './index.scss';
 import { Sidebar } from './components/Sidebar';
 import { StatusBar } from 'app/components/StatusBar';
 
-// import { ScratchPlace } from './features/_scratch/scratch-place';
-// import { AddCustomerView } from './features/customers/AddCustomerView';
-// import { AddProductView } from './features/products/AddProductView';
-import { AddRawMaterial } from './features/inventory/AddRawMaterial';
-// import { AddSupplierView } from './features/suppliers/AddSupplierView';
-// import { SupplierListView } from './features/suppliers/SupplierListView';
+import { AppRouter } from './routing/approuter';
 
 export const App = React.memo(() => {
     return (
         <React.Fragment>
             <Sidebar />
-
-            {/*<ScratchPlace />*/}
-            <AddRawMaterial />
-            {/*<AddSupplierView />*/}
-
+            <AppRouter />
             <StatusBar />
         </React.Fragment>
     );

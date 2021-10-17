@@ -3,6 +3,7 @@ import { ChannelResponse } from "@shared/system_api";
 
 export function setupDevSystemApi() {
     if (process.env.NODE_ENV === 'development') {
+        window['AppChannel'] = AppChannel;
         if (!window.SystemBackend) {
             window.SystemBackend = {
                 sendMessage: async <T = any>(channel: AppChannel, message: T): Promise<ChannelResponse> => {

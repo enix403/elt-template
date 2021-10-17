@@ -6,7 +6,7 @@
     "homepage": "./",
     "scripts": {
         "tscript": "node --no-warnings -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only",
-        "start": "react-app-rewired start",
+        "start": "craco start",
         "build": "yarn run tscript ./scripts/build.prod.ts"
     },
     "dependencies": {
@@ -27,6 +27,7 @@
         "web-vitals": "^2.1.0"
     },
     "devDependencies": {
+        "@craco/craco": "^6.3.0",
         "@testing-library/jest-dom": "^5.14.1",
         "@testing-library/react": "^12.1.1",
         "@testing-library/user-event": "^13.2.1",
@@ -36,8 +37,8 @@
         "@types/react": "^17.0.24",
         "@types/react-dom": "^17.0.9",
         "@types/react-virtualized": "^9.21.13",
+        "craco-alias": "^3.0.1",
         "customize-cra": "^1.0.0",
-        "react-app-rewired": "^2.1.8",
         "react-scripts": "^4.0.3",
         "sass": "^1.42.1",
         "ts-node": "^10.2.1",

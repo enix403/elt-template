@@ -36,7 +36,7 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
     }
 
     refreshCategroies = async () => {
-        this.setState({ data: null, dataFetchError: false, selectedNode: null });
+        this.setState({ data: null, dataFetchError: false });
         try {
             const data = await this.props.dataSource();
             this.setState({ data });
@@ -50,7 +50,7 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
     renderForm() {
         return (
             <form
-                style={{ display: 'flex', flexWrap: 'wrap', margin: "0 0 20px" }}
+                style={{ display: 'flex', flexWrap: 'wrap', margin: "0 0 5px" }}
                 onSubmit={async (e) => {
                     e.preventDefault();
                     let selectedCategory: ICategory | null = null;
@@ -118,6 +118,9 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
     render() {
         return (
             <React.Fragment>
+
+                {this.renderForm()}
+
                 <h6 className="bp3-heading">Select Parent Category</h6>
 
                 <div style={{ margin: '15px 0' }}>
@@ -146,8 +149,6 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
                     outlined={true}
                     onClick={() => this.refreshCategroies()}
                 />
-
-                {this.renderForm()}
             </React.Fragment>
         );
     }

@@ -34,10 +34,21 @@ interface IState {
 }
 
 export class CategorySelect extends React.Component<IProps, IState> {
-    calculateInitialState = (props: IProps): IState =>
-        ({
-            nodes: createInitialState(props.data)
-        });
+    calculateInitialState = (props: IProps): IState => {
+        const initialNodesState = createInitialState(props.data);
+        const {selectedNodePath} = props;
+        if (selectedNodePath !== null) {
+            for (let i = selectedNodePath.length; i > 0; i--) {
+                const chunk = selectedNodePath.slice(0, i);
+                const targetNode = nodeFromPath(chunk, initialNodesState);
+                targetNode.isExpanded = targetNode.childNodes ? targetNode.childNodes.length > 0 : false;
+            }
+            nodeFromPath(selectedNodePath, initialNodesState).isSelected = true;
+        }
+        return {
+            nodes: initialNodesState
+        };
+    }
 
     public state: IState = this.calculateInitialState(this.props);
 

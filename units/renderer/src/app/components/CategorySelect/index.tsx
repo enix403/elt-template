@@ -7,56 +7,155 @@ import {
     TreeNodeInfo
 } from '@blueprintjs/core';
 
-import { NodePath, forEachNode, forNodeAtPath, nodeFromPath } from 'app/components/tree_utils';
+import { NodePath, forEachNode, forNodeAtPath, nodeFromPath, isNodeChild } from 'app/components/tree_utils';
 import classNames from 'classnames';
 
-export interface ICategoryInfo {
+export interface ICategory {
     id: string | number;
     name: string;
-    subcategories?: ICategoryInfo[];
+    children?: ICategory[];
 };
 
-const FAKE_CATEGORIES_DATA: ICategoryInfo[] = [
-    {
-        id: 1,
-        name: "Electronic Accessories",
-        subcategories: [
-            { id: 0, name: "E Sub-Category 1" },
-            { id: 1, name: "E Sub-Category 2" },
-            { id: 2, name: "E Sub-Category 3" },
-        ]
-    },
-    { id: 4, name: "Groceries & Pets" },
-    {
-        id: 2, name: "Home & Lifestyle",
-        subcategories: [
-            { id: 0, name: "H Sub-Category 1" },
-            {
-                id: 1,
-                name: "H Sub-Category 2",
-                subcategories: [
-                    { id: 0, name: "Sub H Sub-Category 1" },
-                ]
-            },
-            { id: 2, name: "H Sub-Category 3" },
-        ]
-    },
-    {
-        id: 3, name: "Sports & Outdoor",
-        subcategories: [
-            { id: 0, name: "S Sub-Category 1" },
-            { id: 1, name: "S Sub-Category 2" },
-            { id: 2, name: "S Sub-Category 3" },
-        ]
-    },
-];
+type TreeAction =
+    | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean, recursive?: boolean } }
+    | { type: "SET_IS_SELECTED"; payload: { path: NodePath; isSelected: boolean } }
+    | { type: "DESELECT_ALL" }
 
-function createTreeNodes(data: ICategoryInfo[]): TreeNodeInfo[] {
-    const nodes: TreeNodeInfo[] = [];
+type INodeStateInfo = TreeNodeInfo[];
+
+interface IProps {
+    data: ICategory[];
+    selectedNodePath: NodePath | null;
+    onSelectedNodeChange: (path: NodePath | null) => void;
+}
+
+interface IState {
+    nodes: INodeStateInfo;
+}
+
+export class CategorySelect extends React.Component<IProps, IState> {
+    calculateInitialState = (props: IProps): IState =>
+        ({
+            nodes: createInitialState(props.data)
+        });
+
+    public state: IState = this.calculateInitialState(this.props);
+
+    componentDidUpdate(prevProps: IProps) {
+        if (prevProps.data !== this.props.data)
+            this.setState(this.calculateInitialState(this.props));
+    }
+
+    static treeReducer = (state: INodeStateInfo, action: TreeAction) =>
+        immer(state, newState => {
+            switch (action.type) {
+                case "DESELECT_ALL":
+                    forEachNode(newState, node => (node.isSelected = false));
+                    break;
+                case "SET_IS_EXPANDED":
+                    if (action.payload.recursive) {
+                        const nodeAtPath = nodeFromPath(action.payload.path, newState);
+                        forEachNode(
+                            [nodeAtPath],
+                            node => (node.isExpanded = action.payload.isExpanded),
+                            // if recursively collapsing, do it from bottom to top
+                            !action.payload.isExpanded
+                        );
+                    }
+                    else {
+                        forNodeAtPath(
+                            newState,
+                            action.payload.path,
+                            node => (node.isExpanded = action.payload.isExpanded)
+                        );
+                    }
+                    break;
+                case "SET_IS_SELECTED":
+                    forNodeAtPath(newState, action.payload.path, node => (node.isSelected = action.payload.isSelected));
+                    break;
+                default:
+                    return;
+            }
+        });
+
+    applyNodesActions = (oldState: INodeStateInfo, actions: TreeAction[]) => {
+        let newNodesState = oldState;
+
+        for (const action of actions) {
+            newNodesState = CategorySelect.treeReducer(newNodesState, action);
+        }
+
+        return newNodesState;
+    }
+
+    handleNodeClick = (node: TreeNodeInfo, nodePath: NodePath) => {
+        const targetSelected = !node.isSelected;
+
+        const newNodesState = this.applyNodesActions(this.state.nodes,
+            [{ type: "DESELECT_ALL" },
+            {
+                payload: { path: nodePath, isSelected: targetSelected },
+                type: "SET_IS_SELECTED",
+            }]
+        );
+
+        this.setState({
+            nodes: newNodesState
+        });
+        this.props.onSelectedNodeChange(targetSelected ? nodePath : null);
+    }
+
+    handleNodeCollapse = (_node: TreeNodeInfo, nodePath: NodePath) => {
+        const shouldDeselect = this.props.selectedNodePath && isNodeChild(nodePath, this.props.selectedNodePath);
+
+        const actions: TreeAction[] = [];
+        if (shouldDeselect) {
+            this.props.onSelectedNodeChange(null);
+            actions.push({ type: 'DESELECT_ALL' });
+        }
+
+        actions.push({
+            type: "SET_IS_EXPANDED",
+            payload: { path: nodePath, isExpanded: false, recursive: true },
+        });
+
+        this.setState({
+            nodes: this.applyNodesActions(this.state.nodes, actions),
+        });
+    }
+
+    handleNodeExpand = (_node: TreeNodeInfo, nodePath: NodePath, e: React.MouseEvent<HTMLElement>) => {
+        this.setState({
+            nodes: this.applyNodesActions(this.state.nodes, [{
+                type: "SET_IS_EXPANDED",
+                payload: {
+                    path: nodePath,
+                    isExpanded: true,
+                    recursive: e.altKey
+                },
+            }])
+        });
+    };
+
+    render() {
+        return (
+            <Tree
+                contents={this.state.nodes}
+                onNodeClick={this.handleNodeClick}
+                onNodeCollapse={this.handleNodeCollapse}
+                onNodeExpand={this.handleNodeExpand}
+                className={classNames(Classes.ELEVATION_0, 'rounded-tree')}
+            />
+        );
+    }
+}
+
+function createTreeNodes(data: ICategory[]): INodeStateInfo {
+    const nodes: INodeStateInfo = [];
 
     for (const cat of data) {
-        const { subcategories } = cat;
-        const hasChildren = subcategories && subcategories.length > 0;
+        const { children: childNodesInfo } = cat;
+        const hasChildren = childNodesInfo && childNodesInfo.length > 0;
         const targetNode: TreeNodeInfo = {
             id: cat.id,
             label: cat.name,
@@ -66,8 +165,7 @@ function createTreeNodes(data: ICategoryInfo[]): TreeNodeInfo[] {
         };
 
         if (hasChildren) {
-            const children = createTreeNodes(subcategories);
-            targetNode.childNodes = children;
+            targetNode.childNodes = createTreeNodes(childNodesInfo);
         }
 
         nodes.push(targetNode);
@@ -76,7 +174,8 @@ function createTreeNodes(data: ICategoryInfo[]): TreeNodeInfo[] {
     return nodes;
 }
 
-const createInitialState = (data: ICategoryInfo[]): TreeNodeInfo[] =>
+
+const createInitialState = (data: ICategory[]): INodeStateInfo =>
     [{
         id: 0,
         label: "All Categories",
@@ -86,127 +185,3 @@ const createInitialState = (data: ICategoryInfo[]): TreeNodeInfo[] =>
 
         childNodes: createTreeNodes(data)
     }];
-
-const getFreshData = () => createInitialState(FAKE_CATEGORIES_DATA);
-
-
-/**
- * Returns true if nodeB is child of nodeA, false otherwise
- * */
-function isNodeChild(nodeA: NodePath, nodeB: NodePath) {
-    if (nodeA.length >= nodeB.length)
-        return false;
-
-    for (let i = 0; i < nodeA.length; i++) {
-        if (nodeA[i] != nodeB[i])
-            return false;
-    }
-
-    return true;
-}
-
-type TreeAction =
-    | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean, recursive?: boolean } }
-    | { type: "SET_IS_SELECTED"; payload: { path: NodePath; isSelected: boolean } }
-    | { type: "DESELECT_ALL" }
-    | { type: "RELOAD_STATE" };
-
-
-function categoryTreeReducer(state: TreeNodeInfo[], action: TreeAction) {
-
-    if (action.type == 'RELOAD_STATE')
-        return getFreshData();
-
-    return immer(state, newState => {
-        switch (action.type) {
-            case "DESELECT_ALL":
-                forEachNode(newState, node => (node.isSelected = false));
-                break;
-            case "SET_IS_EXPANDED":
-                if (action.payload.recursive) {
-                    const nodeAtPath = nodeFromPath(action.payload.path, newState);
-                    forEachNode(
-                        [nodeAtPath],
-                        node => (node.isExpanded = action.payload.isExpanded),
-                        // if recursively collapsing, do it from bottom to top
-                        !action.payload.isExpanded
-                    );
-                }
-                else {
-                    forNodeAtPath(
-                        newState,
-                        action.payload.path,
-                        node => (node.isExpanded = action.payload.isExpanded)
-                    );
-                }
-                break;
-            case "SET_IS_SELECTED":
-                forNodeAtPath(newState, action.payload.path, node => (node.isSelected = action.payload.isSelected));
-                break;
-            default:
-                return;
-        }
-    });
-}
-
-
-export const CatergorySelect: React.FC<React.HTMLProps<HTMLDivElement>> = (props) => {
-    const [nodes, dispatch] = React.useReducer(
-        categoryTreeReducer, getFreshData()
-    );
-    const [selectedNodePath, setSelectedNodePath] = React.useState<NodePath | null>();
-
-    const handleNodeClick = React.useCallback(
-        (node: TreeNodeInfo, nodePath: NodePath) => {
-            const targetSelected = !node.isSelected;
-            dispatch({ type: "DESELECT_ALL" });
-            dispatch({
-                payload: { path: nodePath, isSelected: targetSelected },
-                type: "SET_IS_SELECTED",
-            });
-
-            setSelectedNodePath(targetSelected ? nodePath : null);
-        },
-        [],
-    );
-
-    const handleNodeCollapse = React.useCallback((_node: TreeNodeInfo, nodePath: NodePath) => {
-        if (selectedNodePath && isNodeChild(nodePath, selectedNodePath)) {
-            dispatch({ type: "DESELECT_ALL" });
-            setSelectedNodePath(null);
-        }
-
-        dispatch({
-            type: "SET_IS_EXPANDED",
-            payload: { path: nodePath, isExpanded: false, recursive: true },
-        });
-    }, [selectedNodePath]);
-
-    const handleNodeExpand = React.useCallback(
-        (_node: TreeNodeInfo, nodePath: NodePath, e: React.MouseEvent<HTMLElement>) => {
-            dispatch({
-                type: "SET_IS_EXPANDED",
-                payload: {
-                    path: nodePath,
-                    isExpanded: true,
-                    recursive: e.altKey
-                },
-            });
-        }, []);
-
-    return (
-        <div {...props} style={{
-            width: '100%',
-            margin: '15px 0',
-            ...props.style
-        }}>
-            <Tree
-                contents={nodes}
-                onNodeClick={handleNodeClick}
-                onNodeCollapse={handleNodeCollapse}
-                onNodeExpand={handleNodeExpand}
-                className={classNames(Classes.ELEVATION_0, 'rounded-tree')}
-            />
-        </div>
-    );
-};

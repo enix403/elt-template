@@ -1,5 +1,4 @@
 import React from 'react';
-import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
 import {
     Button,
@@ -10,53 +9,24 @@ import {
     Callout
 } from '@blueprintjs/core';
 
+import { NodePath } from '~/app/components/tree_utils';
 import { FormGroupWithoutLabel } from '~/app/components/form_group_utils';
-import { CategorySelect2, ICategory } from 'app/components/CategorySelect/select2';
+import { CategorySelect, ICategory } from 'app/components/CategorySelect';
+import { ICategoryPreview, findCategoryFromPath } from 'app/components/CategorySelect/utils';
 import { AppChannel, CommResultType } from '@shared/communication';
 
-/*const getMockData = (): ICategory[] => [
-    {
-        id: 1,
-        name: "Electronic Accessories",
-        children: [
-            { id: 0, name: "E Sub-Category 1" },
-            { id: 1, name: "E Sub-Category 2" },
-            { id: 2, name: "E Sub-Category 3" },
-        ]
-    },
-    { id: 4, name: "Groceries & Pets" },
-    {
-        id: 2, name: "Home & Lifestyle",
-        children: [
-            { id: 0, name: "H Sub-Category 1" },
-            {
-                id: 1,
-                name: "H Sub-Category 2",
-                children: [
-                    { id: 0, name: "Sub H Sub-Category 1" },
-                ]
-            },
-            { id: 2, name: "H Sub-Category 3" },
-        ]
-    },
-    {
-        id: 3, name: "Sports & Outdoor",
-        children: [
-            { id: 0, name: "S Sub-Category 1" },
-            { id: 1, name: "S Sub-Category 2" },
-            { id: 2, name: "S Sub-Category 3" },
-        ]
-    },
-];*/
 
 interface ICreateCategoryFormProps {
     dataSource: () => Promise<ICategory[]>
+    onSave: (name: string, parentCategory: ICategoryPreview | null) => void
 };
 
 class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> {
     public state = {
         data: null,
-        dataFetchError: false
+        dataFetchError: false,
+        selectedNode: null,
+        nameInputValue: ""
     };
 
     componentDidMount() {
@@ -64,7 +34,7 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
     }
 
     refreshCategroies = async () => {
-        this.setState({ data: null, dataFetchError: false });
+        this.setState({ data: null, dataFetchError: false, selectedNode: null });
         try {
             const data = await this.props.dataSource();
             this.setState({ data });
@@ -74,6 +44,44 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
             console.log(e);
         }
     };
+
+    renderForm() {
+        return (
+            <div style={{ display: 'flex', flexWrap: 'wrap', margin: "0 0 20px" }}>
+                <FormGroup style={{ flex: 2, padding: '0 5px', minWidth: 200 }} label="New Category Name">
+                    <InputGroup
+                        placeholder="Enter category name"
+                        fill={true}
+                        leftIcon="merge-columns"
+                        value={this.state.nameInputValue}
+                        onChange={(e) => this.setState({ nameInputValue: e.target.value })}
+                    />
+                </FormGroup>
+                <div
+                    style={{ flex: 3, padding: '0 5px' }}
+                >
+                    <FormGroupWithoutLabel>
+                        <Button
+                            text="Add Category"
+                            intent="success"
+                            fill={false}
+                            rightIcon="group-objects"
+                            onClick={() => {
+                                let selectedCategory: ICategory | null = null;
+                                if (this.state.selectedNode && this.state.data) {
+                                    selectedCategory = findCategoryFromPath(
+                                        this.state.selectedNode as NodePath,
+                                        this.state.data,
+                                    );
+                                }
+                                this.props.onSave(this.state.nameInputValue, selectedCategory);
+                            }}
+                        />
+                    </FormGroupWithoutLabel>
+                </div>
+            </div>
+        );
+    }
 
     render() {
         return (
@@ -97,33 +105,17 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
                             Please click <strong>Refresh List</strong> to try again
                         </Callout> :
                         this.state.data ?
-                            <CategorySelect2 data={this.state.data} /> :
+                            <CategorySelect
+                                data={this.state.data}
+                                selectedNodePath={this.state.selectedNode}
+                                onSelectedNodeChange={nodePath =>
+                                    this.setState({ selectedNode: nodePath })}
+                            /> :
                             <Spinner intent="warning" size={150} />
                     }
                 </div>
 
-
-                <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                    <FormGroup style={{ flex: 2, padding: '0 5px', minWidth: 200 }} label="New Category Name">
-                        <InputGroup
-                            placeholder="Enter category name"
-                            fill={true}
-                            leftIcon="merge-columns"
-                        />
-                    </FormGroup>
-                    <div
-                        style={{ flex: 3, padding: '0 5px' }}
-                    >
-                        <FormGroupWithoutLabel>
-                            <Button
-                                text="Add Category"
-                                intent="success"
-                                fill={false}
-                                rightIcon="group-objects"
-                            />
-                        </FormGroupWithoutLabel>
-                    </div>
-                </div>
+                {this.renderForm()}
             </React.Fragment>
         );
     }
@@ -146,6 +138,10 @@ export const ManageCategoriesView = React.memo(() => {
                             console.error("A communication error occured", result);
                             throw new Error("Could not fetch categories");
                         }
+                    }}
+                    onSave={(name, parent) => {
+                        console.log("Name = ", name);
+                        console.log("Parent = ", parent);
                     }}
                 />
             </Card>

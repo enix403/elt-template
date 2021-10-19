@@ -14,7 +14,7 @@ import {
     Classes
 } from '@blueprintjs/core';
 
-import { CatergorySelect } from 'app/components/CategorySelect';
+// import { CatergorySelect } from 'app/components/CategorySelect';
 
 const ProductProps = () => {
     return (
@@ -70,9 +70,9 @@ export const AddRawMaterialView = React.memo(() => {
                 </FormGroup>
                 <Divider style={{ marginBottom: 10 }} />
 
-                <label className={Classes.LABEL}>Select Category</label>
-                <CatergorySelect />
-                <ProductProps />
+                {/*<label className={Classes.LABEL}>Select Category</label>*/}
+                {/*<CatergorySelect />*/}
+                {/*<ProductProps />*/}
 
                 <Button
                     text="Add Raw Material"

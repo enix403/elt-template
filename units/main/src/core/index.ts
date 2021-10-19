@@ -25,7 +25,7 @@ export async function invokeChannel(ipcChannel: IpcChannel, message: object): Pr
         if (err instanceof ChannelError) {
             return {
                 type: CommResultType.ChannelError,
-                error: err.toString()
+                error: err.message
             };
         }
         // TODO: Use a real logging library

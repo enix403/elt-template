@@ -72,7 +72,7 @@ export const AddRawMaterialView = React.memo(() => {
 
                 {/*<label className={Classes.LABEL}>Select Category</label>*/}
                 {/*<CatergorySelect />*/}
-                {/*<ProductProps />*/}
+                <ProductProps />
 
                 <Button
                     text="Add Raw Material"

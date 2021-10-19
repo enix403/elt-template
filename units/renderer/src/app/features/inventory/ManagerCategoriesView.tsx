@@ -14,19 +14,21 @@ import { FormGroupWithoutLabel } from '~/app/components/form_group_utils';
 import { CategorySelect, ICategory } from 'app/components/CategorySelect';
 import { ICategoryPreview, findCategoryFromPath } from 'app/components/CategorySelect/utils';
 import { AppChannel, CommResultType } from '@shared/communication';
+import { AppToaster } from '~/app/toaster';
 
 
 interface ICreateCategoryFormProps {
     dataSource: () => Promise<ICategory[]>
-    onSave: (name: string, parentCategory: ICategoryPreview | null) => void
+    onSave: (name: string, parentCategory: ICategoryPreview | null) => Promise<void>
 };
 
 class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> {
     public state = {
         data: null,
         dataFetchError: false,
+        isDisabled: false,
         selectedNode: null,
-        nameInputValue: ""
+        nameInputValue: "",
     };
 
     componentDidMount() {
@@ -41,20 +43,59 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
         }
         catch (e) {
             this.setState({ data: null, dataFetchError: true });
-            console.log(e);
+            console.error(e);
         }
     };
 
     renderForm() {
         return (
-            <div style={{ display: 'flex', flexWrap: 'wrap', margin: "0 0 20px" }}>
-                <FormGroup style={{ flex: 2, padding: '0 5px', minWidth: 200 }} label="New Category Name">
+            <form
+                style={{ display: 'flex', flexWrap: 'wrap', margin: "0 0 20px" }}
+                onSubmit={async (e) => {
+                    e.preventDefault();
+                    let selectedCategory: ICategory | null = null;
+                    if (this.state.selectedNode && this.state.data) {
+                        selectedCategory = findCategoryFromPath(
+                            this.state.selectedNode as NodePath,
+                            this.state.data,
+                        );
+                    }
+                    try {
+                        this.setState({ isDisabled: true });
+                        await this.props.onSave(this.state.nameInputValue, selectedCategory);
+                    }
+                    catch (e: any) {
+                        AppToaster.show({
+                            icon: "error",
+                            message: e.message,
+                            intent: "danger"
+                        });
+                        return false;
+                    }
+                    finally {
+                        this.setState({ isDisabled: false });
+                    }
+
+                    AppToaster.show({
+                        icon: "build",
+                        message: (<>
+                            Category <strong>{this.state.nameInputValue}</strong> created successfully
+                        </>),
+                        intent: "success"
+                    });
+                    this.setState({ nameInputValue: "" });
+                    this.refreshCategroies();
+                    return false;
+                }}
+            >
+                <FormGroup style={{ flex: 2, paddingRight: '5px', minWidth: 200 }} label="New Category Name">
                     <InputGroup
                         placeholder="Enter category name"
                         fill={true}
                         leftIcon="merge-columns"
                         value={this.state.nameInputValue}
                         onChange={(e) => this.setState({ nameInputValue: e.target.value })}
+                        disabled={this.state.isDisabled}
                     />
                 </FormGroup>
                 <div
@@ -66,37 +107,18 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
                             intent="success"
                             fill={false}
                             rightIcon="group-objects"
-                            onClick={() => {
-                                let selectedCategory: ICategory | null = null;
-                                if (this.state.selectedNode && this.state.data) {
-                                    selectedCategory = findCategoryFromPath(
-                                        this.state.selectedNode as NodePath,
-                                        this.state.data,
-                                    );
-                                }
-                                this.props.onSave(this.state.nameInputValue, selectedCategory);
-                            }}
+                            type="submit"
                         />
                     </FormGroupWithoutLabel>
                 </div>
-            </div>
+            </form>
         );
     }
 
     render() {
         return (
             <React.Fragment>
-                <h5 className="bp3-heading">Select Parent Category</h5>
-
-                <Button
-                    text="Refresh List"
-                    style={{ margin: "15px 0 5px" }}
-                    intent="warning"
-                    rightIcon="refresh"
-                    small={true}
-                    outlined={true}
-                    onClick={() => this.refreshCategroies()}
-                />
+                <h6 className="bp3-heading">Select Parent Category</h6>
 
                 <div style={{ margin: '15px 0' }}>
                     {this.state.dataFetchError ?
@@ -104,7 +126,7 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
                             An error occured while fetching the category list.<br />
                             Please click <strong>Refresh List</strong> to try again
                         </Callout> :
-                        this.state.data ?
+                        !this.state.isDisabled && this.state.data ?
                             <CategorySelect
                                 data={this.state.data}
                                 selectedNodePath={this.state.selectedNode}
@@ -114,6 +136,16 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
                             <Spinner intent="warning" size={150} />
                     }
                 </div>
+
+                <Button
+                    text="Refresh List"
+                    style={{ margin: "5px 0 15px" }}
+                    intent="warning"
+                    rightIcon="refresh"
+                    small={true}
+                    outlined={true}
+                    onClick={() => this.refreshCategroies()}
+                />
 
                 {this.renderForm()}
             </React.Fragment>
@@ -125,26 +157,52 @@ export const ManageCategoriesView = React.memo(() => {
     return (
         <NavPageView title="Add New Raw Material">
             <Card elevation={2} style={{ margin: "15px 25px" }}>
-                <CreateCategoryForm
-                    dataSource={async () => {
-                        const result = await window.SystemBackend.sendMessage(AppChannel.DataOperations, {
-                            action: 'inv:rm:cat:all'
-                        });
+                <h4 className="bp3-heading header-margin-b-l">
+                    Raw Materials Categories
+                </h4>
 
-                        if (result.type === CommResultType.ChannelResponse) {
-                            return result.data as ICategory[];
+                <CreateCategoryForm
+                    dataSource={createSourceLoader('inv:rm:cat:all')}
+                    onSave={async (name, parent) => {
+                        if (parent == null)
+                            throw new Error("Please select a parent category");
+
+                        const result = await window.SystemBackend.sendMessage(
+                            AppChannel.DataOperations,
+                            {
+                                action: "inv:rm:cat:create", payload: {
+                                    name, parentId: parent.id
+                                }
+                            }
+                        );
+
+                        if (result.type !== CommResultType.ChannelResponse) {
+                            if (result.type === CommResultType.ChannelError) {
+                                throw new Error(result.error);
+                            } else {
+                                console.log("An error occured", result);
+                                throw new Error("An error occured while creating the item");
+                            }
                         }
-                        else {
-                            console.error("A communication error occured", result);
-                            throw new Error("Could not fetch categories");
-                        }
-                    }}
-                    onSave={(name, parent) => {
-                        console.log("Name = ", name);
-                        console.log("Parent = ", parent);
                     }}
                 />
             </Card>
         </NavPageView>
     );
 });
+
+function createSourceLoader(action: string) {
+    return async () => {
+        const result = await window.SystemBackend.sendMessage(AppChannel.DataOperations,
+            { action }
+        );
+
+        if (result.type === CommResultType.ChannelResponse) {
+            return result.data as ICategory[];
+        }
+        else {
+            console.error("A communication error occured", result);
+            throw new Error("Could not fetch categories");
+        }
+    };
+}

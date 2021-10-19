@@ -31,14 +31,14 @@ export class DataOpChannel implements IpcChannel {
             const { name, parentId } = payload;
 
             if (!name)
-                throw new ChannelError("Invalid name...");
+                throw new ChannelError("Invalid name");
 
             if (parentId != 0 && !parentId)
-                throw new ChannelError("Invalid parentId...");
+                throw new ChannelError("Invalid parentId");
 
             let parentNode: RMCategory;
             try { parentNode = await RMCategory.findOneOrFail(parentId); }
-            catch (e) { throw new ChannelError("Invalid parentId..."); }
+            catch (e) { throw new ChannelError("Invalid parentId"); }
 
             const node = new RMCategory();
             node.name = name;

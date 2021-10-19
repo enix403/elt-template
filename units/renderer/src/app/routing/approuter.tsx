@@ -10,6 +10,7 @@ import { AddSupplierView } from '~/app/features/suppliers/AddSupplierView';
 import { AddCustomerView } from '~/app/features/customers/AddCustomerView';
 
 import { ScratchPlace } from '~/app/features/_scratch/scratch-place';
+import { ManageCategoriesView } from '../features/inventory/ManagerCategoriesView';
 
 export const AppRouter: React.FC<{}> = React.memo(_ => {
     return (
@@ -18,6 +19,7 @@ export const AppRouter: React.FC<{}> = React.memo(_ => {
                 <Redirect exact from="/" to={appRoutes.inventory.rawMaterial.path} />
 
                 <Route path={appRoutes.inventory.rawMaterial.path}  component={AddRawMaterialView}  />
+                <Route path={appRoutes.inventory.categories.path}   component={ManageCategoriesView}  />
                 <Route path={appRoutes.inventory.products.path}     component={AddProductView}      />
                 <Route path={appRoutes.suppliers.add.path}          component={AddSupplierView}     />
                 <Route path={appRoutes.customers.add.path}          component={AddCustomerView}     />

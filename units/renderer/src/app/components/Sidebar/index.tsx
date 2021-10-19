@@ -84,6 +84,7 @@ const SidebarBody = () => {
                 label="Inventory"
             >
                 <SidebarRouteEntry conf={appRoutes.inventory.rawMaterial} />
+                <SidebarRouteEntry conf={appRoutes.inventory.categories} />
                 <SidebarRouteEntry conf={appRoutes.inventory.products} />
                 <SidebarRouteEntry conf={appRoutes.suppliers.add} />
                 <SidebarRouteEntry conf={appRoutes.customers.add} />

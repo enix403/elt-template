@@ -1,14 +1,13 @@
 import { RawMaterial } from "./RawMaterial";
 import { Supplier } from "./Supplier";
-import { Category } from "./Category";
-
+import { RMCategory } from "./RMCategory";
 
 export const allEntities = [
     RawMaterial,
     Supplier,
-    Category
+    RMCategory,
 ];
 
 
-export { RawMaterial, Supplier, Category };
+export { RawMaterial, Supplier, RMCategory };
 

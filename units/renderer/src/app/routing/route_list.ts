@@ -17,3 +17,7 @@ export const appRoutes = {
         add:        { name: "Add Customer"      , path: "/cst/add"  }
     }
 };
+
+export const devAppRoutes = {
+    scratch: { name: "Scratch Place", path: "/dev/scratch" }
+};

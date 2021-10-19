@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './style.module.scss';
 import classnames from 'classnames/bind';
 import { Icon, IconName } from '@blueprintjs/core';
-import { appRoutes, RouteConf } from '~/app/routing/route_list';
+import { appRoutes, devAppRoutes, RouteConf } from '~/app/routing/route_list';
 import { InputGroup } from '@blueprintjs/core';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -90,6 +90,12 @@ const SidebarBody = () => {
             </SidebarNavSection>
 
 
+            <SidebarNavSection
+                icon="key-delete"
+                label="Developement"
+            >
+                <SidebarRouteEntry conf={devAppRoutes.scratch} />
+            </SidebarNavSection>
         </div>
     );
 };

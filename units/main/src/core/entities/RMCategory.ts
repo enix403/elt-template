@@ -9,19 +9,18 @@ import {
 } from 'typeorm';
 
 
-@Entity("tbl_category")
+@Entity("tbl_rm_category")
 @Tree("nested-set")
-export class Category extends BaseEntity {
-
+export class RMCategory extends BaseEntity {
     @PrimaryGeneratedColumn()
     id!: number
 
     @Column()
     name!: string;
 
-    @TreeChildren()
-    children!: Category[];
-
     @TreeParent()
-    parent!: Category;
+    parent!: RMCategory;
+
+    @TreeChildren()
+    children!: RMCategory[];
 }

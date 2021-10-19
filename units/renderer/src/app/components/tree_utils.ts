@@ -30,3 +30,18 @@ export function forNodeAtPath(nodes: TreeNodeInfo[], path: NodePath, callback: (
     callback(nodeFromPath(path, nodes));
 }
 
+
+/**
+ * Returns true if nodeB is child of nodeA, false otherwise
+ * */
+export function isNodeChild(nodeA: NodePath, nodeB: NodePath) {
+    if (nodeA.length >= nodeB.length)
+        return false;
+
+    for (let i = 0; i < nodeA.length; i++) {
+        if (nodeA[i] != nodeB[i])
+            return false;
+    }
+
+    return true;
+}

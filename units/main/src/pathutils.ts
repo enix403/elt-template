@@ -6,7 +6,8 @@ import {
     app_data_directory_name,
 } from '~/appconfig.json';
 
-type PathSpec = 'userData'
+type PathSpec =
+    | 'userData'
     | 'data'
     | 'config'
     | 'cache'

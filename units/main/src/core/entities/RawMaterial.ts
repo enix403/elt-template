@@ -4,8 +4,12 @@ import {
     Column,
     PrimaryGeneratedColumn,
     ManyToMany,
-    JoinTable
+    ManyToOne,
+    JoinTable,
+    OneToOne,
+    JoinColumn
 } from 'typeorm';
+import { RMCategory } from './RMCategory';
 
 import { Supplier } from './Supplier';
 
@@ -24,5 +28,8 @@ export class RawMaterial extends BaseEntity {
     @ManyToMany(() => Supplier, sup => sup.materials)
     @JoinTable()
     suppliers!: Supplier[];
+
+    @ManyToOne(type => RMCategory)
+    category!: RMCategory;
 }
 

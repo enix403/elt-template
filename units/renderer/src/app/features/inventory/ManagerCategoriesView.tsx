@@ -13,10 +13,10 @@ import { FormGroupWithoutLabel } from '~/app/components/form_group_utils';
 import { AppToaster } from '~/app/toaster';
 
 import type { NodePath } from '~/app/components/tree_utils';
-import { CategorySelect, ICategory } from 'app/components/CategorySelect';
+import { CategorySelect } from 'app/components/CategorySelect';
 import { ICategoryPreview, findCategoryFromPath } from 'app/components/CategorySelect/utils';
-
 import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
+import type { ICategory } from '@shared/object_types';
 
 interface ICreateCategoryFormProps {
     dataSource: () => Promise<ICategory[]>
@@ -169,10 +169,9 @@ export const ManageCategoriesView = React.memo(() => {
 
                 <CreateCategoryForm
                     dataSource={async () => {
-                        const fetchMsg = new AllMessages.Inv.RM.GetAllCategories<ICategory>();
                         const result = await window.SystemBackend.sendMessage(
                             AppChannel.Inventory,
-                            fetchMsg
+                            new AllMessages.Inv.RM.GetAllCategories()
                         );
 
                         if (result.type === CommResultType.ChannelResponse) {

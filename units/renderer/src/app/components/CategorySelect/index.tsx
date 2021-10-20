@@ -9,12 +9,7 @@ import {
 
 import { NodePath, forEachNode, forNodeAtPath, nodeFromPath, isNodeChild } from 'app/components/tree_utils';
 import classNames from 'classnames';
-
-export interface ICategory {
-    id: string | number;
-    name: string;
-    children?: ICategory[];
-};
+import type { ICategory } from '@shared/object_types';
 
 type TreeAction =
     | { type: "SET_IS_EXPANDED"; payload: { path: NodePath; isExpanded: boolean, recursive?: boolean } }

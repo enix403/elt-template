@@ -1,6 +1,6 @@
 import type { AppChannel, ChannelResponse, Message } from './communication'
 
-// This API is here in shared code instead of inside renderer unit because
+// This API is here in shared code instead of the renderer unit because
 // preload.ts (from the main unit) needs access to this API
 
 export interface ISystemBackendAPI {

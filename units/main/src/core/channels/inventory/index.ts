@@ -14,6 +14,7 @@ async function createRootCategoryIfNotExists() {
     }
 }
 
+
 export class InventoryChannel extends ActionMessageChannel {
     channelName = AppChannel.Inventory;
 
@@ -47,7 +48,7 @@ export class InventoryChannel extends ActionMessageChannel {
 
         this.registerHandler(
             AllMessages.Inv.RM.GetAllCategories,
-            async (): Promise<RMCategory[]> => {
+            async () => {
                 const tree = await getManager()
                                     .getTreeRepository(RMCategory)
                                     .findTrees();

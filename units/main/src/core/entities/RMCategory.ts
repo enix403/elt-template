@@ -8,10 +8,11 @@ import {
     TreeParent
 } from 'typeorm';
 
+import type { ICategory } from '@shared/object_types';
 
 @Entity("tbl_rm_category")
 @Tree("nested-set")
-export class RMCategory extends BaseEntity {
+export class RMCategory extends BaseEntity implements ICategory {
     @PrimaryGeneratedColumn()
     id!: number
 

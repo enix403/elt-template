@@ -1,5 +1,5 @@
-import { NodePath } from "~/app/components/tree_utils";
-import { ICategory } from './index';
+import type { NodePath } from "~/app/components/tree_utils";
+import type { ICategory } from '@shared/object_types';
 
 export type ICategoryPreview = Omit<ICategory, 'children'>;
 

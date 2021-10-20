@@ -8,11 +8,13 @@ import express from 'express';
 import cors from 'cors';
 
 import { configureApplicationPaths, getPath } from '~/pathutils';
-import { invokeChannel, IpcChannel } from '~/core/index';
 import { createDBConnection } from '~/core/db';
-import { DataOpChannel } from '~/core/channels/operations';
-import { CommResultType } from '@shared/communication';
-import { ChannelResponse } from '@shared/system_api';
+import { InventoryChannel } from '~/core/channels/inventory';
+
+import type { IpcChannel } from '~/core/channels/IpcChannel';
+import type { ChannelResponse } from '@shared/communication/interfaces';
+import { CommResultType } from '@shared/communication/constants';
+import { invokeChannel } from '~/core/cnl_utils';
 
 // -- code body
 
@@ -48,14 +50,17 @@ function setupExpressApp() {
     });
 }
 
-const registeredChannels: IpcChannel[] = [new DataOpChannel()];
+const registeredChannels: IpcChannel[] = [new InventoryChannel()];
 
 async function processRequest(payload: any): Promise<ChannelResponse> {
     const targetChannelName = payload.channel;
     const targetChannel = registeredChannels.find(c => c.channelName == targetChannelName);
 
     if (!targetChannel) {
-        return { type: CommResultType.InvalidChannel, error: "Please specify a valid message channel" };
+        return {
+            type: CommResultType.InvalidChannel,
+            error: "Please specify a valid message channel"
+        };
     }
 
     return await invokeChannel(targetChannel, payload.message || null);

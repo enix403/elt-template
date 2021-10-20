@@ -6,11 +6,14 @@ import {
 } from 'main/window';
 import { getPath } from '~/pathutils';
 import { createDBConnection } from '~/core/db';
-import { IpcChannel, invokeChannel } from '~/core/index';
-import { DataOpChannel } from '~/core/channels/operations';
+
+import type { IpcChannel } from '~/core/channels/IpcChannel';
+import { invokeChannel } from '~/core/cnl_utils';
+
+import { InventoryChannel } from '~/core/channels/inventory';
 
 const registeredChannels: IpcChannel[] = [
-    new DataOpChannel(),
+    new InventoryChannel(),
 ];
 
 export const initApp = async () => {

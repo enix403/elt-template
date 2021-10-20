@@ -1,7 +1,16 @@
-import { CommResultType, AppChannel } from './communication';
+import type { AppChannel, ChannelResponse, Message } from './communication'
 
-export type ChannelResponse<T = any> = { type: CommResultType, data?: T, error?: string };
+// This API is here in shared code instead of inside renderer unit because
+// preload.ts (from the main unit) needs access to this API
 
 export interface ISystemBackendAPI {
-    sendMessage<T = void>(channel: AppChannel, message: T): Promise<ChannelResponse>;
-};
+    sendPlainMessage(
+        channel: AppChannel,
+        message: any
+    ): Promise<ChannelResponse<any>>;
+
+    sendMessage<T, K>(
+        channel: AppChannel,
+        message: Message<T, K>
+    ): Promise<ChannelResponse<K>>;
+}

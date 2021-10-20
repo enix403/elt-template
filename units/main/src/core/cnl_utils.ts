@@ -1,11 +1,6 @@
-import { AppChannel, CommResultType } from "@shared/communication";
-import { ChannelResponse } from '@shared/system_api';
-
-export interface IpcChannel {
-    channelName: AppChannel;
-    handle(message: object): any;
-};
-
+import type { ChannelResponse } from '@shared/communication/interfaces';
+import type { IpcChannel } from './channels/IpcChannel';
+import { CommResultType } from '@shared/communication/constants';
 
 export class ChannelError extends Error {
     constructor(message?: string) {
@@ -14,7 +9,11 @@ export class ChannelError extends Error {
     }
 }
 
-export async function invokeChannel(ipcChannel: IpcChannel, message: object): Promise<ChannelResponse> {
+export async function invokeChannel(
+    ipcChannel: IpcChannel,
+    message: object
+): Promise<ChannelResponse>
+{
     try {
         return {
             type: CommResultType.ChannelResponse,

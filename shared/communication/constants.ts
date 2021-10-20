@@ -7,7 +7,5 @@ export enum CommResultType {
 
 export enum AppChannel {
     DataOperations = 'scnl:data',
-    UserPreferences = 'scnl:sett'
+    Inventory = 'scnl:inv'
 };
-
-

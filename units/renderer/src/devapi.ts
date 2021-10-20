@@ -1,31 +1,36 @@
-import { AppChannel, CommResultType } from "@shared/communication";
-import { ChannelResponse } from "@shared/system_api";
+import { AppChannel, CommResultType, AllMessages } from "@shared/communication";
 
 export function setupDevSystemApi() {
-    if (typeof window.SystemBackend == 'object')
+    if (window.SystemBackend && typeof window.SystemBackend == 'object')
         return
 
-    if (process.env.NODE_ENV === 'development') {
-        window['AppChannel'] = AppChannel;
-        if (!window.SystemBackend) {
-            window.SystemBackend = {
-                sendMessage: async <T = any>(channel: AppChannel, message: T): Promise<ChannelResponse> => {
-                    try {
-                        const rawResponse = await fetch('http://localhost:4201', {
-                            method: 'POST',
-                            headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ channel, message })
-                        });
-                        return await rawResponse.json();
-                    }
-                    catch (e) {
-                        return {
-                            type: CommResultType.SystemError,
-                            error: "Failed to send http request"
-                        }
-                    }
-                }
-            };
+    if (process.env.NODE_ENV !== 'development')
+        return
+
+    window['AppChannel'] = AppChannel;
+    window['AllMessages'] = AllMessages;
+
+    const _sendPlainMessage = async (channel: AppChannel, message: any): Promise<any> => {
+        try {
+            // TODO: get the port out of an env variable instead of hardcoding it
+            const rawResponse = await fetch('http://localhost:4201', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify({ channel: channel.toString(), message })
+            });
+            return await rawResponse.json();
+        }
+        catch (e) {
+            return {
+                type: CommResultType.SystemError,
+                error: "Http request send/receive error"
+            }
         }
     }
+
+    window.SystemBackend = {
+        sendPlainMessage: _sendPlainMessage,
+        sendMessage: (channel, message) =>
+            _sendPlainMessage(channel, message.serialize())
+    };
 }

@@ -28,7 +28,7 @@ interface NavPageViewProps {
 const NavPageViewHeader = ({title}) => {
     return (
         <Card elevation={1} className='content-body-header-main'>
-            <Icon icon="full-circle" color="#E936C2" />
+            <Icon icon="full-circle" color="#0c9fcc" />
             <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 7 }}>
                 {title}
             </span>

@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import type { ISystemBackendAPI } from '@shared/system_api';
-import { AppChannel, AllMessages } from '@shared/communication';
+import { AppChannel, AllMessages, Message } from '@shared/communication';
 import { IS_RUNNING_DEV } from './utils';
 
 
@@ -18,7 +18,7 @@ async function _sendPlainMessage(channel: AppChannel, message: any) {
 const electronBackendApi: ISystemBackendAPI = {
     sendPlainMessage: _sendPlainMessage,
     sendMessage: (channel, message) =>
-        _sendPlainMessage(channel, message.serialize())
+        _sendPlainMessage(channel, Message.serialize(message))
 };
 
 contextBridge.exposeInMainWorld('SystemBackend', electronBackendApi);

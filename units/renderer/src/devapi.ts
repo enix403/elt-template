@@ -1,4 +1,9 @@
-import { AppChannel, CommResultType, AllMessages } from "@shared/communication";
+import {
+    AppChannel,
+    CommResultType,
+    AllMessages,
+    Message
+} from "@shared/communication";
 
 export function setupDevSystemApi() {
     if (window.SystemBackend && typeof window.SystemBackend == 'object')
@@ -31,6 +36,6 @@ export function setupDevSystemApi() {
     window.SystemBackend = {
         sendPlainMessage: _sendPlainMessage,
         sendMessage: (channel, message) =>
-            _sendPlainMessage(channel, message.serialize())
+            _sendPlainMessage(channel, Message.serialize(message))
     };
 }

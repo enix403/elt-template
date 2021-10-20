@@ -1,12 +1,15 @@
 import { Card } from '@blueprintjs/core';
 import { NavPageView } from '~/app/layout/views';
 
+import { MyTable } from './table-example';
+
 export const ScratchPlace = () => {
     return (
-        <NavPageView title="Category Select 2">
+        <NavPageView title="Manage Customers">
             <Card elevation={2} style={{ margin: "15px 25px" }}>
-                <div style={{ margin: "15px 0" }}>
-                </div>
+                <MyTable />
+                {/*<div style={{ margin: "15px 0" }}>*/}
+                {/*</div>*/}
             </Card>
         </NavPageView>
     );

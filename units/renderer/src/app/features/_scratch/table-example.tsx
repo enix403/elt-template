@@ -17,7 +17,7 @@ const TableColumnHeader: React.FC<any> = ({ children, ...restProps }) => {
     );
 };
 
-const MyTable = React.memo(() => {
+export const MyTable = React.memo(() => {
     return (
         <div className="table-wrapper">
             <div className="table-header">
@@ -61,7 +61,7 @@ const MyTable = React.memo(() => {
                                     United States
                                 </div>
                             </td>
-                            <td>Toni Bowcher</td>
+                            <td>Tony Bowcher</td>
                             <td>09/13/2015</td>
                             <td>$70,663.00</td>
                             <td>Unqualified</td>
@@ -78,7 +78,7 @@ const MyTable = React.memo(() => {
                                     Argentina
                                 </div>
                             </td>
-                            <td>Toni Bowcher</td>
+                            <td>Tony Bowcher</td>
                             <td>09/13/2015</td>
                             <td>$70,663.00</td>
                             <td>Unqualified</td>
@@ -96,7 +96,7 @@ const MyTable = React.memo(() => {
                                     Algeria
                                 </div>
                             </td>
-                            <td>Toni Bowcher</td>
+                            <td>Tony Bowcher</td>
                             <td>09/13/2015</td>
                             <td>$70,663.00</td>
                             <td>Unqualified</td>
@@ -115,7 +115,7 @@ const MyTable = React.memo(() => {
                                     Antigua and Barbuda
                                 </div>
                             </td>
-                            <td>Toni Bowcher</td>
+                            <td>Tony Bowcher</td>
                             <td>09/13/2015</td>
                             <td>$70,663.00</td>
                             <td>Unqualified</td>
@@ -134,7 +134,7 @@ const MyTable = React.memo(() => {
                                     Canada
                                 </div>
                             </td>*/}
-                            <td>Toni Bowcher</td>
+                            <td>Tony Bowcher</td>
                             <td>09/13/2015</td>
                             <td>$70,663.00</td>
                             <td>Unqualified</td>
@@ -151,7 +151,7 @@ const MyTable = React.memo(() => {
                                     El Salvador
                                 </div>
                             </td>
-                            <td>Toni Bowcher</td>
+                            <td>Tony Bowcher</td>
                             <td>09/13/2015</td>
                             <td>$70,663.00</td>
                             <td>Unqualified</td>

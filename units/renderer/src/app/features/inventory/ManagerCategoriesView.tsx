@@ -48,44 +48,48 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
         }
     };
 
+    onFormSubmit = async () => {
+        let selectedCategory: ICategory | null = null;
+        if (this.state.selectedNode && this.state.data) {
+            selectedCategory = findCategoryFromPath(
+                this.state.selectedNode as NodePath,
+                this.state.data,
+            );
+        }
+        try {
+            this.setState({ isDisabled: true });
+            await this.props.onSave(this.state.nameInputValue, selectedCategory);
+        }
+        catch (e: any) {
+            AppToaster.show({
+                icon: "error",
+                message: e.message,
+                intent: "danger"
+            });
+            return;
+        }
+        finally {
+            this.setState({ isDisabled: false });
+        }
+
+        AppToaster.show({
+            icon: "build",
+            message: (<>
+                Category <strong>{this.state.nameInputValue}</strong> created successfully
+            </>),
+            intent: "success"
+        });
+        this.setState({ nameInputValue: "" });
+        this.refreshCategroies();
+    };
+
     renderForm() {
         return (
             <form
                 style={{ display: 'flex', flexWrap: 'wrap', margin: "0 0 5px" }}
-                onSubmit={async (e) => {
+                onSubmit={e => {
                     e.preventDefault();
-                    let selectedCategory: ICategory | null = null;
-                    if (this.state.selectedNode && this.state.data) {
-                        selectedCategory = findCategoryFromPath(
-                            this.state.selectedNode as NodePath,
-                            this.state.data,
-                        );
-                    }
-                    try {
-                        this.setState({ isDisabled: true });
-                        await this.props.onSave(this.state.nameInputValue, selectedCategory);
-                    }
-                    catch (e: any) {
-                        AppToaster.show({
-                            icon: "error",
-                            message: e.message,
-                            intent: "danger"
-                        });
-                        return false;
-                    }
-                    finally {
-                        this.setState({ isDisabled: false });
-                    }
-
-                    AppToaster.show({
-                        icon: "build",
-                        message: (<>
-                            Category <strong>{this.state.nameInputValue}</strong> created successfully
-                        </>),
-                        intent: "success"
-                    });
-                    this.setState({ nameInputValue: "" });
-                    this.refreshCategroies();
+                    this.onFormSubmit();
                     return false;
                 }}
             >

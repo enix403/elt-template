@@ -19,7 +19,9 @@
         "rd:r": "yarn workspace @application/renderer remove",
 
         "r:m": "yarn workspace @application/main run",
-        "r:r": "yarn workspace @application/renderer run"
+        "r:r": "yarn workspace @application/renderer run",
+
+        "typecheck": "yarn r:m -s typecheck; yarn r:r -s typecheck"
     },
     "devDependencies": {}
 }

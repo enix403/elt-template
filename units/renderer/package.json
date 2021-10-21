@@ -6,6 +6,7 @@
     "homepage": "./",
     "scripts": {
         "tscript": "node --no-warnings -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only",
+        "typecheck": "yarn -s run tsc --noEmit",
         "start": "craco start",
         "cmd:build": "craco build",
         "build": "yarn run tscript ./scripts/build.prod.ts"

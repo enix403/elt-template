@@ -14,7 +14,6 @@ async function createRootCategoryIfNotExists() {
     }
 }
 
-
 export class InventoryChannel extends ActionMessageChannel {
     channelName = AppChannel.Inventory;
 

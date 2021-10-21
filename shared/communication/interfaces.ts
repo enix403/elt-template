@@ -13,7 +13,7 @@ export abstract class Message<T = {}, K = {}> {
     // that is later used for typechecking of message response
     //
     // @ts-ignore
-    protected readonly __ResultType?: K | null = null;
+    protected readonly __ResultType?: K | undefined = undefined;
 
     // The action name for this message
     //
@@ -22,9 +22,9 @@ export abstract class Message<T = {}, K = {}> {
 
     // The above ACTION_NAME static field must be copied into its own non-static field because
     // when any object, including this Message object, is passed through electron preload's
-    // contextBrigde, it looses its prototype chain. As a result all methods and static members are
+    // contextBridge, it looses its prototype chain. As a result all methods and static members are
     // lost. So any static ACTION_NAME is not availble once this object reaches the electron
-    // main process. The static version is also required because some code depends on it
+    // main process. The static version is also required because some code depends on it.
     public readonly actionName: string;
 
     // The actual data to send
@@ -40,7 +40,7 @@ export abstract class Message<T = {}, K = {}> {
     ): SerializedMessage<U | null> {
         return {
             action: message.actionName,
-            payload: message.payload || null,
+            payload: message.payload,
         };
     }
 };

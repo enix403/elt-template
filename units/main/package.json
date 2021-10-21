@@ -5,6 +5,7 @@
     "license": "UNLICENSED",
     "scripts": {
         "tscript": "node --no-warnings -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only",
+        "typecheck": "yarn -s run tsc --noEmit",
         "watch": "yarn run build:dev -w",
         "start": "yarn run tscript ./toolchain/scripts/electron-runner.ts",
         "start:dist": "yarn run tscript ./toolchain/scripts/start-dist.ts",

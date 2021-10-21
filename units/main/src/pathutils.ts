@@ -54,7 +54,7 @@ export function configureApplicationPaths(osAppDataRoot: string | null, createMi
     if (IS_RUNNING_DEV) {
         let mainUnitDir: string;
 
-        if (isElectron())
+        if (process.env.BUNDLE_COMPILED == 'yes')
             mainUnitDir = path.join(__dirname, '..');
         else
             mainUnitDir = resolveProjectRoot(RP_MAIN_UNIT);
@@ -86,7 +86,10 @@ export function configureAssetsPath(isAppPackaged: boolean) {
     }
     else if (IS_RUNNING_DEV) {
         // If in development we use the actual assets folder (relative to the dev main.js bundle inside main/build-dev)
-        runtimePaths.assetsPath = path.join(__dirname, '..', 'assets');
+        if (process.env.BUNDLE_COMPILED == 'yes')
+            runtimePaths.assetsPath = path.join(__dirname, '..', 'assets');
+        else
+            runtimePaths.assetsPath = resolveProjectRoot(RP_MAIN_UNIT, 'assets');
     }
     else {
         // If it is not packaged and not running in development mode then it must be

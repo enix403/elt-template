@@ -9,8 +9,12 @@ import {
 export let mainWindow: BrowserWindow | null = null;
 
 const getPreloadScriptPath = (): string => {
-    // the string below will be replaced by the build system with the actual preload file name
-    let preloadName = '#__APP_PRE_COMPILED_PRELOAD_SCRIPT_NAME__#';
+    let preloadName: string;
+    if (process.env.BUNDLE_COMPILED === 'yes')
+        // the string below will be replaced by the build system with the actual preload file name
+        preloadName = '#__APP_PRE_COMPILED_PRELOAD_SCRIPT_NAME__#';
+    else
+        preloadName = path.join('..', 'preload_mask.js');
     return path.join(__dirname, preloadName);
 }
 

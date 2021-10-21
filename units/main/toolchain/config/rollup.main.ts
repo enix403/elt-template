@@ -102,6 +102,7 @@ export const inputOptions: InputOptions = {
          */
         injectProcessEnv({
             NODE_ENV: isProduction ? 'production' : 'development',
+            BUNDLE_COMPILED: 'yes'
         }),
 
 

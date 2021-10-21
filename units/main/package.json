@@ -6,8 +6,8 @@
     "scripts": {
         "tscript": "node --no-warnings -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only",
         "typecheck": "yarn -s run tsc --noEmit",
-        "watch": "yarn run build:dev -w",
-        "start": "yarn run tscript ./toolchain/scripts/electron-runner.ts",
+        "start": "cross-env NODE_ENV=development electron -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only ./src/main/index.ts",
+        "start:dev-compiled": "electron -r dotenv/config ./build-dev/main.js",
         "start:dist": "yarn run tscript ./toolchain/scripts/start-dist.ts",
         "server:start": "yarn run tscript src/devserver/server.ts",
         "server:watch": "tsnd -r dotenv/config -r tsconfig-paths/register --transpile-only --respawn --rs --cls src/devserver/server.ts",

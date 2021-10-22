@@ -14,20 +14,17 @@
     "scripts": {
         "postinstall": "patch-package",
         "ptp": "patch-package",
-
         "a:m": "yarn workspace @application/main add",
         "a:r": "yarn workspace @application/renderer add",
-
         "rd:m": "yarn workspace @application/main remove",
         "rd:r": "yarn workspace @application/renderer remove",
-
         "r:m": "yarn workspace @application/main run",
         "r:r": "yarn workspace @application/renderer run",
-
         "typecheck": "yarn r:m -s typecheck; yarn r:r -s typecheck"
     },
     "devDependencies": {
         "patch-package": "^6.4.7",
         "postinstall-postinstall": "^2.1.0"
-    }
+    },
+    "packageManager": "yarn@3.0.2"
 }

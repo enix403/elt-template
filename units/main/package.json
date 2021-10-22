@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "license": "UNLICENSED",
     "scripts": {
-        "tscript": "node --no-warnings -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only",
+        "tscript": "ts-node -r dotenv/config -r tsconfig-paths/register",
         "typecheck": "yarn -s run tsc --noEmit",
         "start": "cross-env NODE_ENV=development electron -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only ./src/main/index.ts",
         "start:dev-compiled": "electron -r dotenv/config ./build-dev/main.js",

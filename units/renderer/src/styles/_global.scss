@@ -1,6 +1,6 @@
 // Regular CSS imports do not work with relative path
-@import 'styles/normalize_elements.css';
-@import 'styles/blueprint_overrides.css';
+@import '@/styles/normalize_elements.css';
+@import '@/styles/blueprint_overrides.css';
 
 * {
     font-family: 'Roboto', sans-serif;

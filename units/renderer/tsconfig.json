@@ -1,20 +1,30 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "module": "esnext",
-    "jsx": "react-jsx",
-    "baseUrl": "./src",
-    "isolatedModules": true
-  },
-  "include": [
-    "src",
-    "scripts",
-    "../../shared/**/*"
-  ]
+    "extends": "./../../tsconfig.json",
+
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "DOM",
+            "DOM.Iterable",
+            "ESNext"
+        ],
+        "module": "ESNext",
+
+        "useDefineForClassFields": true,
+        "isolatedModules": true,
+        "jsx": "react-jsx",
+
+        "baseUrl": "./src",
+        "paths": {
+            "~/*": ["./*"],
+            "@/*": ["./*"],
+            "@shared/*": ["../../../shared/*"]
+        }
+    },
+    "include": [
+        "src",
+        "scripts",
+        "*.ts",
+        "../../shared/**/*"
+    ]
 }

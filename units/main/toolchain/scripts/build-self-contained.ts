@@ -39,7 +39,7 @@ const main = async () => {
     }
 
     const bundles: Promise<rollup.RollupBuild>[] = [];
-    const checkExternal = (source) => {
+    const checkExternal = (source: string) => {
         if (entries.includes(source))
             return false;
         if (chunks.includes(path.basename(source)))

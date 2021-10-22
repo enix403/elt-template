@@ -37,7 +37,6 @@
         "electron-debug": "^3.2.0",
         "json5": "^2.2.0",
         "merge-anything": "^4.0.1",
-        "nodemon": "^2.0.13",
         "rollup": "^2.57.0",
         "rollup-plugin-auto-external": "^2.0.0",
         "rollup-plugin-copy": "^3.4.0",
@@ -51,7 +50,6 @@
         "ts-node-dev": "^1.1.8",
         "tsconfig-paths": "^3.11.0",
         "tslib": "^2.3.1",
-        "typescript": "^4.4.3",
-        "wait-on": "^6.0.0"
+        "typescript": "^4.4.3"
     }
 }

@@ -1,7 +1,8 @@
 import type { NodePath } from "~/app/components/tree_utils";
 import type { ICategory } from '@shared/object_types';
+import type { TypedOmit } from '@shared/tsutils';
 
-export type ICategoryPreview = Omit<ICategory, 'children'>;
+export type ICategoryPreview = TypedOmit<ICategory, 'children'>;
 
 export function findCategoryFromPath(path: NodePath, nodes?: Array<ICategory>): ICategoryPreview {
     if (path.length === 1 && path[0] == 0) {

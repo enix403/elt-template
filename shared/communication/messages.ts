@@ -1,5 +1,9 @@
 import { Message } from './interfaces';
-import type { ICategory } from '@shared/object_types';
+import type {
+    WithoutID,
+    ICategory,
+    IRawMaterial
+} from '@shared/object_types';
 
 abstract class SimpleMessage<T, K> extends Message<T, K> {
     constructor(payload: T) {
@@ -18,5 +22,9 @@ export namespace AllMessages {
         export class GetAllCategories
             extends SimpleMessage<void, Array<ICategory>>
         { static ACTION_NAME = 'inv:rm:cat:all' }
+
+        export class CreateMaterial
+            extends SimpleMessage<WithoutID<IRawMaterial>, void>
+        { static ACTION_NAME = 'inv:rm:create' }
     };
 };

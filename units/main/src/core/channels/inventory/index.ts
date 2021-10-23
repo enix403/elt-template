@@ -1,8 +1,12 @@
 import { AppChannel, AllMessages } from '@shared/communication';
 import { ActionMessageChannel } from '~/core/channels/ActionMessageChannel';
 import { ChannelError } from '~/core/cnl_utils';
-import { RMCategory } from '~/core/entities';
 import { getManager } from 'typeorm';
+
+import {
+    RMCategory,
+    RawMaterial
+} from '~/core/entities';
 
 async function createRootCategoryIfNotExists() {
     const rootNode = await RMCategory.findOne(0);
@@ -53,6 +57,24 @@ export class InventoryChannel extends ActionMessageChannel {
                                     .findTrees();
                 const treeRoot = tree[0];
                 return treeRoot ? treeRoot.children : [];
+            }
+        );
+
+        this.registerHandler(
+            AllMessages.Inv.RM.CreateMaterial,
+            async ({ name, categoryId, measurement_unit, inventory_unit }) => {
+                const mat = new RawMaterial();
+                mat.name = name!;
+                mat.inventory_unit = inventory_unit!;
+                mat.measurement_unit = measurement_unit!;
+                try {
+                    mat.category = await RMCategory.findOneOrFail(categoryId);
+                }
+                catch {
+                    throw new ChannelError("Category not found");
+                }
+
+                await mat.save();
             }
         );
     }

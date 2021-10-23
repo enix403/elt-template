@@ -13,7 +13,7 @@ export abstract class Message<T = {}, K = {}> {
     // that is later used for typechecking of message response
     //
     // @ts-ignore
-    protected readonly __ResultType?: K | undefined = undefined;
+    protected readonly __ResultType!: K;
 
     // The action name for this message
     //

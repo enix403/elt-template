@@ -1,7 +1,7 @@
 import { AppChannel, AllMessages } from '@shared/communication';
 import { ActionMessageChannel } from '~/core/channels/ActionMessageChannel';
 import { ChannelError } from '~/core/cnl_utils';
-import { getManager } from 'typeorm';
+import { getManager, Raw } from 'typeorm';
 
 import {
     RMCategory,
@@ -76,6 +76,11 @@ export class InventoryChannel extends ActionMessageChannel {
 
                 await mat.save();
             }
+        );
+
+        this.registerHandler(
+            AllMessages.Inv.RM.GetAllMaterials,
+            async () => RawMaterial.find()
         );
     }
 }

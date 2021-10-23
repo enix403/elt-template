@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
 import {
@@ -11,14 +11,17 @@ import {
     ControlGroup,
     Classes,
     Card,
+    Icon,
+    Spinner,
 } from '@blueprintjs/core';
 
 import { ChooseCategoryForm } from './commom/ChooseCategory';
 import type { ICategoryPreview } from 'app/components/CategorySelect/utils';
 
 import { AppToaster } from '@/app/toaster';
-
 import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
+
+import type { IRawMaterial } from '@shared/object_types';
 
 type ProductPropNames = 'm_unit' | 'i_unit';
 
@@ -30,6 +33,7 @@ type IProductPropertiesProps = {
         }
     }
 };
+
 
 const ProductProperties: React.FC<IProductPropertiesProps> = ({ store }) => {
     return (
@@ -52,7 +56,7 @@ const ProductProperties: React.FC<IProductPropertiesProps> = ({ store }) => {
                 </FormGroup>
             </GridColumn>
             <GridColumn colSize='auto'>
-                <FormGroup label="Iventory Unit">
+                <FormGroup label="Inventory Unit">
                     <ControlGroup>
                         <HTMLSelect
                             value={store.i_unit.value}
@@ -75,93 +79,177 @@ const ProductProperties: React.FC<IProductPropertiesProps> = ({ store }) => {
     );
 };
 
+const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
+    const [cat, setCat] = React.useState<ICategoryPreview | null>(null);
+    const [name, setName] = React.useState('');
+    const [mUnit, setMUnit] = React.useState('item');
+    const [iUnit, setIUnit] = React.useState('carton');
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    return (
+        <React.Fragment>
+            <FormGroup
+                label="Material Name"
+                inline={false}
+            >
+                <InputGroup
+                    placeholder="Enter the material name"
+                    fill={true}
+                    leftIcon='layers'
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    disabled={isSubmitting}
+                />
+            </FormGroup>
+            <Divider style={{ marginBottom: 10 }} />
+
+            <label className={Classes.LABEL}>Select Category</label>
+            <ChooseCategoryForm
+                dataSource={async () => {
+                    const result = await window.SystemBackend.sendMessage(
+                        AppChannel.Inventory,
+                        new AllMessages.Inv.RM.GetAllCategories()
+                    );
+
+                    if (result.type === CommResultType.ChannelResponse) {
+                        return result.data!;
+                    }
+                    else {
+                        console.error("A communication error occured", result);
+                        throw new Error("Could not fetch categories");
+                    }
+                }}
+                onCategoryChange={cat => {
+                    // console.log(cat);
+                    setCat(cat);
+                }}
+            />
+            <ProductProperties
+                store={{
+                    m_unit: { value: mUnit, setValue: setMUnit },
+                    i_unit: { value: iUnit, setValue: setIUnit },
+                }}
+            />
+
+            <Button
+                loading={isSubmitting}
+                text="Add Raw Material"
+                intent="success"
+                icon="new-grid-item"
+                onClick={async () => {
+                    if (isSubmitting) return;
+                    if (!cat || !cat.id || cat.id == 0) {
+                        showError("Please choose a valid category");
+                        return;
+                    }
+
+                    if (!name) {
+                        showError("Please enter a name");
+                        return;
+                    }
+                    setIsSubmitting(true);
+                    const createMsg = new AllMessages.Inv.RM.CreateMaterial({
+                        name: name,
+                        categoryId: cat.id,
+                        inventory_unit: iUnit,
+                        measurement_unit: mUnit,
+                    });
+
+                    const result = await window.SystemBackend.sendMessage(AppChannel.Inventory, createMsg);
+                    if (result.type === CommResultType.ChannelResponse) {
+                        setName("");
+                        props.afterCreate?.();
+                    } else if (result.type === CommResultType.ChannelError) {
+                        showError(result.error || "An error occured");
+                    }
+                    else {
+                        showError("An error occured");
+                    }
+                    setIsSubmitting(false);
+                }}
+            />
+        </React.Fragment>
+    );
+}
+
+const RawMaterialList: React.FC<{ rows: IRawMaterial[] }> = ({ rows }) => {
+
+    return (
+        <div className="table-wrapper">
+            <div className="table-header">
+                <span className="title">
+                    Raw Materials Added
+                </span>
+                <Button
+                    text="Export To Excel"
+                    rightIcon="export"
+                    intent="success"
+                    outlined={true}
+                />
+            </div>
+            <div className="table-responsive">
+                <table className="table">
+                    <thead>
+                        <tr className="small">
+                            <th>Name</th>
+                            <th>Measurement Unit</th>
+                            <th>Inventory Unit</th>
+                            <th>Number Of Suppliers</th>
+                            <th>Available Stock</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows.map(row =>
+                            <tr key={row.id}>
+                                <td>{row.name}</td>
+                                <td>{row.measurement_unit}</td>
+                                <td>{row.inventory_unit} of 45</td>
+                                <td>12</td>
+                                <td>40</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
 
 export const AddRawMaterialView = React.memo(() => {
-    const [cat, setCat] = React.useState<ICategoryPreview | null>(null);
-    const [name, setName] = React.useState<string>('');
-    const [mUnit, setMUnit] = React.useState<string>('item');
-    const [iUnit, setIUnit] = React.useState<string>('carton');
+    const [rows, setRows] = React.useState<IRawMaterial[]>([]);
+    const [rowsLoading, setRowsLoading] = React.useState(false);
+
+    const refreshList = React.useCallback(() => {
+        setRowsLoading(true);
+        window.SystemBackend.sendMessage(
+            AppChannel.Inventory,
+            new AllMessages.Inv.RM.GetAllMaterials()
+        )
+            .then(result => {
+                if (result.type == CommResultType.ChannelResponse)
+                    setRows(result.data!);
+                else
+                    console.error(result.error);
+            })
+            .finally(() => setRowsLoading(false))
+            .catch(err => console.error(err));
+    }, []);
+
+    useEffect(() => {
+        refreshList();
+    }, []);
 
     return (
         <NavPageView title="Add New Raw Material">
             <Card elevation={2} style={{ margin: "15px 25px" }}>
-                <FormGroup
-                    label="Material Name"
-                    inline={false}
-                >
-                    <InputGroup
-                        placeholder="Enter the material name"
-                        fill={true}
-                        leftIcon='layers'
-                        value={name}
-                        onChange={e => setName(e.target.value)}
-                    />
-                </FormGroup>
-                <Divider style={{ marginBottom: 10 }} />
+                <MaterialForm afterCreate={refreshList} />
+            </Card>
 
-                {/*<h6 className="bp3-heading">Choose Category</h6>*/}
-
-                <label className={Classes.LABEL}>Select Category</label>
-                <ChooseCategoryForm
-                    dataSource={async () => {
-                        const result = await window.SystemBackend.sendMessage(
-                            AppChannel.Inventory,
-                            new AllMessages.Inv.RM.GetAllCategories()
-                        );
-
-                        if (result.type === CommResultType.ChannelResponse) {
-                            return result.data!;
-                        }
-                        else {
-                            console.error("A communication error occured", result);
-                            throw new Error("Could not fetch categories");
-                        }
-                    }}
-                    onCategoryChange={cat => {
-                        // console.log(cat);
-                        setCat(cat);
-                    }}
-                />
-                <ProductProperties
-                    store={{
-                        m_unit: { value: mUnit, setValue: setMUnit },
-                        i_unit: { value: iUnit, setValue: setIUnit },
-                    }}
-                />
-
-                <Button
-                    text="Add Raw Material"
-                    intent="success"
-                    icon="new-grid-item"
-                    onClick={async () => {
-                        if (!cat || !cat.id || cat.id == 0) {
-                            showError("Please choose a valid category");
-                            return;
-                        }
-
-                        if (!name) {
-                            showError("Please enter a name");
-                            return;
-                        }
-
-                        const createMsg = new AllMessages.Inv.RM.CreateMaterial({
-                            name: name,
-                            categoryId: cat.id,
-                            inventory_unit: iUnit,
-                            measurement_unit: mUnit,
-                        });
-
-                        const result = await window.SystemBackend.sendMessage(AppChannel.Inventory, createMsg);
-                        if (result.type === CommResultType.ChannelResponse) {
-                            setName("");
-                        } else if (result.type === CommResultType.ChannelError) {
-                            showError(result.error || "An error occured");
-                        }
-                        else {
-                            showError("An error occured");
-                        }
-                    }}
-                />
+            <Card elevation={2} style={{ margin: "15px 25px 150px" }}>
+                {rowsLoading ?
+                    <Spinner intent="primary" size={120} /> :
+                    <RawMaterialList rows={rows} />
+                }
             </Card>
         </NavPageView>
     );

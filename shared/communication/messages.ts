@@ -26,5 +26,9 @@ export namespace AllMessages {
         export class CreateMaterial
             extends SimpleMessage<WithoutID<IRawMaterial>, void>
         { static ACTION_NAME = 'inv:rm:create' }
+
+        export class GetAllMaterials
+            extends SimpleMessage<void, Array<IRawMaterial>>
+        { static ACTION_NAME = 'inv:rm:all' }
     };
 };

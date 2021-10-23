@@ -5,7 +5,7 @@
     "license": "UNLICENSED",
     "scripts": {
         "tscript": "ts-node -r dotenv/config -r tsconfig-paths/register",
-        "typecheck": "yarn -s run tsc --noEmit",
+        "typecheck": "yarn run tsc --noEmit",
         "tm": "cross-env NODE_OPTIONS='-r ts-node/register/transpile-only' typeorm",
         "mig:gen": "yarn tm migration:generate -o",
         "mig:apply": "yarn tm migration:run",

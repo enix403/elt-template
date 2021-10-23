@@ -8,7 +8,8 @@ $yellow:  #ffc107;
 $green:   #28a745;
 $teal:    #20c997;
 $cyan:    #17a2b8;
-$primary: $blue;
+
+$primary: $orange;
 
 /* ======================= */
 
@@ -84,6 +85,11 @@ $table-row-background: #ffffff;
         &:hover {
             background-color: $table-row-border-color;
         }
+    }
+
+    tr.small th {
+        padding-top:        5px;
+        padding-bottom:     5px;
     }
 
     td {

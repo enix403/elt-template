@@ -23,7 +23,7 @@
         "rd:r": "yarn workspace @application/renderer remove",
         "r:m": "yarn workspace @application/main run",
         "r:r": "yarn workspace @application/renderer run",
-        "typecheck": "yarn r:m -s typecheck; yarn r:r -s typecheck"
+        "typecheck": "yarn r:m typecheck; yarn r:r typecheck"
     },
     "devDependencies": {
         "patch-package": "^6.4.7",

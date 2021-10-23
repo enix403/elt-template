@@ -1,2 +1,3 @@
 build-dev/
 runtime-dev/
+migrations/

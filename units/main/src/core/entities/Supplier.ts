@@ -14,12 +14,6 @@ export class Supplier extends BaseEntity {
     id!: number;
 
     @Column()
-    age!: number;
-
-    @Column()
-    second_age!: number;
-
-    @Column()
     name!: string;
 
     @ManyToMany(() => RawMaterial, mat => mat.suppliers)

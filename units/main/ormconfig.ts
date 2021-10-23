@@ -1,3 +1,5 @@
+/* TypeORM config */
+
 process.env.NODE_ENV = 'development';
 
 require('tsconfig-paths/register');
@@ -12,11 +14,13 @@ configureApplicationPaths(null, true);
 export default {
     ...getDBConnectionOptions(),
 
-    migrations: ["./src/migrations/*.ts", "./src/migrations/*.js"],
+    migrations: ["./migrations/*.ts", "./migrations/*.js"],
 
     cli: {
-        // relative to ormconfig.ts
-        entitiesDir: "./src/core/entities",
-        migrationsDir: "./src/migrations"
+        migrationsDir: "./migrations",
+
+        // Where to create new entities.
+        // Relative to ormconfig.ts
+        entitiesDir: "./src/core/entities"
     }
 } as ConnectionOptions;

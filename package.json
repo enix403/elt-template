@@ -3,7 +3,6 @@
     "private": true,
     "version": "1.0.0",
     "license": "UNLICENSED",
-    "packageManager": "yarn@3.0.2",
     "workspaces": {
         "packages": [
             "units/*"

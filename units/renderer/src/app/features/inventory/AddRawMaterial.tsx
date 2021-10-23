@@ -33,7 +33,7 @@ const ProductProps = () => {
                 </FormGroup>
             </GridColumn>
             <GridColumn colSize='auto'>
-                <FormGroup label="Stock Keeping Unit">
+                <FormGroup label="Iventory Unit">
                     <ControlGroup>
                         <HTMLSelect fill={true}>
                             <option value="1">Group Of</option>

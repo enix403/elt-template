@@ -6,6 +6,9 @@
     "scripts": {
         "tscript": "ts-node -r dotenv/config -r tsconfig-paths/register",
         "typecheck": "yarn -s run tsc --noEmit",
+        "tm": "cross-env NODE_OPTIONS='-r ts-node/register/transpile-only' typeorm",
+        "mig:gen": "yarn tm migration:generate -o",
+        "mig": "yarn tm migration:run",
         "start": "cross-env NODE_ENV=development electron -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only ./src/main/index.ts",
         "start:dev-compiled": "electron -r dotenv/config ./build-dev/main.js",
         "start:dist": "yarn run tscript ./toolchain/scripts/start-dist.ts",

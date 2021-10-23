@@ -2,18 +2,27 @@ import 'reflect-metadata';
 
 import { IS_RUNNING_DEV } from '~/utils';
 
+import type { ConnectionOptions } from 'typeorm';
 import { createConnection } from 'typeorm';
 import { allEntities } from './entities';
 
-export async function createDBConnection(storagePath: string) {
-    await createConnection({
-        type: 'sqlite',
-        database: storagePath,
+import { getStoragePath } from '@/common_paths';
 
-        // logging: IS_RUNNING_DEV,
+export function getDBConnectionOptions(): ConnectionOptions {
+    return {
+        // Connection
+        type: 'sqlite',
+        database: getStoragePath(),
+
+        // Behaviour
         logging: false,
         synchronize: IS_RUNNING_DEV,
 
-        entities: allEntities
-    });
+        // Database itself
+        entities: allEntities,
+    }
+}
+
+export async function createDBConnection() {
+    await createConnection(getDBConnectionOptions());
 }

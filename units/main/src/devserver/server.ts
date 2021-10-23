@@ -1,13 +1,10 @@
 process.env.NODE_ENV = 'development';
 
 // -- imports
-
-import path from 'path';
-
 import express from 'express';
 import cors from 'cors';
 
-import { configureApplicationPaths, getPath } from '~/pathutils';
+import { configureApplicationPaths } from '~/pathutils';
 import { createDBConnection } from '~/core/db';
 import { InventoryChannel } from '~/core/channels/inventory';
 
@@ -68,7 +65,7 @@ async function processRequest(payload: any): Promise<ChannelResponse> {
 
 async function main() {
     configureApplicationPaths(null, false);
-    await createDBConnection(path.join(getPath('data'), 'storage.sqlite3'));
+    await createDBConnection();
     setupExpressApp();
 
     console.log("Application Ready [NodeJS]:");

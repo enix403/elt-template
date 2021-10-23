@@ -9,7 +9,9 @@
             "units/*"
         ],
         "nohoist": [
-            "electron"
+            "electron",
+            "**/typeorm/**",
+            "**/typeorm"
         ]
     },
     "scripts": {

@@ -1,23 +1,22 @@
-import path from 'path';
 import { app, ipcMain } from 'electron';
 import {
     createWindow,
     recreateWindow
 } from 'main/window';
-import { getPath } from '~/pathutils';
-import { createDBConnection } from '~/core/db';
+import { getPath } from '@/pathutils';
+import { createDBConnection } from '@/core/db';
 
-import type { IpcChannel } from '~/core/channels/IpcChannel';
-import { invokeChannel } from '~/core/cnl_utils';
+import type { IpcChannel } from '@/core/channels/IpcChannel';
+import { invokeChannel } from '@/core/cnl_utils';
 
-import { InventoryChannel } from '~/core/channels/inventory';
+import { InventoryChannel } from '@/core/channels/inventory';
 
 const registeredChannels: IpcChannel[] = [
     new InventoryChannel(),
 ];
 
 export const initApp = async () => {
-    await createDBConnection(path.join(getPath('data'), 'storage.sqlite3'));
+    await createDBConnection();
 
     // setup ipc communication channels
     for (const channel of registeredChannels) {

@@ -16,7 +16,7 @@ export function getDBConnectionOptions(): ConnectionOptions {
 
         // Behaviour
         logging: false,
-        synchronize: IS_RUNNING_DEV,
+        synchronize: !IS_RUNNING_DEV,
 
         // Database itself
         entities: allEntities,

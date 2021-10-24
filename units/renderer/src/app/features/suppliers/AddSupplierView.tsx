@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import { GridRow, GridColumn } from 'app/components/Grid';
 import { NavPageView } from 'app/layout/views';
@@ -8,6 +8,7 @@ import {
     maybeGetCallingCountryCode,
     ReactPhoneInputState
 } from 'app/components/phone_input_utils';
+import type { IRawMaterial } from '@shared/object_types';
 
 import {
     Button,
@@ -21,8 +22,10 @@ import {
     Icon,
 } from '@blueprintjs/core';
 import { HorizontalSectionDivider } from 'app/components/misc_utils';
-import { CountrySelectWrapper } from 'app/components/CountrySelect';
+import { CountrySelect } from 'app/components/CountrySelect';
 import { ICountry } from 'app/components/CountrySelect/countries';
+import { AllMessages, AppChannel } from '~/../../../shared/communication';
+import { parse } from 'path/posix';
 
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",
@@ -35,16 +38,39 @@ const TelephoneInput = phone_input_factory({
     leftIcon: "phone"
 });
 
-const SupplierPersonalInformationForm = () => {
-    const [country, setCountry] = React.useState<ICountry>();
 
-    const [cellphone, setCellphone] = React.useState<ReactPhoneInputState>();
-    const [telephone, setTelephone] = React.useState<ReactPhoneInputState>();
+
+type FieldNames =
+    | 'name'
+    | 'email'
+    | 'country'
+    | 'state'
+    | 'city'
+    | 'zipCode'
+    | 'cellphoneNumber'
+    | 'officeNumber'
+    | 'addrMail'
+    | 'addrOffice'
+    | 'remarks';
+
+type ValueSetter = (f: FieldNames, val: any) => void;
+
+type FormStore = {
+    values: { [p in FieldNames]: any; },
+    setValue: ValueSetter
+};
+
+const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props => {
+    const { values, setValue } = props.store;
+
+    const form_handler = React.useCallback((name: FieldNames) => {
+        return e => setValue(name, e.target.value);
+    }, [setValue])
 
     return (
         <React.Fragment>
             <GridRow>
-                <GridColumn colSize={12}>
+                <GridColumn colSize={6}>
                     <FormGroup
                         label="Supplier Name"
                     >
@@ -52,16 +78,8 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter supplier name"
                             fill={true}
                             leftIcon="layers"
-                            intent='success'
-                        />
-                    </FormGroup>
-                </GridColumn>
-                <GridColumn colSize={6}>
-                    <FormGroup label="Company Name">
-                        <InputGroup
-                            placeholder="Company Name"
-                            fill={true}
-                            leftIcon="app-header"
+                            value={values.name}
+                            onChange={form_handler('name')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -71,17 +89,20 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter Email Address"
                             fill={true}
                             leftIcon="envelope"
+                            value={values.email}
+                            onChange={form_handler('email')}
                         />
                     </FormGroup>
                 </GridColumn>
             </GridRow>
             <GridRow>
-                <GridColumn colSize={3}>
-                    <FormGroup label="City">
-                        <InputGroup
-                            placeholder="Enter City"
+                <GridColumn colSize={4}>
+                    <FormGroup label="Country">
+                        <CountrySelect
+                            selectedCountry={values.country}
+                            onCountryChange={v => setValue('country', v)}
+                            intent="success"
                             fill={true}
-                            leftIcon="map-marker"
                         />
                     </FormGroup>
                 </GridColumn>
@@ -91,6 +112,19 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter State"
                             fill={true}
                             leftIcon="map"
+                            value={values.state}
+                            onChange={form_handler('state')}
+                        />
+                    </FormGroup>
+                </GridColumn>
+                <GridColumn colSize={3}>
+                    <FormGroup label="City">
+                        <InputGroup
+                            placeholder="Enter City"
+                            fill={true}
+                            leftIcon="map-marker"
+                            value={values.city}
+                            onChange={form_handler('city')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -100,16 +134,8 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter Code"
                             fill={true}
                             leftIcon="geolocation"
-                        />
-                    </FormGroup>
-                </GridColumn>
-                <GridColumn colSize={4}>
-                    <FormGroup label="Country">
-                        <CountrySelectWrapper
-                            selectedCountry={country}
-                            onCountryChange={setCountry}
-                            intent="success"
-                            fill={true}
+                            value={values.zipCode}
+                            onChange={form_handler('zipCode')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -122,20 +148,20 @@ const SupplierPersonalInformationForm = () => {
                                     from the country selected previouly. `}
                     >
                         <ReactPhoneInput
-                            value={cellphone ?? undefined}
-                            onChange={setCellphone}
+                            value={values.cellphoneNumber ?? undefined}
+                            onChange={v => setValue('cellphoneNumber', v)}
                             inputComponent={CellphoneInput as any}
-                            defaultCountry={maybeGetCallingCountryCode(country?.code)}
+                            defaultCountry={maybeGetCallingCountryCode(values.country?.code)}
                         />
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={6}>
                     <FormGroup label="Office Telephone Number">
                         <ReactPhoneInput
-                            value={telephone ?? undefined}
-                            onChange={setTelephone}
+                            value={values.officeNumber ?? undefined}
+                            onChange={v => setValue('officeNumber', v)}
                             inputComponent={TelephoneInput as any}
-                            defaultCountry={country?.code}
+                            defaultCountry={values.country?.code}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -147,6 +173,8 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter Address"
                             fill={true}
                             style={{ resize: 'vertical' }}
+                            value={values.addrMail}
+                            onChange={form_handler('addrMail')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -156,6 +184,8 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="Enter Address"
                             fill={true}
                             style={{ resize: 'vertical' }}
+                            value={values.addrOffice}
+                            onChange={form_handler('addrOffice')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -171,6 +201,8 @@ const SupplierPersonalInformationForm = () => {
                             placeholder="None..."
                             fill={true}
                             style={{ resize: 'vertical' }}
+                            value={values.remarks}
+                            onChange={form_handler('remarks')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -180,58 +212,142 @@ const SupplierPersonalInformationForm = () => {
     );
 };
 
-const RawMaterialInformationForm = () => {
-    return (
-        <GridRow>
-            <GridColumn colSize={6}>
-                <FormGroup
-                    label="Select Raw Material"
-                    helperText="The raw material that this vendor supplies"
-                >
-                    <HTMLSelect fill={true}>
-                        <option value='0'>Material 1</option>
-                        <option value='0'>Material 2</option>
-                        <option value='0'>Material 3</option>
-                        <option value='0'>Material 4</option>
-                        <option value='0'>Material 5</option>
-                        <option value='0'>Material 6</option>
-                    </HTMLSelect>
-                </FormGroup>
-            </GridColumn>
-            <GridColumn colSize={6}>
-                <FormGroup
-                    label="Monthly Capacity"
-                    helperText={<>Capacity measured in the defined <strong>"Measurement Unit"</strong> of the selected raw material"</>}
-                >
-                    <NumericInput
-                        placeholder="Enter Amount"
-                        fill={true}
-                        min={0}
-                    />
-                </FormGroup>
-            </GridColumn>
-        </GridRow>
-    );
-};
 
-const ViewContent = React.memo(() => {
+const ViewContent = () => {
+
+    const [form_name, setform_name] = React.useState<string>('');
+    const [form_email, setform_email] = React.useState<string>('');
+    const [form_country, setform_country] = React.useState<ICountry>();
+    const [form_state, setform_state] = React.useState<string>('');
+    const [form_city, setform_city] = React.useState<string>('');
+    const [form_zipCode, setform_zipCode] = React.useState<string>('');
+    const [form_cellphoneNumber, setform_cellphoneNumber] = React.useState<ReactPhoneInputState>();
+    const [form_officeNumber, setform_officeNumber] = React.useState<ReactPhoneInputState>();
+    const [form_addrMail, setform_addrMail] = React.useState<string>('');
+    const [form_addrOffice, setform_addrOffice] = React.useState<string>('');
+    const [form_remarks, setform_remarks] = React.useState<string>('');
+
+    const [allRawMaterial, setRawMaterials] = React.useState<IRawMaterial[]>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+    const [selectedRawMaterial, setSelectedRawMaterial] = React.useState<IRawMaterial>();
+    const [mat_Capacity, setmat_Capacity] = React.useState<number>();
+
+    const onSelectedRawMaterialChange = React.useCallback(e => {
+        const id = e.target.value;
+        setSelectedRawMaterial(allRawMaterial.find(mat => mat.id === id));
+    }, [allRawMaterial]);
+
+
+    useEffect(() => {
+        setIsLoading(true);
+        window.SystemBackend.sendMessage(
+            AppChannel.Inventory,
+            new AllMessages.Inv.RM.GetAllMaterials()
+        )
+            .then(res => {
+                setRawMaterials(res.data!);
+                if (res.data!.length > 0) setSelectedRawMaterial(res.data![0])
+            })
+            .catch(err => console.log(err))
+            .finally(() => setIsLoading(false))
+    }, []);
+
+    const personalInfo_setValue = React.useCallback((p: FieldNames, val: any) => {
+        switch (p) {
+            case 'name': return setform_name(val)
+            case 'email': return setform_email(val)
+            case 'country': return setform_country(val)
+            case 'state': return setform_state(val)
+            case 'city': return setform_city(val)
+            case 'zipCode': return setform_zipCode(val)
+            case 'cellphoneNumber': return setform_cellphoneNumber(val)
+            case 'officeNumber': return setform_officeNumber(val)
+            case 'addrMail': return setform_addrMail(val)
+            case 'addrOffice': return setform_addrOffice(val)
+            case 'remarks': return setform_remarks(val)
+        }
+    }, []);
+
+    const store: FormStore = {
+        values: {
+            name: form_name,
+            email: form_email,
+            country: form_country,
+            state: form_state,
+            city: form_city,
+            zipCode: form_zipCode,
+            cellphoneNumber: form_cellphoneNumber,
+            officeNumber: form_officeNumber,
+            addrMail: form_addrMail,
+            addrOffice: form_addrOffice,
+            remarks: form_remarks,
+        },
+        setValue: personalInfo_setValue
+    };
+
     return (
         <React.Fragment>
             <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
                 <Icon size={16} icon="user" />
                 <h5 className="bp3-heading icon-text-md">Personal Information</h5>
             </div>
-            <SupplierPersonalInformationForm />
+            <SupplierPersonalInformationForm store={store} />
+
             <HorizontalSectionDivider />
 
             <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
                 <Icon size={16} icon="duplicate" />
                 <h5 className="bp3-heading icon-text-md">Product/Raw Material Information</h5>
             </div>
-            <RawMaterialInformationForm />
+            <GridRow>
+                <GridColumn colSize={6}>
+                    <FormGroup
+                        label="Select Raw Material"
+                        helperText="The raw material that this vendor supplies"
+                    >
+                        {isLoading ?
+                            <Button disabled={true} fill={true} text="Loading Materials..." /> :
+                            <HTMLSelect
+                                fill={true}
+                                value={selectedRawMaterial?.id}
+                                onChange={onSelectedRawMaterialChange}
+                            >
+                                {allRawMaterial.map(mat =>
+                                    <option key={mat.id} value={mat.id}>{mat.name}</option>
+                                )}
+                            </HTMLSelect>
+                        }
+                    </FormGroup>
+                </GridColumn>
+                <GridColumn colSize={6}>
+                    <FormGroup
+                        label="Monthly Capacity"
+                        helperText={<>Capacity measured in the defined <strong>"Measurement Unit"</strong> of the selected raw material"</>}
+                    >
+                        <NumericInput
+                            placeholder="Enter Amount"
+                            fill={true}
+                            min={0}
+                            leftIcon="truck"
+                            clampValueOnBlur={true}
+                            value={mat_Capacity}
+                            onValueChange={value => {
+                                setmat_Capacity(value);
+                            }}
+                        />
+                    </FormGroup>
+                </GridColumn>
+            </GridRow>
+            <br />
+            <Button
+                text="Add Vendor"
+                rightIcon="chevron-right"
+                intent="primary"
+            />
         </React.Fragment>
     );
-});
+};
 
 
 export const AddSupplierView = React.memo(() => {
@@ -239,12 +355,6 @@ export const AddSupplierView = React.memo(() => {
         <NavPageView title="Add a New Supplier">
             <Card elevation={2} style={{ margin: "15px 25px" }}>
                 <ViewContent />
-                <br />
-                <Button
-                    text="Add Vendor"
-                    rightIcon="chevron-right"
-                    intent="primary"
-                />
             </Card>
         </NavPageView>
     );

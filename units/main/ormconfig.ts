@@ -14,13 +14,13 @@ configureApplicationPaths(null, true);
 export default {
     ...getDBConnectionOptions(),
 
-    migrations: ["./migrations/*.ts", "./migrations/*.js"],
+    migrations: ["migrations/*.ts", "migrations/*.js"],
 
     cli: {
         migrationsDir: "./migrations",
 
         // Where to create new entities.
         // Relative to ormconfig.ts
-        entitiesDir: "./src/core/entities"
+        entitiesDir: "src/core/entities"
     }
 } as ConnectionOptions;

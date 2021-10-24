@@ -37,8 +37,8 @@ const FLAG_STYLES: React.CSSProperties = {
 };
 const PLACEHOLDER_FLAG = <Icon icon="help" style={{ marginRight: 10 }} />
 
-const CountrySelect = Select.ofType<ICountry>();
-export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
+const _CountrySelectInternal = Select.ofType<ICountry>();
+export const CountrySelect: React.FC<CountrySelectProps> = (props) => {
     const {
         intent = 'none',
         fill = false,
@@ -50,7 +50,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
     const [activeItem, setActiveItem] = React.useState<ICountry | null>();
 
     return (
-        <CountrySelect
+        <_CountrySelectInternal
             items={ALL_COUNTRIES}
             itemRenderer={(item, { handleClick, modifiers, query }) => {
                 const cname = highlightText(item.name, query);
@@ -147,7 +147,7 @@ export const CountrySelectWrapper: React.FC<CountrySelectProps> = (props) => {
                 {...targetButtonProps}
                 fill={fill}
             />
-        </CountrySelect>
+        </_CountrySelectInternal>
     );
 }
 

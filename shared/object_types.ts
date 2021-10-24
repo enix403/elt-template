@@ -14,3 +14,26 @@ export interface IRawMaterial {
     inventory_unit: string;
     categoryId: number;
 };
+
+export interface ISupplier {
+    id: number;
+    name: string;
+    info?: ISupplierInfo | undefined;
+}
+
+export interface ISupplierInfo {
+    email: string;
+
+    countryCode: string;
+    state: string;
+    city: string;
+    zipCode: string;
+
+    cellphoneNumber: string;
+    officeNumber: string;
+
+    addrMail: string;
+    addrOffice: string;
+
+    remarks?: string;
+}

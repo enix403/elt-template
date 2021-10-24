@@ -14,7 +14,7 @@ export abstract class ActionMessageChannel implements IpcChannel {
 
     protected registerHandler<T, K>(
         factory: MessageFactory<T, K>,
-        handler: (payload: Partial<T>) => Promise<K>
+        handler: (payload: T) => Promise<K>
     ): void {
         const actionName = (factory as any as typeof Message).ACTION_NAME;
         this.allHandlers[actionName] = handler;

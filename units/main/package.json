@@ -24,6 +24,7 @@
     "dependencies": {
         "cors": "^2.8.5",
         "express": "^4.17.1",
+        "pino": "^7.0.5",
         "reflect-metadata": "^0.1.13",
         "sqlite3": "^5.0.2",
         "typeorm": "^0.2.38"
@@ -42,6 +43,7 @@
         "electron-debug": "^3.2.0",
         "json5": "^2.2.0",
         "merge-anything": "^4.0.1",
+        "pino-pretty": "^7.1.0",
         "rollup": "^2.57.0",
         "rollup-plugin-auto-external": "^2.0.0",
         "rollup-plugin-copy": "^3.4.0",

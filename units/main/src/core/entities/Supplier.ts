@@ -11,8 +11,10 @@ import {
 import { RawMaterial } from './RawMaterial';
 import { SupplierInfo } from './SupplierInfo';
 
+import { ISupplier } from '@shared/object_types';
+
 @Entity("tbl_suppliers")
-export class Supplier extends BaseEntity {
+export class Supplier extends BaseEntity implements ISupplier {
 
     @PrimaryGeneratedColumn()
     id!: number;

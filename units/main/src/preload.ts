@@ -1,18 +1,23 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
-import type { ISystemBackendAPI } from '@shared/system_api';
-import { AppChannel, AllMessages, Message } from '@shared/communication';
+import { AppChannel, AllMessages, Message, CommResultType } from '@shared/communication';
 import { IS_RUNNING_DEV } from './utils';
 
+import type { ISystemBackendAPI } from '@shared/system_api';
+import type { ChannelResponse } from '@shared/communication';
 
-async function _sendPlainMessage(channel: AppChannel, message: any) {
+
+async function _sendPlainMessage(channel: AppChannel, message: any): Promise<ChannelResponse<any>> {
     // TODO: Check for channel validity at runtime using:
     // Object.values(AppChannel).includes(channel);
 
-    // TODO: Instead of directly returning the promise wrap it in a
-    // try-catch block to prevent possible (unlikely) unhandled rejected promises.
-    // Also return a CommResultType.SystemError in this case
-    return ipcRenderer.invoke(channel.toString(), message);
+    try {
+        return await ipcRenderer.invoke(channel.toString(), message);
+    }
+    catch (e) {
+        console.error("CommunicationError:", "Electron IPC communication error");
+        return { type: CommResultType.CommunicationError };
+    }
 }
 
 const electronBackendApi: ISystemBackendAPI = {
@@ -22,6 +27,7 @@ const electronBackendApi: ISystemBackendAPI = {
 };
 
 contextBridge.exposeInMainWorld('SystemBackend', electronBackendApi);
+
 if (IS_RUNNING_DEV) {
     contextBridge.exposeInMainWorld('AppChannel', AppChannel)
     contextBridge.exposeInMainWorld('AllMessages', AllMessages)

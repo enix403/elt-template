@@ -9,14 +9,21 @@ import {
     Callout
 } from '@blueprintjs/core';
 
-import { FormGroupWithoutLabel } from '~/app/components/form_group_utils';
-import { AppToaster } from '~/app/toaster';
+import { FormGroupWithoutLabel } from '@/app/components/form_group_utils';
+import { AppToaster } from '@/app/toaster';
 
-import type { NodePath } from '~/app/components/tree_utils';
-import { CategorySelect } from 'app/components/CategorySelect';
-import { ICategoryPreview, findCategoryFromPath } from 'app/components/CategorySelect/utils';
-import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
+import { CategorySelect } from '@/app/components/CategorySelect';
+import { ICategoryPreview, findCategoryFromPath } from '@/app/components/CategorySelect/utils';
+import { AppChannel, AllMessages } from '@shared/communication';
+
+import type { NodePath } from '@/app/components/tree_utils';
 import type { ICategory } from '@shared/object_types';
+
+import {
+    isResponseSuccessful,
+    formatResponseError,
+    formatResponseErrorLog
+ } from '@/app/helpers';
 
 interface ICreateCategoryFormProps {
     dataSource: () => Promise<ICategory[]>
@@ -42,9 +49,9 @@ class CreateCategoryForm extends React.Component<ICreateCategoryFormProps, any> 
             const data = await this.props.dataSource();
             this.setState({ data });
         }
-        catch (e) {
+        catch (e: any) {
             this.setState({ data: null, dataFetchError: true });
-            console.error(e);
+            console.error("Could not fetch categories:", e.message);
         }
     };
 
@@ -174,31 +181,25 @@ export const ManageCategoriesView = React.memo(() => {
                             new AllMessages.Inv.RM.GetAllCategories()
                         );
 
-                        if (result.type === CommResultType.ChannelResponse) {
-                            return result.data!;
-                        }
-                        else {
-                            console.error("A communication error occured", result);
-                            throw new Error("Could not fetch categories");
-                        }
+                        if (!isResponseSuccessful(result))
+                            throw new Error(formatResponseErrorLog(result));
+
+                        return result.data!;
                     }}
                     onSave={async (name, parent) => {
                         if (parent == null)
                             throw new Error("Please select a parent category");
+
+                        if (!name)
+                            throw new Error("Please enter a name");
 
                         const result = await window.SystemBackend.sendMessage(
                             AppChannel.Inventory,
                             new AllMessages.Inv.RM.CreateCategory({ name, parentId: parent.id })
                         );
 
-                        if (result.type !== CommResultType.ChannelResponse) {
-                            if (result.type === CommResultType.ChannelError) {
-                                throw new Error(result.error);
-                            } else {
-                                console.log("An error occured", result);
-                                throw new Error("An error occured while creating the item");
-                            }
-                        }
+                        if (!isResponseSuccessful(result))
+                            throw new Error(formatResponseError(result));
                     }}
                 />
             </Card>

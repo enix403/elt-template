@@ -5,6 +5,8 @@ import {
     Message
 } from "@shared/communication";
 
+import type { ChannelResponse } from "@shared/communication";
+
 export function setupDevSystemApi() {
     if (window.SystemBackend && typeof window.SystemBackend == 'object')
         return
@@ -15,7 +17,7 @@ export function setupDevSystemApi() {
     window['AppChannel'] = AppChannel;
     window['AllMessages'] = AllMessages;
 
-    const _sendPlainMessage = async (channel: AppChannel, message: any): Promise<any> => {
+    const _sendPlainMessage = async (channel: AppChannel, message: any): Promise<ChannelResponse<any>> => {
         try {
             // TODO: get the port out of an env variable instead of hardcoding it
             const rawResponse = await fetch('http://localhost:4201', {
@@ -26,10 +28,8 @@ export function setupDevSystemApi() {
             return await rawResponse.json();
         }
         catch (e) {
-            return {
-                type: CommResultType.SystemError,
-                error: "Http request send/receive error"
-            }
+            console.error("CommunicationError:", "Http request send/receive error");
+            return { type: CommResultType.CommunicationError };
         }
     }
 

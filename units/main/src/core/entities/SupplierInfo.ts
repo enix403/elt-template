@@ -1,9 +1,9 @@
-import {Column, Entity, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {BaseEntity, Column, Entity, OneToOne, PrimaryGeneratedColumn} from "typeorm";
 import type { ISupplierInfo } from "@shared/object_types";
 import { Supplier } from "./Supplier";
 
 @Entity()
-export class SupplierInfo implements ISupplierInfo {
+export class SupplierInfo extends BaseEntity implements ISupplierInfo {
     @PrimaryGeneratedColumn()
     id!: number
 

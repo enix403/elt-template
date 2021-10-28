@@ -54,10 +54,7 @@ async function processRequest(payload: any): Promise<ChannelResponse> {
     const targetChannel = registeredChannels.find(c => c.channelName == targetChannelName);
 
     if (!targetChannel) {
-        return {
-            type: CommResultType.InvalidChannel,
-            error: "Please specify a valid message channel"
-        };
+        return { type: CommResultType.InvalidChannel };
     }
 
     return await invokeChannel(targetChannel, payload.message || null);

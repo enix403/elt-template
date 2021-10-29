@@ -23,7 +23,13 @@ export function initLogging() {
         allTargets.push({
             target: 'pino-pretty',
             level: 'debug',
-            options: { colorize: true },
+            options: {
+                colorize: true,
+                singleLine: true,
+                ignore: "lvlLabel",
+                levelFirst: false,
+                translateTime: "SYS:yyyy-mm-dd HH:MM:ss"
+            },
         });
     else
         allTargets.push({
@@ -33,12 +39,26 @@ export function initLogging() {
         });
 
     logger = pino({
-        name: "MAIN",
+        name: "main",
         level: IS_RUNNING_DEV ? "debug" : 'info',
 
         base: undefined,
         timestamp: true,
 
+        formatters: {
+            level: (level, value) => ({ level: value, lvlLabel: level })
+        }
     }, pino.transport({ targets: allTargets }));
 
+}
+
+
+function pad(padding: string, str: string | number, padLeft: boolean) {
+    if (typeof str === 'undefined')
+        return padding;
+    if (padLeft) {
+        return (padding + str).slice(-padding.length);
+    } else {
+        return (str + padding).substring(0, padding.length);
+    }
 }

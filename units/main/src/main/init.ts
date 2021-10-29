@@ -6,6 +6,7 @@ import {
 import { getPath } from '@/pathutils';
 import { createDBConnection } from '@/core/db';
 
+import { logger } from '@/logging';
 import type { IpcChannel } from '@/core/channels/IpcChannel';
 import { invokeChannel } from '@/core/cnl_utils';
 
@@ -37,18 +38,19 @@ export const initApp = async () => {
 
     try {
         await app.whenReady();
-        console.log("Application Ready [Electron]");
-        console.log("Asset Paths: " + getPath('assets'));
-        console.log("Data Paths: " + getPath('data'));
-        console.log("Config Paths: " + getPath('config'));
-        console.log("Cache Paths: " + getPath('cache'));
-        console.log();
-        console.log("Creating window");
+        logger.info("Application Ready [Electron]");
+
+        logger.info("Asset Path:   %s ", getPath('assets'));
+        logger.info("Data Path:    %s ", getPath('data'));
+        logger.info("Config Path:  %s ", getPath('config'));
+        logger.info("Cache Path:   %s ", getPath('cache'));
+
+        logger.debug("Creating main window");
         createWindow();
     }
     catch (err) {
-        console.error("Unable to start app");
-        console.error(err);
+        logger.error("Unable to start app");
+        logger.error(err);
         process.exit(1);
     }
 

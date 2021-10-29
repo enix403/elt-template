@@ -3,3 +3,5 @@ runtime-dev/
 migrations/
 
 demo.ts
+*.demo.ts
+*.log

@@ -1,6 +1,7 @@
 import type { ChannelResponse } from '@shared/communication/interfaces';
 import type { IpcChannel } from './channels/IpcChannel';
 import { CommResultType } from '@shared/communication/constants';
+import { logger } from '@/logging';
 
 export class ChannelError extends Error {
     constructor(message?: string) {
@@ -20,15 +21,14 @@ export async function invokeChannel(
             data: await ipcChannel.handle(message)
         };
     }
-    catch (err) {
+    catch (err: any) {
         if (err instanceof ChannelError) {
             return {
                 type: CommResultType.ChannelError,
                 error: err.message
             };
         }
-        // TODO: Use a real logging library
-        console.log(err);
+        logger.error("invoke-channel SysError: %s",  err.message);
         return { type: CommResultType.SystemError };
     }
 }

@@ -4,6 +4,8 @@ import { IS_RUNNING_DEV } from '~/utils';
 import { initApp } from './init';
 import { app } from 'electron';
 
+import { logger, initLogging } from '@/logging';
+
 import { app_name, electron_data_directory_name } from '~/appconfig.json';
 
 app.setName(app_name);
@@ -16,8 +18,10 @@ app.setPath('userData', path.join(app.getPath('appData'), electron_data_director
 configureApplicationPaths(app.getPath('appData'));
 configureAssetsPath(app.isPackaged);
 
+initLogging();
+
 if (IS_RUNNING_DEV) {
-    console.log("Application is running with NODE_ENV=development. Development features are enabled");
+    logger.debug("Application is running with NODE_ENV=development. Development features are enabled");
     require('electron-debug')({ showDevTools: false });
 }
 

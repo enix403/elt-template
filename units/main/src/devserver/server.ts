@@ -1,17 +1,22 @@
 process.env.NODE_ENV = 'development';
 
+// Clear the screen
+process.stdout.write('\x1Bc');
+
 // -- imports
 import express from 'express';
 import cors from 'cors';
 
-import { configureApplicationPaths } from '~/pathutils';
-import { createDBConnection } from '~/core/db';
-import { InventoryChannel } from '~/core/channels/inventory';
+import { configureApplicationPaths } from '@/pathutils';
+import { createDBConnection } from '@/core/db';
+import { initLogging, logger } from '@/logging';
 
-import type { IpcChannel } from '~/core/channels/IpcChannel';
+import { InventoryChannel } from '@/core/channels/inventory';
+
+import type { IpcChannel } from '@/core/channels/IpcChannel';
 import type { ChannelResponse } from '@shared/communication/interfaces';
 import { CommResultType } from '@shared/communication/constants';
-import { invokeChannel } from '~/core/cnl_utils';
+import { invokeChannel } from '@/core/cnl_utils';
 
 // -- code body
 
@@ -62,11 +67,15 @@ async function processRequest(payload: any): Promise<ChannelResponse> {
 
 async function main() {
     configureApplicationPaths(null, false);
+    initLogging();
+
+
+    logger.debug("Connecting to database");
     await createDBConnection();
     setupExpressApp();
 
-    console.log("Application Ready [NodeJS]:");
-    app.listen(PORT, () => console.log(`\nlistening on http://localhost:${PORT}\n`))
+    logger.info("Application Ready [NodeJS]:");
+    app.listen(PORT, () => logger.info(`Listening on http://localhost:${PORT}`))
 }
 
 

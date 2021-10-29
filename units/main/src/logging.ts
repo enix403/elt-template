@@ -1,64 +1,79 @@
-import { mkdirSync } from 'fs';
 import path from 'path';
-import pino from 'pino';
+
+import winston, { format } from 'winston';
+
 import { getPath } from './pathutils';
 import { IS_RUNNING_DEV } from './utils';
 
-export let logger: pino.Logger;
+export let logger: winston.Logger;
 
 export function initLogging() {
 
-    const parentDir = path.join(getPath('data'), 'logs');
-    mkdirSync(parentDir, { recursive: true });
+    const logsDir = path.join(getPath('data'), 'logs');
 
-    const allTargets = [
-        {
-            level: 'warn',
-            target: 'pino/file',
-            options: { destination: path.join(parentDir, 'app.log') }
-        },
-    ] as pino.TransportTargetOptions[];
+    const commonFormats = format.combine(
+        format.timestamp({ format: 'YYYY-MM-DD HH:mm' }),
+        format.splat()
+    );
 
-    if (IS_RUNNING_DEV)
-        allTargets.push({
-            target: 'pino-pretty',
-            level: 'debug',
-            options: {
-                colorize: true,
-                singleLine: true,
-                ignore: "lvlLabel",
-                levelFirst: false,
-                translateTime: "SYS:yyyy-mm-dd HH:MM:ss"
-            },
-        });
-    else
-        allTargets.push({
-            level: 'info',
-            target: 'pino/file',
-            options: { destination: 1 /* stdout */ }
-        });
+    /**
+     * Levels
+     *      error       = 0
+     *      warn        = 1
+     *      info        = 2
+     *      http        = 3
+     *      verbose     = 4
+     *      debug       = 5
+     *      silly       = 6
+     * */
 
-    logger = pino({
-        name: "main",
-        level: IS_RUNNING_DEV ? "debug" : 'info',
+    // const generalFileTransport = new winston.transports.File({
+        // level: IS_RUNNING_DEV ? 'debug' : 'info',
+        // filename: path.join(logsDir, "combined.log"),
+        // format: format.json()
+    // });
 
-        base: undefined,
-        timestamp: true,
+    const errorFileTransport = new winston.transports.File({
+        level: 'warn',
+        filename: path.join(logsDir, "error.log"),
+        format: format.json()
+    });
 
-        formatters: {
-            level: (level, value) => ({ level: value, lvlLabel: level })
-        }
-    }, pino.transport({ targets: allTargets }));
+    let consoleFormat: winston.Logform.Format;
 
-}
-
-
-function pad(padding: string, str: string | number, padLeft: boolean) {
-    if (typeof str === 'undefined')
-        return padding;
-    if (padLeft) {
-        return (padding + str).slice(-padding.length);
-    } else {
-        return (str + padding).substring(0, padding.length);
+    if (IS_RUNNING_DEV) {
+        consoleFormat = format.combine(
+            format(info => {
+                info.level = `(${info.level.toUpperCase()})`;
+                info.message = `: ${info.message}`;
+                return info;
+            })(),
+            format.colorize({ all: true }),
+            format.padLevels(),
+            format.printf(info =>
+                `[ ${info.timestamp} ] ${info.level} ${info.message}`)
+        );
     }
+    else {
+        consoleFormat = format.combine(
+            format.printf(info =>
+                `[ ${info.timestamp} ] ${info.level} ${info.message}`)
+        )
+    }
+
+    let stdoutTransport = new winston.transports.Console({
+        format: consoleFormat,
+        debugStdout: IS_RUNNING_DEV,
+        level: IS_RUNNING_DEV ? 'debug' : 'info',
+    });
+
+
+    logger = winston.createLogger({
+        format: commonFormats,
+        transports: [
+            // generalFileTransport,
+            errorFileTransport,
+            stdoutTransport,
+        ]
+    });
 }

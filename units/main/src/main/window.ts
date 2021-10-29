@@ -1,6 +1,7 @@
 import path from "path";
 import { BrowserWindow, shell } from "electron";
 import { resolveHtmlPath, IS_RUNNING_DEV } from '~/utils';
+import { logger } from '@/logging';
 
 import {
     default_win_title
@@ -48,7 +49,7 @@ export const createWindow = async () => {
     });
 
     mainWindow.on("closed", () => {
-        console.log("Main window closed");
+        logger.debug("Main window closed");
         mainWindow = null;
     });
 

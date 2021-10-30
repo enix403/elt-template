@@ -6,11 +6,11 @@
     "scripts": {
         "tscript": "ts-node -r dotenv/config -r tsconfig-paths/register",
         "typecheck": "yarn run tsc --noEmit",
-        "tm": "cross-env NODE_OPTIONS='-r ts-node/register/transpile-only' typeorm",
-        "mig:gen": "yarn tm migration:generate -o",
-        "mig:apply": "yarn tm migration:run",
-        "mig:fresh": "run tm schema:drop && run tm cache:clear && run tm schema:sync",
-        "mig": "run mig:gen -n auto && run mig:apply",
+        "orm": "cross-env TS_NODE_TRANSPILE_ONLY=true mikro-orm",
+        "mig:gen": "yarn orm migration:create",
+        "mig:apply": "yarn orm migration:up",
+        "mig": "yarn run mig:gen && yarn run mig:apply",
+        "mig:fresh": "node ./toolchain/rmrf.js migrations && yarn run orm schema:drop --drop-migrations-table -r && yarn run mig",
         "start": "cross-env NODE_ENV=development electron -r dotenv/config -r tsconfig-paths/register -r ts-node/register/transpile-only ./src/main/index.ts",
         "start:dev-compiled": "electron -r dotenv/config ./build-dev/main.js",
         "start:dist": "yarn run tscript ./toolchain/scripts/start-dist.ts",
@@ -22,20 +22,22 @@
         "pack": "electron-builder build"
     },
     "dependencies": {
+        "@mikro-orm/core": "^4.5.9",
+        "@mikro-orm/sqlite": "^4.5.9",
         "cors": "^2.8.5",
         "express": "^4.17.1",
         "reflect-metadata": "^0.1.13",
         "sqlite3": "^5.0.2",
-        "typeorm": "^0.2.38",
         "winston": "^3.3.3"
     },
     "devDependencies": {
+        "@mikro-orm/cli": "^4.5.9",
+        "@mikro-orm/migrations": "^4.5.9",
         "@rollup/plugin-commonjs": "^20.0.0",
         "@rollup/plugin-json": "^4.1.0",
         "@rollup/plugin-replace": "^3.0.0",
         "@types/express": "^4.17.13",
         "@types/node": "^16.10.1",
-        "chalk": "^4.1.2",
         "cross-env": "^7.0.3",
         "dotenv": "^10.0.0",
         "electron": "15.0.0",
@@ -57,5 +59,11 @@
         "tsconfig-paths": "^3.11.0",
         "tslib": "^2.3.1",
         "typescript": "^4.4.3"
+    },
+    "mikro-orm": {
+        "useTsNode": true,
+        "configPaths": [
+            "./mikro-orm.config.ts"
+        ]
     }
 }

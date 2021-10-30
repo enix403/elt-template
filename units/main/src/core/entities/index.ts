@@ -1,30 +1,16 @@
-import type { BaseEntity } from 'typeorm';
+import { SimpleEntitySchema } from './SimpleEntity';
+import { RMCategory, RMCategorySchema } from './RMCategory';
+import { RawMaterial, RawMaterialSchema } from './RawMaterial';
 
-import { RawMaterial } from "./RawMaterial";
-import { RMCategory } from "./RMCategory";
-import { Supplier } from "./Supplier";
-import { SupplierInfo } from "./SupplierInfo";
-
-
-export const allEntities = [
-    RawMaterial,
-    RMCategory,
-    Supplier,
-    SupplierInfo,
+const allEntities = [
+    SimpleEntitySchema,
+    RMCategorySchema,
+    RawMaterialSchema
 ];
 
+export default allEntities;
 
 export {
-    RawMaterial,
     RMCategory,
-    Supplier,
-    SupplierInfo,
-};
-
-
-/* See https://stackoverflow.com/a/51419293 */
-export type ModelRelation<T> = {
-    [P in keyof Required<T>]: T[P] extends Array<BaseEntity> | BaseEntity ? P : never
-}[keyof T];
-
-export type ModelRelationList<T> = T extends BaseEntity ? Array<ModelRelation<T>> : never;
+    RawMaterial
+}

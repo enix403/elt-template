@@ -1,27 +1,29 @@
-import {
-    Entity,
-    BaseEntity,
-    Column,
-    PrimaryGeneratedColumn,
-    Tree,
-    TreeChildren,
-    TreeParent
-} from 'typeorm';
+import { Collection, EntitySchema, IdentifiedReference } from "@mikro-orm/core";
+import { SimpleEntity } from "./SimpleEntity";
 
-import type { ICategory } from '@shared/object_types';
-
-@Entity("tbl_rm_category")
-@Tree("nested-set")
-export class RMCategory extends BaseEntity implements ICategory {
-    @PrimaryGeneratedColumn()
-    id!: number
-
-    @Column()
+export class RMCategory extends SimpleEntity {
     name!: string;
-
-    @TreeParent()
-    parent!: RMCategory;
-
-    @TreeChildren()
-    children!: RMCategory[];
+    children!: Collection<RMCategory>;
+    parent?: IdentifiedReference<RMCategory> | undefined;
 }
+
+export const RMCategorySchema = new EntitySchema<RMCategory, SimpleEntity>({
+    class: RMCategory,
+    tableName: 'tbl_rm_cats',
+    properties: {
+        name: { type: String },
+        children: {
+            reference: '1:m',
+            entity: () => RMCategory,
+            mappedBy: cat => cat.parent,
+            nullable: false,
+        },
+        parent: {
+            reference: 'm:1',
+            entity: () => RMCategory,
+            inversedBy: cat => cat.children,
+            wrappedReference: true,
+            nullable: true
+        }
+    }
+});

@@ -1,21 +1,55 @@
 import { AppChannel, AllMessages } from '@shared/communication';
 import { ActionMessageChannel } from '~/core/channels/ActionMessageChannel';
 import { ChannelError } from '~/core/cnl_utils';
-import { getManager, Raw } from 'typeorm';
 
 import {
     RMCategory,
     RawMaterial
-} from '~/core/entities';
+} from '@/core/entities';
+import { orm, EnttManager } from '@/core/db';
+import { QueryOrderNumeric } from '@mikro-orm/core';
 
-async function createRootCategoryIfNotExists() {
-    const rootNode = await RMCategory.findOne(0);
-    if (!rootNode) {
-        const node = new RMCategory();
-        node.id = 0;
-        node.name = '-ROOT-';
-        await node.save();
+import type { ICategory } from '@shared/object_types';
+
+async function createRootCategoryIfNotExists(em: EnttManager) {
+    const rootNode = await em.findOne(RMCategory, { id: 0 });
+    if (!rootNode)
+        await em.persistAndFlush(em.create(RMCategory, { id: 0, name: '--ROOT--' }));
+}
+
+/**
+ * Convert adjency list to tree object
+ *
+ * @see https://stackoverflow.com/a/21343255
+ * */
+function toTree(flatNodes: RMCategory[]) {
+
+    const nodes = [] as ICategory[];
+    const toplevelNodes = [] as ICategory[];
+    const lookupList = {};
+
+    for (var i = 0; i < flatNodes.length; i++) {
+        const fnode = flatNodes[i];
+        let lnode: ICategory = {
+            id: fnode.id,
+            name: fnode.name,
+            children: []
+        };
+        lookupList[lnode.id] = lnode;
+        nodes.push(lnode);
+        if (fnode.parent == null) {
+            toplevelNodes.push(lnode);
+        }
     }
+
+    for (var i = 0; i < nodes.length; i++) {
+        const fnode = flatNodes[i];
+        if (!(fnode.parent == null)) {
+            lookupList[fnode.parent.id].children = lookupList[fnode.parent.id].children.concat([nodes[i]]);
+        }
+    }
+
+    return toplevelNodes;
 }
 
 export class InventoryChannel extends ActionMessageChannel {
@@ -27,7 +61,8 @@ export class InventoryChannel extends ActionMessageChannel {
         this.registerHandler(
             AllMessages.Inv.RM.CreateCategory,
             async ({ name, parentId }) => {
-                await createRootCategoryIfNotExists();
+                const em = orm.em.fork();
+                await createRootCategoryIfNotExists(em);
 
                 if (!name)
                     throw new ChannelError("Invalid name");
@@ -38,23 +73,31 @@ export class InventoryChannel extends ActionMessageChannel {
                 parentId = parseInt(parentId.toString());
 
                 let parentNode: RMCategory;
-                try { parentNode = await RMCategory.findOneOrFail(parentId); }
+                try { parentNode = await em.findOneOrFail(RMCategory, { id: parentId }); }
                 catch (e) { throw new ChannelError("Invalid parentId"); }
 
-                const node = new RMCategory();
-                node.name = name;
-                node.parent = parentNode;
-                await node.save();
+                await em.persistAndFlush(
+                    em.create(RMCategory, {
+                        name,
+                        parent: parentNode
+                    })
+                );
             }
         );
-
 
         this.registerHandler(
             AllMessages.Inv.RM.GetAllCategories,
             async () => {
-                const tree = await getManager()
-                                    .getTreeRepository(RMCategory)
-                                    .findTrees();
+                const em = orm.em.fork();
+                const nodes = await em.find(RMCategory, {},
+                    {
+                        orderBy: {
+                            parent: QueryOrderNumeric.ASC
+                        }
+                    }
+                );
+
+                const tree = toTree(nodes);
                 const treeRoot = tree[0];
                 return treeRoot ? treeRoot.children : [];
             }
@@ -62,25 +105,31 @@ export class InventoryChannel extends ActionMessageChannel {
 
         this.registerHandler(
             AllMessages.Inv.RM.CreateMaterial,
-            async ({ name, categoryId, measurement_unit, inventory_unit }) => {
-                const mat = new RawMaterial();
-                mat.name = name!;
-                mat.inventory_unit = inventory_unit!;
-                mat.measurement_unit = measurement_unit!;
+            async ({ name, category, measurement_unit, inventory_unit }) => {
+                const em = orm.em.fork();
+
+                let targetCat: RMCategory;
                 try {
-                    mat.category = await RMCategory.findOneOrFail(categoryId);
+                    targetCat = await em.findOneOrFail(RMCategory, { id: category.id });
                 }
                 catch {
                     throw new ChannelError("Category not found");
                 }
 
-                await mat.save();
+                const mat = em.create(RawMaterial, {
+                    name,
+                    inventory_unit,
+                    measurement_unit,
+                    category: targetCat
+                });
+
+                await em.persistAndFlush(mat);
             }
         );
 
         this.registerHandler(
             AllMessages.Inv.RM.GetAllMaterials,
-            async () => RawMaterial.find()
+            async () => orm.em.fork().find(RawMaterial, {})
         );
     }
 }

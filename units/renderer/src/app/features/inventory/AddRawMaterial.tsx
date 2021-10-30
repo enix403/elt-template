@@ -11,17 +11,14 @@ import {
     ControlGroup,
     Classes,
     Card,
-    Icon,
     Spinner,
 } from '@blueprintjs/core';
 
 import { ChooseCategoryForm } from './commom/ChooseCategory';
-import type { ICategoryPreview } from 'app/components/CategorySelect/utils';
-
 import { AppToaster } from '@/app/toaster';
 import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
 
-import type { IRawMaterial } from '@shared/object_types';
+import type { IRawMaterial, ICategoryPreview } from '@shared/object_types';
 
 type ProductPropNames = 'm_unit' | 'i_unit';
 
@@ -150,7 +147,7 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                     setIsSubmitting(true);
                     const createMsg = new AllMessages.Inv.RM.CreateMaterial({
                         name: name,
-                        categoryId: cat.id,
+                        category: { id: cat.id },
                         inventory_unit: iUnit,
                         measurement_unit: mUnit,
                     });

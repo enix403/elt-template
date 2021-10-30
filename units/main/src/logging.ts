@@ -1,6 +1,6 @@
 import path from 'path';
 
-import winston, { format } from 'winston';
+import winston, { format, createLogger, transports } from 'winston';
 
 import { getPath } from './pathutils';
 import { IS_RUNNING_DEV } from './utils';
@@ -8,6 +8,9 @@ import { IS_RUNNING_DEV } from './utils';
 export let logger: winston.Logger;
 
 export function initLogging() {
+
+    if (logger !== undefined)
+        return;
 
     const logsDir = path.join(getPath('data'), 'logs');
 
@@ -27,13 +30,13 @@ export function initLogging() {
      *      silly       = 6
      * */
 
-    // const generalFileTransport = new winston.transports.File({
+    // const generalFileTransport = new transports.File({
         // level: IS_RUNNING_DEV ? 'debug' : 'info',
         // filename: path.join(logsDir, "combined.log"),
         // format: format.json()
     // });
 
-    const errorFileTransport = new winston.transports.File({
+    const errorFileTransport = new transports.File({
         level: 'warn',
         filename: path.join(logsDir, "error.log"),
         format: format.json()
@@ -61,14 +64,14 @@ export function initLogging() {
         )
     }
 
-    let stdoutTransport = new winston.transports.Console({
+    let stdoutTransport = new transports.Console({
         format: consoleFormat,
         debugStdout: IS_RUNNING_DEV,
         level: IS_RUNNING_DEV ? 'debug' : 'info',
     });
 
 
-    logger = winston.createLogger({
+    logger = createLogger({
         format: commonFormats,
         transports: [
             // generalFileTransport,

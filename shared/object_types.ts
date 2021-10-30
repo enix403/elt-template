@@ -1,18 +1,23 @@
+import type { TypedOmit } from './tsutils';
+
 export type HasID<T = number> = { id: T };
 export type WithoutID<T extends HasID<K>, K = number> = Omit<T, 'id'>;
+export type IDRef<K = number> = { id: K };
 
 export interface ICategory {
     id: number;
     name: string;
-    children?: ICategory[];
+    children?: Array<ICategory>;
 };
+
+export type ICategoryPreview = TypedOmit<ICategory, 'children'>;
 
 export interface IRawMaterial {
     id: number;
     name: string;
     measurement_unit: string;
     inventory_unit: string;
-    categoryId: number;
+    category: IDRef;
 };
 
 export interface ISupplier {

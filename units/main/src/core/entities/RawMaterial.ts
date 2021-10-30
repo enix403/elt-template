@@ -1,42 +1,30 @@
-import {
-    Entity,
-    BaseEntity,
-    Column,
-    PrimaryGeneratedColumn,
-    ManyToMany,
-    ManyToOne,
-    JoinTable,
-    RelationId
-} from 'typeorm';
+import { EntitySchema, IdentifiedReference } from "@mikro-orm/core";
 
-import type { IRawMaterial } from '@shared/object_types';
+import { SimpleEntity } from "./SimpleEntity";
+import { RMCategory } from "./RMCategory";
+import type { IRawMaterial } from "@shared/object_types";
 
-import { RMCategory } from './RMCategory';
-import { Supplier } from './Supplier';
 
-@Entity("tbl_raw_mts")
-export class RawMaterial extends BaseEntity implements IRawMaterial {
-
-    @PrimaryGeneratedColumn()
-    id!: number;
-
-    @Column()
+export class RawMaterial extends SimpleEntity implements IRawMaterial {
     name!: string;
-
-    @Column()
     measurement_unit!: string;
-
-    @Column()
     inventory_unit!: string;
-
-    @ManyToMany(() => Supplier, sup => sup.materials)
-    @JoinTable()
-    suppliers!: Supplier[];
-
-    @ManyToOne(type => RMCategory)
-    category!: RMCategory;
-
-    @RelationId((mat: RawMaterial) => mat.category)
-    categoryId!: number;
+    category!: IdentifiedReference<RMCategory>;
 }
 
+
+export const RawMaterialSchema = new EntitySchema<RawMaterial, SimpleEntity>({
+    class: RawMaterial,
+    tableName: 'tbl_rawmats',
+    properties: {
+        name: { type: String },
+        measurement_unit: { type: String },
+        inventory_unit: { type: String },
+        category: {
+            reference: 'm:1',
+            entity: () => RMCategory,
+            wrappedReference: true,
+            nullable: false
+        }
+    }
+});

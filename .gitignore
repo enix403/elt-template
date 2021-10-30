@@ -11,7 +11,6 @@
 *.sublime-project
 *.sublime-workspace
 build/
-tmp/
 
 # Just `ln -rs .git/info/exclude user.gitignore` and get your own private user-specific .gitignore
 user.gitignore

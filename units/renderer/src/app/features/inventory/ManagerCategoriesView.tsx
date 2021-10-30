@@ -13,11 +13,11 @@ import { FormGroupWithoutLabel } from '@/app/components/form_group_utils';
 import { AppToaster } from '@/app/toaster';
 
 import { CategorySelect } from '@/app/components/CategorySelect';
-import { ICategoryPreview, findCategoryFromPath } from '@/app/components/CategorySelect/utils';
+import { findCategoryFromPath } from '@/app/components/CategorySelect/utils';
 import { AppChannel, AllMessages } from '@shared/communication';
 
 import type { NodePath } from '@/app/components/tree_utils';
-import type { ICategory } from '@shared/object_types';
+import type { ICategory, ICategoryPreview } from '@shared/object_types';
 
 import {
     isResponseSuccessful,

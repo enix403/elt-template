@@ -6,10 +6,10 @@ import {
     HTMLSelect,
     TextArea,
 } from '@blueprintjs/core';
-import { GridRow, GridColumn } from 'app/components/Grid';
-import { NavPageView } from 'app/layout/views';
+import { GridRow, GridColumn } from '@/components/Grid';
+import { NavPageView } from '@/layout/views';
 
-import { AppToaster } from 'app/toaster';
+import { AppToaster } from '@/toaster';
 
 const CustomerForm = ({ customerType }) => {
     return (

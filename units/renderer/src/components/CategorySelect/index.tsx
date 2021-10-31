@@ -7,7 +7,7 @@ import {
     TreeNodeInfo
 } from '@blueprintjs/core';
 
-import { NodePath, forEachNode, forNodeAtPath, nodeFromPath, isNodeChild } from 'app/components/tree_utils';
+import { NodePath, forEachNode, forNodeAtPath, nodeFromPath, isNodeChild } from '../tree_utils';
 import classNames from 'classnames';
 import type { ICategory } from '@shared/object_types';
 

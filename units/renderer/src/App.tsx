@@ -1,9 +1,9 @@
 import React from 'react';
 
-import './index.scss';
+import './App.scss';
 
 import { Sidebar } from './components/Sidebar';
-import { StatusBar } from 'app/components/StatusBar';
+import { StatusBar } from './components/StatusBar';
 
 import { Router } from 'react-router-dom';
 import { history } from './routing/history'

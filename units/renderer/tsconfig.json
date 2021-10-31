@@ -16,14 +16,12 @@
 
         "baseUrl": "./src",
         "paths": {
-            "~/*": ["./*"],
             "@/*": ["./*"],
             "@shared/*": ["../../../shared/*"]
         }
     },
     "include": [
         "src",
-        "scripts",
         "*.ts",
         "../../shared/**/*"
     ]

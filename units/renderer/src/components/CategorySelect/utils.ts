@@ -1,4 +1,4 @@
-import type { NodePath } from "~/app/components/tree_utils";
+import type { NodePath } from "../tree_utils";
 import type { ICategory, ICategoryPreview } from '@shared/object_types';
 
 export type { ICategoryPreview };

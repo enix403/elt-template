@@ -1,6 +1,6 @@
 import React from 'react';
-import { GridRow, GridColumn } from 'app/components/Grid';
-import { NavPageView } from 'app/layout/views';
+import { GridRow, GridColumn } from '@/components/Grid';
+import { NavPageView } from '@/layout/views';
 import {
     Button,
     Divider,
@@ -11,7 +11,7 @@ import {
     ControlGroup,
     Icon
 } from '@blueprintjs/core';
-import { FormGroupWithoutLabel } from 'app/components/form_group_utils';
+import { FormGroupWithoutLabel } from '@/components/form_group_utils';
 
 const CategorySelection = () => {
 

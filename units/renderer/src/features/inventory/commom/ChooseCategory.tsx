@@ -4,14 +4,12 @@ import {
     Button,
     Spinner,
 } from '@blueprintjs/core';
-import { CategorySelect } from 'app/components/CategorySelect';
-import { findCategoryFromPath } from 'app/components/CategorySelect/utils';
-import type { ICategoryPreview } from 'app/components/CategorySelect/utils';
-import type { NodePath } from '~/app/components/tree_utils';
+import { CategorySelect } from '@/components/CategorySelect';
+import { findCategoryFromPath } from '@/components/CategorySelect/utils';
+import type { ICategoryPreview } from '@/components/CategorySelect/utils';
+import type { NodePath } from '@/components/tree_utils';
 import type {
-    WithoutID,
     ICategory,
-    IRawMaterial
 } from '@shared/object_types';
 
 

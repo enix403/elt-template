@@ -8,7 +8,7 @@
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { App } from 'app';
+import { App } from './App';
 import { setupDevSystemApi } from './devapi';
 
 import reportWebVitals from 'reportWebVitals';

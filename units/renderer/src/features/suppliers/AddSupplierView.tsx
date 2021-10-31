@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
-import { GridRow, GridColumn } from 'app/components/Grid';
-import { NavPageView } from 'app/layout/views';
+import { GridRow, GridColumn } from '@/components/Grid';
+import { NavPageView } from '@/layout/views';
 import ReactPhoneInput from 'react-phone-number-input/input';
 import {
     phone_input_factory,
     maybeGetCallingCountryCode,
     ReactPhoneInputState
-} from 'app/components/phone_input_utils';
+} from '@/components/phone_input_utils';
 import type { IRawMaterial } from '@shared/object_types';
 
 import {
@@ -21,12 +21,12 @@ import {
     Card,
     Icon,
 } from '@blueprintjs/core';
-import { HorizontalSectionDivider } from 'app/components/misc_utils';
-import { CountrySelect } from '@/app/components/CountrySelect';
-import { ICountry } from '@/app/components/CountrySelect/countries';
+import { HorizontalSectionDivider } from '@/components/misc_utils';
+import { CountrySelect } from '@/components/CountrySelect';
+import { ICountry } from '@/components/CountrySelect/countries';
 import { AllMessages, AppChannel } from '@shared/communication';
-import { AppToaster } from '@/app/toaster';
-import { isResponseSuccessful, formatResponseError } from '@/app/helpers';
+import { AppToaster } from '@/toaster';
+import { isResponseSuccessful, formatResponseError } from '@/utils';
 
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",

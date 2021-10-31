@@ -2,15 +2,15 @@ import * as React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { appRoutes, devAppRoutes } from './route_list';
 
-import { NotFoundView } from '~/app/components/NotFoundView';
+import { NotFoundView } from '@/components/NotFoundView';
 
-import { AddRawMaterialView } from '~/app/features/inventory/AddRawMaterial';
-import { AddProductView } from '~/app/features/inventory/AddProductView';
-import { AddSupplierView } from '~/app/features/suppliers/AddSupplierView';
-import { AddCustomerView } from '~/app/features/customers/AddCustomerView';
+import { AddRawMaterialView } from '@/features/inventory/AddRawMaterial';
+import { AddProductView } from '@/features/inventory/AddProductView';
+import { AddSupplierView } from '@/features/suppliers/AddSupplierView';
+import { AddCustomerView } from '@/features/customers/AddCustomerView';
 
-import { ScratchPlace } from '~/app/features/_scratch/scratch-place';
-import { ManageCategoriesView } from '../features/inventory/ManagerCategoriesView';
+import { ScratchPlace } from '@/features/_scratch/scratch-place';
+import { ManageCategoriesView } from '@/features/inventory/ManagerCategoriesView';
 
 export const AppRouter: React.FC<{}> = React.memo(_ => {
     return (

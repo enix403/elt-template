@@ -1,4 +1,4 @@
-import { NavPageView } from '~/app/layout/views';
+import { NavPageView } from '@/layout/views';
 
 export const NotFoundView = () => {
     return (

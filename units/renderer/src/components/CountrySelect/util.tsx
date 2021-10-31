@@ -1,5 +1,4 @@
-// import { IItemListRendererProps, ItemPredicate } from "@blueprintjs/select";
-import { ICountry } from './countries';
+import type { ICountry } from './countries';
 import Flags from 'country-flag-icons/react/3x2';
 
 const FLAG_STYLES: React.CSSProperties = {

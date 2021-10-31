@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavPageView } from 'app/layout/views';
+import { NavPageView } from '@/layout/views';
 import {
     Button,
     FormGroup,
@@ -9,21 +9,21 @@ import {
     Callout
 } from '@blueprintjs/core';
 
-import { FormGroupWithoutLabel } from '@/app/components/form_group_utils';
-import { AppToaster } from '@/app/toaster';
+import { FormGroupWithoutLabel } from '@/components/form_group_utils';
+import { AppToaster } from '@/toaster';
 
-import { CategorySelect } from '@/app/components/CategorySelect';
-import { findCategoryFromPath } from '@/app/components/CategorySelect/utils';
+import { CategorySelect } from '@/components/CategorySelect';
+import { findCategoryFromPath } from '@/components/CategorySelect/utils';
 import { AppChannel, AllMessages } from '@shared/communication';
 
-import type { NodePath } from '@/app/components/tree_utils';
+import type { NodePath } from '@/components/tree_utils';
 import type { ICategory, ICategoryPreview } from '@shared/object_types';
 
 import {
     isResponseSuccessful,
     formatResponseError,
     formatResponseErrorLog
- } from '@/app/helpers';
+ } from '@/utils';
 
 interface ICreateCategoryFormProps {
     dataSource: () => Promise<ICategory[]>

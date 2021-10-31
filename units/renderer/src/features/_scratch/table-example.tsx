@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavPageView } from "app/layout/views";
+import { NavPageView } from "@/layout/views";
 import { Card, Icon, Button, Checkbox } from '@blueprintjs/core';
 import Flags from 'country-flag-icons/react/3x2';
 

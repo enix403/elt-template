@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { GridRow, GridColumn } from 'app/components/Grid';
-import { NavPageView } from 'app/layout/views';
+import { GridRow, GridColumn } from '@/components/Grid';
+import { NavPageView } from '@/layout/views';
 import {
     Button,
     Divider,
@@ -15,7 +15,7 @@ import {
 } from '@blueprintjs/core';
 
 import { ChooseCategoryForm } from './commom/ChooseCategory';
-import { AppToaster } from '@/app/toaster';
+import { AppToaster } from '@//toaster';
 import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
 
 import type { IRawMaterial, ICategoryPreview } from '@shared/object_types';

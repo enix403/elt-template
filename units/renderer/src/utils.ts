@@ -1,7 +1,7 @@
 import ReactDOMServer from "react-dom/server";
-import { CommResultType } from '@shared/communication/constants';
-import { AppToaster } from '~/app/toaster';
 import type { ChannelResponse } from '@shared/communication/interfaces';
+import { CommResultType } from '@shared/communication/constants';
+import { AppToaster } from './toaster';
 
 // The below if-checks are used A LOT in the application
 // So they are wrapped in their own tiny functions for convenience

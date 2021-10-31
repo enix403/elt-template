@@ -1,5 +1,5 @@
 import { Card } from '@blueprintjs/core';
-import { NavPageView } from '~/app/layout/views';
+import { NavPageView } from '@/layout/views';
 
 import { MyTable } from './table-example';
 

@@ -17,6 +17,7 @@ export const RMCategorySchema = new EntitySchema<RMCategory, SimpleEntity>({
             entity: () => RMCategory,
             mappedBy: cat => cat.parent,
             nullable: false,
+            fixedOrder: true
         },
         parent: {
             reference: 'm:1',

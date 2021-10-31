@@ -22,23 +22,23 @@ import {
     Icon,
 } from '@blueprintjs/core';
 import { HorizontalSectionDivider } from 'app/components/misc_utils';
-import { CountrySelect } from 'app/components/CountrySelect';
-import { ICountry } from 'app/components/CountrySelect/countries';
-import { AllMessages, AppChannel } from '~/../../../shared/communication';
-import { parse } from 'path/posix';
+import { CountrySelect } from '@/app/components/CountrySelect';
+import { ICountry } from '@/app/components/CountrySelect/countries';
+import { AllMessages, AppChannel } from '@shared/communication';
+import { AppToaster } from '@/app/toaster';
+import { isResponseSuccessful, formatResponseError } from '@/app/helpers';
 
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",
     fill: true,
     leftIcon: "mobile-phone"
 });
+
 const TelephoneInput = phone_input_factory({
     placeholder: "Enter Telephone Number",
     fill: true,
     leftIcon: "phone"
 });
-
-
 
 type FieldNames =
     | 'name'
@@ -60,8 +60,9 @@ type FormStore = {
     setValue: ValueSetter
 };
 
-const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props => {
+const SupplierPersonalInformationForm: React.FC<{ store: FormStore, allDisabled: boolean }> = props => {
     const { values, setValue } = props.store;
+    const { allDisabled } = props;
 
     const form_handler = React.useCallback((name: FieldNames) => {
         return e => setValue(name, e.target.value);
@@ -72,12 +73,14 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
             <GridRow>
                 <GridColumn colSize={6}>
                     <FormGroup
+                        disabled={allDisabled}
                         label="Supplier Name"
                     >
                         <InputGroup
                             placeholder="Enter supplier name"
                             fill={true}
                             leftIcon="layers"
+                            disabled={allDisabled}
                             value={values.name}
                             onChange={form_handler('name')}
                         />
@@ -89,6 +92,7 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
                             placeholder="Enter Email Address"
                             fill={true}
                             leftIcon="envelope"
+                            disabled={allDisabled}
                             value={values.email}
                             onChange={form_handler('email')}
                         />
@@ -97,8 +101,11 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
             </GridRow>
             <GridRow>
                 <GridColumn colSize={4}>
-                    <FormGroup label="Country">
+                    <FormGroup label="Country" disabled={allDisabled}>
                         <CountrySelect
+                            targetButtonProps={{
+                                disabled: allDisabled
+                            }}
                             selectedCountry={values.country}
                             onCountryChange={v => setValue('country', v)}
                             intent="success"
@@ -107,33 +114,36 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={3}>
-                    <FormGroup label="State / Province">
+                    <FormGroup label="State / Province" disabled={allDisabled}>
                         <InputGroup
                             placeholder="Enter State"
                             fill={true}
                             leftIcon="map"
+                            disabled={allDisabled}
                             value={values.state}
                             onChange={form_handler('state')}
                         />
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={3}>
-                    <FormGroup label="City">
+                    <FormGroup label="City" disabled={allDisabled}>
                         <InputGroup
                             placeholder="Enter City"
                             fill={true}
                             leftIcon="map-marker"
+                            disabled={allDisabled}
                             value={values.city}
                             onChange={form_handler('city')}
                         />
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={2}>
-                    <FormGroup label="Zip Code">
+                    <FormGroup label="Zip Code" disabled={allDisabled}>
                         <InputGroup
                             placeholder="Enter Code"
                             fill={true}
                             leftIcon="geolocation"
+                            disabled={allDisabled}
                             value={values.zipCode}
                             onChange={form_handler('zipCode')}
                         />
@@ -143,11 +153,13 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
             <GridRow>
                 <GridColumn colSize={6}>
                     <FormGroup
+                        disabled={allDisabled}
                         label="Cellphone Number"
                         helperText={`Start the number with a country calling code if it is not
                                     from the country selected previouly. `}
                     >
                         <ReactPhoneInput
+                            disabled={allDisabled}
                             value={values.cellphoneNumber ?? undefined}
                             onChange={v => setValue('cellphoneNumber', v)}
                             inputComponent={CellphoneInput as any}
@@ -156,8 +168,9 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
                     </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={6}>
-                    <FormGroup label="Office Telephone Number">
+                    <FormGroup label="Office Telephone Number" disabled={allDisabled}>
                         <ReactPhoneInput
+                            disabled={allDisabled}
                             value={values.officeNumber ?? undefined}
                             onChange={v => setValue('officeNumber', v)}
                             inputComponent={TelephoneInput as any}
@@ -168,31 +181,18 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
             </GridRow>
             <GridRow>
                 <GridColumn colSize={6}>
-                    <FormGroup label="Mailing Address">
+                    <FormGroup label="Mailing Address" disabled={allDisabled}>
                         <TextArea
                             placeholder="Enter Address"
                             fill={true}
                             style={{ resize: 'vertical' }}
+                            disabled={allDisabled}
                             value={values.addrMail}
                             onChange={form_handler('addrMail')}
                         />
                     </FormGroup>
-                </GridColumn>
-                <GridColumn colSize={6}>
-                    <FormGroup label="Permanent/Office Address">
-                        <TextArea
-                            placeholder="Enter Address"
-                            fill={true}
-                            style={{ resize: 'vertical' }}
-                            value={values.addrOffice}
-                            onChange={form_handler('addrOffice')}
-                        />
-                    </FormGroup>
-                </GridColumn>
-            </GridRow>
-            <GridRow>
-                <GridColumn colSize={6}>
                     <FormGroup
+                        disabled={allDisabled}
                         label={
                             <>Remarks <span className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>(Optional)</span></>
                         }
@@ -201,8 +201,21 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore }> = props =>
                             placeholder="None..."
                             fill={true}
                             style={{ resize: 'vertical' }}
+                            disabled={allDisabled}
                             value={values.remarks}
                             onChange={form_handler('remarks')}
+                        />
+                    </FormGroup>
+                </GridColumn>
+                <GridColumn colSize={6}>
+                    <FormGroup label="Permanent/Office Address" disabled={allDisabled}>
+                        <TextArea
+                            placeholder="Enter Address"
+                            fill={true}
+                            style={{ resize: 'vertical' }}
+                            disabled={allDisabled}
+                            value={values.addrOffice}
+                            onChange={form_handler('addrOffice')}
                         />
                     </FormGroup>
                 </GridColumn>
@@ -233,9 +246,11 @@ const ViewContent = () => {
     const [selectedRawMaterial, setSelectedRawMaterial] = React.useState<IRawMaterial>();
     const [mat_Capacity, setmat_Capacity] = React.useState<number>();
 
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
     const onSelectedRawMaterialChange = React.useCallback(e => {
         const id = e.target.value;
-        setSelectedRawMaterial(allRawMaterial.find(mat => mat.id === id));
+        setSelectedRawMaterial(allRawMaterial.find(mat => mat.id == id));
     }, [allRawMaterial]);
 
 
@@ -246,8 +261,14 @@ const ViewContent = () => {
             new AllMessages.Inv.RM.GetAllMaterials()
         )
             .then(res => {
-                setRawMaterials(res.data!);
-                if (res.data!.length > 0) setSelectedRawMaterial(res.data![0])
+                if (isResponseSuccessful(res)) {
+                    setRawMaterials(res.data!);
+                    if (res.data!.length > 0) setSelectedRawMaterial(res.data![0])
+                }
+                else {
+                    setRawMaterials([]);
+                    setSelectedRawMaterial(undefined);
+                }
             })
             .catch(err => console.log(err))
             .finally(() => setIsLoading(false))
@@ -286,13 +307,82 @@ const ViewContent = () => {
         setValue: personalInfo_setValue
     };
 
+    const onSubmit = React.useCallback(async (values: FormStore['values']) => {
+        const msg = new AllMessages.Supl.AddSupplier({
+            name: values.name,
+            email: values.email,
+            countryCode: (values.country as ICountry || {}).code,
+            state: values.state,
+            city: values.city,
+            zipCode: values.zipCode,
+            cellphoneNumber: values.cellphoneNumber,
+            officeNumber: values.officeNumber,
+            addrMail: values.addrMail,
+            addrOffice: values.addrOffice,
+            remarks: values.remarks,
+            capacity: mat_Capacity || 0,
+            rawMaterialId: selectedRawMaterial ? selectedRawMaterial.id : 0
+        });
+        setIsSubmitting(true);
+        const result = await window.SystemBackend.sendMessage(AppChannel.Suppliers, msg)
+            .finally(() => setIsSubmitting(false));
+
+        if (!isResponseSuccessful(result)) {
+            AppToaster.show({ intent: 'danger', message: formatResponseError(result), icon: 'error' });
+            return;
+        }
+
+        AppToaster.show({
+            intent: 'success',
+            message: "Supplier added successfully",
+            icon: 'tick-circle'
+        });
+
+        setform_name('');
+        setform_email('');
+        setform_country(undefined);
+        setform_state('');
+        setform_city('');
+        setform_zipCode('');
+        setform_cellphoneNumber('');
+        setform_officeNumber('');
+        setform_addrMail('');
+        setform_addrOffice('');
+        setform_remarks('');
+        setmat_Capacity(0);
+
+    }, [mat_Capacity]);
+
+
+    const renderedRawMaterialSelect = (
+        <FormGroup
+            label="Select Raw Material"
+            helperText="The raw material that this vendor supplies"
+            disabled={isSubmitting}
+        >
+            {isLoading ?
+                <Button disabled={true} fill={true} text="Loading Materials..." /> :
+                <HTMLSelect
+                    fill={true}
+                    disabled={isSubmitting}
+                    value={selectedRawMaterial?.id}
+                    onChange={onSelectedRawMaterialChange}
+                >
+                    {allRawMaterial.map(mat =>
+                        <option key={mat.id} value={mat.id}>{mat.name}</option>
+                    )}
+                </HTMLSelect>
+            }
+        </FormGroup>
+    );
+
     return (
         <React.Fragment>
             <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
                 <Icon size={16} icon="user" />
                 <h5 className="bp3-heading icon-text-md">Personal Information</h5>
             </div>
-            <SupplierPersonalInformationForm store={store} />
+            <SupplierPersonalInformationForm store={store} allDisabled={isSubmitting} />
 
             <HorizontalSectionDivider />
 
@@ -301,29 +391,14 @@ const ViewContent = () => {
                 <h5 className="bp3-heading icon-text-md">Product/Raw Material Information</h5>
             </div>
             <GridRow>
-                <GridColumn colSize={6}>
-                    <FormGroup
-                        label="Select Raw Material"
-                        helperText="The raw material that this vendor supplies"
-                    >
-                        {isLoading ?
-                            <Button disabled={true} fill={true} text="Loading Materials..." /> :
-                            <HTMLSelect
-                                fill={true}
-                                value={selectedRawMaterial?.id}
-                                onChange={onSelectedRawMaterialChange}
-                            >
-                                {allRawMaterial.map(mat =>
-                                    <option key={mat.id} value={mat.id}>{mat.name}</option>
-                                )}
-                            </HTMLSelect>
-                        }
-                    </FormGroup>
+                <GridColumn colSize={7}>
+                    {renderedRawMaterialSelect}
                 </GridColumn>
-                <GridColumn colSize={6}>
+                <GridColumn colSize={5}>
                     <FormGroup
+                        disabled={isSubmitting}
                         label="Monthly Capacity"
-                        helperText={<>Capacity measured in the defined <strong>"Measurement Unit"</strong> of the selected raw material"</>}
+                        helperText={<>Capacity measured in <strong>{selectedRawMaterial?.measurement_unit.toUpperCase()}</strong></>}
                     >
                         <NumericInput
                             placeholder="Enter Amount"
@@ -331,6 +406,7 @@ const ViewContent = () => {
                             min={0}
                             leftIcon="truck"
                             clampValueOnBlur={true}
+                            disabled={isSubmitting}
                             value={mat_Capacity}
                             onValueChange={value => {
                                 setmat_Capacity(value);
@@ -344,6 +420,9 @@ const ViewContent = () => {
                 text="Add Vendor"
                 rightIcon="chevron-right"
                 intent="primary"
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                onClick={() => onSubmit(store.values)}
             />
         </React.Fragment>
     );

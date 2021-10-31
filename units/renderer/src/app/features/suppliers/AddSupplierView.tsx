@@ -191,22 +191,6 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore, allDisabled:
                             onChange={form_handler('addrMail')}
                         />
                     </FormGroup>
-                </GridColumn>
-                <GridColumn colSize={6}>
-                    <FormGroup label="Permanent/Office Address" disabled={allDisabled}>
-                        <TextArea
-                            placeholder="Enter Address"
-                            fill={true}
-                            style={{ resize: 'vertical' }}
-                            disabled={allDisabled}
-                            value={values.addrOffice}
-                            onChange={form_handler('addrOffice')}
-                        />
-                    </FormGroup>
-                </GridColumn>
-            </GridRow>
-            <GridRow>
-                <GridColumn colSize={6}>
                     <FormGroup
                         disabled={allDisabled}
                         label={
@@ -220,6 +204,18 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore, allDisabled:
                             disabled={allDisabled}
                             value={values.remarks}
                             onChange={form_handler('remarks')}
+                        />
+                    </FormGroup>
+                </GridColumn>
+                <GridColumn colSize={6}>
+                    <FormGroup label="Permanent/Office Address" disabled={allDisabled}>
+                        <TextArea
+                            placeholder="Enter Address"
+                            fill={true}
+                            style={{ resize: 'vertical' }}
+                            disabled={allDisabled}
+                            value={values.addrOffice}
+                            onChange={form_handler('addrOffice')}
                         />
                     </FormGroup>
                 </GridColumn>

@@ -1,17 +1,14 @@
 import { AppChannel, AllMessages } from '@shared/communication';
 import { ActionMessageChannel } from '@/core/channels/ActionMessageChannel';
 import { ChannelError } from '@/core/cnl_utils';
-import { logger } from '@/logging';
 
 import {
     Supplier,
     SupplierInfo,
     RawMaterial
 } from '@/core/entities';
-import { orm, EnttManager } from '@/core/db';
+import { orm } from '@/core/db';
 import { Reference } from '@mikro-orm/core';
-// import { QueryOrderNumeric } from '@mikro-orm/core';
-
 
 export class SuppliersChannel extends ActionMessageChannel {
     channelName = AppChannel.Suppliers;

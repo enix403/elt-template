@@ -1,10 +1,10 @@
 import path from 'path';
 import fs from 'fs';
-import { IS_RUNNING_DEV, isElectron } from './utils';
+import { IS_RUNNING_DEV } from './utils';
 import { resolveProjectRoot, RP_MAIN_UNIT } from '@shared/app_paths';
 import {
-    app_data_directory_name,
-} from '~/appconfig.json';
+    app_data_directory_name
+} from '@/appconfig.json';
 
 type PathSpec =
     | 'userData'
@@ -59,7 +59,7 @@ export function configureApplicationPaths(osAppDataRoot: string | null, createMi
         else
             mainUnitDir = resolveProjectRoot(RP_MAIN_UNIT);
 
-        sysData = path.join(mainUnitDir, 'runtime-dev');
+        sysData = path.join(mainUnitDir, 'dev_runtime');
     }
     else {
         sysData = osAppDataRoot || __dirname;

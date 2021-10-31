@@ -1,13 +1,13 @@
 import { AppChannel, AllMessages } from '@shared/communication';
-import { ActionMessageChannel } from '@/core/channels/ActionMessageChannel';
-import { ChannelError } from '@/core/cnl_utils';
+import { ActionMessageChannel } from '@/channel/ActionMessageChannel';
+import { ChannelError } from '@/channel/exceptions';
 
 import {
     Supplier,
     SupplierInfo,
     RawMaterial
-} from '@/core/entities';
-import { orm } from '@/core/db';
+} from '@/entities';
+import { orm } from '@/database';
 import { Reference } from '@mikro-orm/core';
 
 export class SuppliersChannel extends ActionMessageChannel {

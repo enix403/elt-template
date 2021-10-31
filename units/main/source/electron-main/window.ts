@@ -1,11 +1,18 @@
 import path from "path";
+import { URL } from 'url';
+
 import { BrowserWindow, shell } from "electron";
-import { resolveHtmlPath, IS_RUNNING_DEV } from '~/utils';
+import { IS_RUNNING_DEV } from '@/utils';
 import { logger } from '@/logging';
 
 import {
+    RP_BUILD_COMPILED_MAIN,
+    RP_BUILD_COMPILED_RENDERER
+} from '@shared/app_paths';
+
+import {
     default_win_title
-} from '~/appconfig.json';
+} from '@/appconfig.json';
 
 export let mainWindow: BrowserWindow | null = null;
 
@@ -65,3 +72,28 @@ export const recreateWindow = () => {
         createWindow();
     }
 };
+
+
+
+function resolveHtmlPath(htmlFileName: string): string {
+    if (IS_RUNNING_DEV) {
+        const port = process.env.FRONTEND_PORT;
+
+        if (!port) {
+            logger.error("No FRONTEND_PORT specified. Cannot connect to frontend server");
+            process.exit(1);
+        }
+
+        const url = new URL(`http://localhost:${port}`);
+        url.pathname = htmlFileName;
+        return url.href;
+    }
+
+    const filepath = path.resolve(
+        __dirname,
+        path.relative(RP_BUILD_COMPILED_MAIN, RP_BUILD_COMPILED_RENDERER),
+        htmlFileName
+    )
+    return `file://${filepath}`;
+
+}

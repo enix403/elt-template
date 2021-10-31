@@ -10,7 +10,7 @@ import path from 'path';
 import type { MikroORM } from '@mikro-orm/core';
 import { configureApplicationPaths } from '@/pathutils';
 import { initLogging } from '@/logging';
-import { getMDBConfig } from '@/core/db';
+import { getMDBConfig } from '@/database';
 
 configureApplicationPaths(null, true);
 initLogging();

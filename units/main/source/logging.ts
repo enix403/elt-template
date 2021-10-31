@@ -2,8 +2,8 @@ import path from 'path';
 
 import winston, { format, createLogger, transports } from 'winston';
 
-import { getPath } from './pathutils';
-import { IS_RUNNING_DEV } from './utils';
+import { getPath } from '@/pathutils';
+import { IS_RUNNING_DEV } from '@/utils';
 
 export let logger: winston.Logger;
 

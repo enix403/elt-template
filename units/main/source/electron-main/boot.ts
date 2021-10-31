@@ -2,16 +2,16 @@ import { app, ipcMain } from 'electron';
 import {
     createWindow,
     recreateWindow
-} from 'main/window';
+} from './window';
 import { getPath } from '@/pathutils';
-import { createDBConnection } from '@/core/db';
+import { createDBConnection } from '@/database';
 
 import { logger } from '@/logging';
-import type { IpcChannel } from '@/core/channels/IpcChannel';
-import { invokeChannel } from '@/core/cnl_utils';
 
-import { InventoryChannel } from '@/core/channels/inventory';
-import { SuppliersChannel } from '@/core/channels/suppliers';
+import { IpcChannel, invokeChannel } from '@/channel';
+
+import { InventoryChannel } from '@/core/InventoryChannel';
+import { SuppliersChannel } from '@/core/SuppliersChannel';
 
 const registeredChannels: IpcChannel[] = [
     new InventoryChannel(),

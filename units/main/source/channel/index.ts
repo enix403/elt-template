@@ -1,20 +1,21 @@
+import type { AppChannel } from '@shared/communication/constants';
 import type { ChannelResponse } from '@shared/communication/interfaces';
-import type { IpcChannel } from './channels/IpcChannel';
+
 import { CommResultType } from '@shared/communication/constants';
+import { ChannelError } from './exceptions';
+
 import { logger } from '@/logging';
 
-export class ChannelError extends Error {
-    constructor(message?: string) {
-        super(message);
-        this.name = "ChannelError";
-    }
-}
+export interface IpcChannel {
+    channelName: AppChannel;
+    handle(message: any | void): any;
+};
+
 
 export async function invokeChannel(
     ipcChannel: IpcChannel,
     message: object
-): Promise<ChannelResponse>
-{
+): Promise<ChannelResponse> {
     try {
         return {
             type: CommResultType.ChannelResponse,
@@ -28,7 +29,7 @@ export async function invokeChannel(
                 error: err.message
             };
         }
-        logger.error("invoke-channel SysError: %s",  err.message);
+        logger.error("invoke-channel SysError: %s", err.message);
         return { type: CommResultType.SystemError };
     }
 }

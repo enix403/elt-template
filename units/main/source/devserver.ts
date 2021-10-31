@@ -8,16 +8,16 @@ import express from 'express';
 import cors from 'cors';
 
 import { configureApplicationPaths } from '@/pathutils';
-import { createDBConnection } from '@/core/db';
+import { createDBConnection } from '@/database';
 import { initLogging, logger } from '@/logging';
 
-import { InventoryChannel } from '@/core/channels/inventory';
-import { SuppliersChannel } from '@/core/channels/suppliers';
+import { invokeChannel, IpcChannel } from '@/channel';
 
-import type { IpcChannel } from '@/core/channels/IpcChannel';
 import type { ChannelResponse } from '@shared/communication/interfaces';
 import { CommResultType } from '@shared/communication/constants';
-import { invokeChannel } from '@/core/cnl_utils';
+
+import { InventoryChannel } from '@/core/InventoryChannel';
+import { SuppliersChannel } from '@/core/SuppliersChannel';
 
 // -- code body
 
@@ -73,7 +73,6 @@ async function processRequest(payload: any): Promise<ChannelResponse> {
 async function main() {
     configureApplicationPaths(null, false);
     initLogging();
-
 
     logger.debug("Connecting to database");
     await createDBConnection();

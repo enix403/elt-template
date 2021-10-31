@@ -14,7 +14,7 @@ import {
 import {
     app_name,
     app_name_long
-} from "~/appconfig.json";
+} from "@/appconfig.json";
 
 const mainFile = path.join(
     path.relative(RP_APP_BUILD, RP_BUILD_COMPILED_MAIN),

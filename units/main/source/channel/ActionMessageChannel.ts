@@ -1,4 +1,4 @@
-import { IpcChannel } from './IpcChannel';
+import { IpcChannel } from './index';
 import type { AppChannel } from '@shared/communication/constants';
 import type { SerializedMessage, Message, MessageFactory } from '@shared/communication/interfaces';
 

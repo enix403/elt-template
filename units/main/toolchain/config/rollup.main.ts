@@ -43,7 +43,7 @@ const pkgJson = readJsonSync(PKG_JSON_PATH);
 
 export const outputDirPath = isProduction ?
     resolveProjectRoot(RP_BUILD_COMPILED_MAIN) :
-    resolveMainRoot('build-dev')
+    resolveMainRoot('dev_build')
 
 const MANIFEST_OUTPUT_PATH = path.join(outputDirPath, 'meta');
 const MANIFEST_FILE_NAME = 'files-manifest.json';
@@ -54,12 +54,12 @@ const PRELOAD_SCRIPT_ENTRY_NAME = 'preload';
 
 export const inputOptions: InputOptions = {
     input: {
-        main: resolveMainRoot('src', 'main', 'index.ts'),
-        [PRELOAD_SCRIPT_ENTRY_NAME]: resolveMainRoot('src', 'preload.ts'),
+        main: resolveMainRoot('source', 'electron-main', 'index.ts'),
+        [PRELOAD_SCRIPT_ENTRY_NAME]: resolveMainRoot('source', 'preload.ts'),
     },
     watch: {
         exclude: excludedFiles, include: [
-            'src/**/*',
+            'source/**/*',
             resolveProjectRoot(RP_SHARED) + "/**/*"
         ]
     },
@@ -91,11 +91,6 @@ export const inputOptions: InputOptions = {
         }),
 
         /* Tree shake common js files (that use require() and module.exports) */
-        // commonjs({
-        //     ignore: ['electron-debug'],
-        //     ignoreDynamicRequires: true,
-        //     ignoreTryCatch: true
-        // }),
 
         /* This plugin modifies process.env to always return the corresponding given values for
          * for the specified keys

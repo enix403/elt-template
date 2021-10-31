@@ -1,5 +1,5 @@
 import { EntitySchema, IdentifiedReference } from "@mikro-orm/core";
-import { ISupplierInfo } from "~/../../../shared/object_types";
+import { ISupplierInfo } from "@shared/object_types";
 import { SimpleEntity } from "./SimpleEntity";
 import { Supplier } from "./Supplier";
 

@@ -1,12 +1,12 @@
 import { AppChannel, AllMessages } from '@shared/communication';
-import { ActionMessageChannel } from '~/core/channels/ActionMessageChannel';
-import { ChannelError } from '~/core/cnl_utils';
+import { ActionMessageChannel } from '@/channel/ActionMessageChannel';
+import { ChannelError } from '@/channel/exceptions';
 
 import {
     RMCategory,
     RawMaterial
-} from '@/core/entities';
-import { orm, EnttManager } from '@/core/db';
+} from '@/entities';
+import { orm, EnttManager } from '@/database';
 import { QueryOrderNumeric } from '@mikro-orm/core';
 
 import type { ICategory } from '@shared/object_types';

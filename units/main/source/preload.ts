@@ -1,7 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 import { AppChannel, AllMessages, Message, CommResultType } from '@shared/communication';
-import { IS_RUNNING_DEV } from './utils';
+import { IS_RUNNING_DEV } from '@/utils';
 
 import type { ISystemBackendAPI } from '@shared/system_api';
 import type { ChannelResponse } from '@shared/communication';

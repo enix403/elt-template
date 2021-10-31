@@ -24,9 +24,8 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
 
-        "baseUrl": "./src",
+        "baseUrl": "./source",
         "paths": {
-            "~/*": ["./*"],
             "@/*": ["./*"],
             "@shared/*": ["./../../../shared/*"],
         },
@@ -34,7 +33,7 @@
 
     "include": [
         "*.ts",
-        "**/**/*.ts",
+        "./**/*.ts",
         "../../shared/**/*"
     ],
 }

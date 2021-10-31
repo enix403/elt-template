@@ -50,7 +50,7 @@ export class SuppliersChannel extends ActionMessageChannel {
                 try {
                     rawMat = await em.findOneOrFail(RawMaterial, { id: rawMaterialId });
                 }
-                catch {
+                catch (e) {
                     throw new ChannelError("Invalid Raw Material");
                 }
 

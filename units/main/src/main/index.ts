@@ -1,11 +1,5 @@
 import path from 'path';
-import { configureApplicationPaths, configureAssetsPath } from '~/pathutils';
-import { IS_RUNNING_DEV } from '~/utils';
-import { initApp } from './init';
 import { app } from 'electron';
-
-import { logger, initLogging } from '@/logging';
-
 import { app_name, electron_data_directory_name } from '~/appconfig.json';
 
 app.setName(app_name);
@@ -14,6 +8,12 @@ app.setName(app_name);
 // electron because electron clutters that up with its cache.
 // See: https://github.com/electron/electron/issues/8124
 app.setPath('userData', path.join(app.getPath('appData'), electron_data_directory_name));
+
+import { configureApplicationPaths, configureAssetsPath } from '~/pathutils';
+import { IS_RUNNING_DEV } from '~/utils';
+import { initApp } from './init';
+
+import { logger, initLogging } from '@/logging';
 
 configureApplicationPaths(app.getPath('appData'));
 configureAssetsPath(app.isPackaged);

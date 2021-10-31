@@ -112,7 +112,7 @@ export class InventoryChannel extends ActionMessageChannel {
                 try {
                     targetCat = await em.findOneOrFail(RMCategory, { id: category.id });
                 }
-                catch {
+                catch (e) {
                     throw new ChannelError("Category not found");
                 }
 

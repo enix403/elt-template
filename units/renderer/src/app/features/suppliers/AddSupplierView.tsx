@@ -354,28 +354,6 @@ const ViewContent = () => {
     }, [mat_Capacity]);
 
 
-    const renderedRawMaterialSelect = (
-        <FormGroup
-            label="Select Raw Material"
-            helperText="The raw material that this vendor supplies"
-            disabled={isSubmitting}
-        >
-            {isLoading ?
-                <Button disabled={true} fill={true} text="Loading Materials..." /> :
-                <HTMLSelect
-                    fill={true}
-                    disabled={isSubmitting}
-                    value={selectedRawMaterial?.id}
-                    onChange={onSelectedRawMaterialChange}
-                >
-                    {allRawMaterial.map(mat =>
-                        <option key={mat.id} value={mat.id}>{mat.name}</option>
-                    )}
-                </HTMLSelect>
-            }
-        </FormGroup>
-    );
-
     return (
         <React.Fragment>
             <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
@@ -392,7 +370,25 @@ const ViewContent = () => {
             </div>
             <GridRow>
                 <GridColumn colSize={7}>
-                    {renderedRawMaterialSelect}
+                    <FormGroup
+                        label="Select Raw Material"
+                        helperText="The raw material that this vendor supplies"
+                        disabled={isSubmitting}
+                    >
+                        {isLoading ?
+                            <Button disabled={true} fill={true} text="Loading Materials..." /> :
+                            <HTMLSelect
+                                fill={true}
+                                disabled={isSubmitting}
+                                value={selectedRawMaterial?.id}
+                                onChange={onSelectedRawMaterialChange}
+                            >
+                                {allRawMaterial.map(mat =>
+                                    <option key={mat.id} value={mat.id}>{mat.name}</option>
+                                )}
+                            </HTMLSelect>
+                        }
+                    </FormGroup>
                 </GridColumn>
                 <GridColumn colSize={5}>
                     <FormGroup

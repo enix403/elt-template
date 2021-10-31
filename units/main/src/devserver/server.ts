@@ -12,6 +12,7 @@ import { createDBConnection } from '@/core/db';
 import { initLogging, logger } from '@/logging';
 
 import { InventoryChannel } from '@/core/channels/inventory';
+import { SuppliersChannel } from '@/core/channels/suppliers';
 
 import type { IpcChannel } from '@/core/channels/IpcChannel';
 import type { ChannelResponse } from '@shared/communication/interfaces';
@@ -52,17 +53,21 @@ function setupExpressApp() {
     });
 }
 
-const registeredChannels: IpcChannel[] = [new InventoryChannel()];
+const registeredChannels: IpcChannel[] = [
+    new InventoryChannel(),
+    new SuppliersChannel()
+];
 
 async function processRequest(payload: any): Promise<ChannelResponse> {
     const targetChannelName = payload.channel;
     const targetChannel = registeredChannels.find(c => c.channelName == targetChannelName);
 
     if (!targetChannel) {
+        logger.error(`InvalidChannel: Not a valid channel '${targetChannelName}'`);
         return { type: CommResultType.InvalidChannel };
     }
 
-    return await invokeChannel(targetChannel, payload.message || null);
+    return invokeChannel(targetChannel, payload.message || null);
 }
 
 async function main() {

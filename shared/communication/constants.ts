@@ -15,6 +15,6 @@ export enum CommResultType {
 };
 
 export enum AppChannel {
-    DataOperations = 'scnl:data',
-    Inventory = 'scnl:inv'
+    Suppliers = 'scnl:supl',
+    Inventory = 'scnl:inv',
 };

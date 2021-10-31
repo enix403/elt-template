@@ -11,9 +11,11 @@ import type { IpcChannel } from '@/core/channels/IpcChannel';
 import { invokeChannel } from '@/core/cnl_utils';
 
 import { InventoryChannel } from '@/core/channels/inventory';
+import { SuppliersChannel } from '@/core/channels/suppliers';
 
 const registeredChannels: IpcChannel[] = [
     new InventoryChannel(),
+    new SuppliersChannel()
 ];
 
 export const initApp = async () => {

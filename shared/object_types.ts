@@ -23,7 +23,6 @@ export interface IRawMaterial {
 export interface ISupplier {
     id: number;
     name: string;
-    info?: ISupplierInfo | undefined;
 }
 
 export interface ISupplierInfo {

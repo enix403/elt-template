@@ -1,5 +1,6 @@
-import type { IDatabaseDriver, Connection } from '@mikro-orm/core';
 import { MikroORM } from '@mikro-orm/core';
+import { SqliteDriver } from '@mikro-orm/sqlite';
+import type { IDatabaseDriver, Connection } from '@mikro-orm/core';
 
 import { getStoragePath } from '@/common_paths';
 import { IS_RUNNING_DEV } from '@/utils';
@@ -11,7 +12,7 @@ export type EnttManager = (typeof orm)['em'];
 
 export function getMDBConfig(): Parameters<typeof MikroORM.init>[0] {
     return {
-        type: 'sqlite',
+        driver: SqliteDriver,
 
         dbName: getStoragePath(),
         // debug: IS_RUNNING_DEV && ['query', 'query-params'],

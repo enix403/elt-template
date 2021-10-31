@@ -1,5 +1,4 @@
 import { IpcChannel } from './IpcChannel';
-import { ChannelError } from '~/core/cnl_utils';
 import type { AppChannel } from '@shared/communication/constants';
 import type { SerializedMessage, Message, MessageFactory } from '@shared/communication/interfaces';
 
@@ -22,13 +21,13 @@ export abstract class ActionMessageChannel implements IpcChannel {
 
     async handle(message: SerializedMessage<any> | void) {
         if (!message)
-            throw new ChannelError("Invalid message.");
+            throw new Error("Invalid message.");
 
         const reg = this.allHandlers[message.action || ''];
 
         if (reg)
             return reg(message.payload || {});
 
-        throw new ChannelError("Invalid action.");
+        throw new Error("Invalid action.");
     }
 }

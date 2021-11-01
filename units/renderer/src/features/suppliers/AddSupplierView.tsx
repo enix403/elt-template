@@ -27,6 +27,7 @@ import { ICountry } from '@/components/CountrySelect/countries';
 import { AllMessages, AppChannel } from '@shared/communication';
 import { AppToaster } from '@/toaster';
 import { isResponseSuccessful, formatResponseError } from '@/utils';
+import { useRawMaterialList } from '../hooks';
 
 const CellphoneInput = phone_input_factory({
     placeholder: "Enter Cellphone Number",
@@ -227,6 +228,7 @@ const SupplierPersonalInformationForm: React.FC<{ store: FormStore, allDisabled:
 
 
 const ViewContent = () => {
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     const [form_name, setform_name] = React.useState<string>('');
     const [form_email, setform_email] = React.useState<string>('');
@@ -240,39 +242,17 @@ const ViewContent = () => {
     const [form_addrOffice, setform_addrOffice] = React.useState<string>('');
     const [form_remarks, setform_remarks] = React.useState<string>('');
 
-    const [allRawMaterial, setRawMaterials] = React.useState<IRawMaterial[]>([]);
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const [allRawMaterial, isLoading, _refreshMats] = useRawMaterialList(allMats => {
+        setSelectedRawMaterial(allMats.length > 0 ? allMats[0] : undefined);
+    });
 
-    const [selectedRawMaterial, setSelectedRawMaterial] = React.useState<IRawMaterial>();
     const [mat_Capacity, setmat_Capacity] = React.useState<number>();
-
-    const [isSubmitting, setIsSubmitting] = React.useState(false);
+    const [selectedRawMaterial, setSelectedRawMaterial] = React.useState<IRawMaterial>();
 
     const onSelectedRawMaterialChange = React.useCallback(e => {
         const id = e.target.value;
         setSelectedRawMaterial(allRawMaterial.find(mat => mat.id == id));
     }, [allRawMaterial]);
-
-
-    useEffect(() => {
-        setIsLoading(true);
-        window.SystemBackend.sendMessage(
-            AppChannel.Inventory,
-            new AllMessages.Inv.RM.GetAllMaterials()
-        )
-            .then(res => {
-                if (isResponseSuccessful(res)) {
-                    setRawMaterials(res.data!);
-                    if (res.data!.length > 0) setSelectedRawMaterial(res.data![0])
-                }
-                else {
-                    setRawMaterials([]);
-                    setSelectedRawMaterial(undefined);
-                }
-            })
-            .catch(err => console.log(err))
-            .finally(() => setIsLoading(false))
-    }, []);
 
     const personalInfo_setValue = React.useCallback((p: FieldNames, val: any) => {
         switch (p) {

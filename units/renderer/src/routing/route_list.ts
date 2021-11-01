@@ -6,7 +6,8 @@ export const appRoutes = {
         stocks:          { name: "Stocks"          , path: "/inv/stocks"           },
         rawMaterial:     { name: "Raw Material"    , path: "/inv/raw-material"     },
         products:        { name: "Products"        , path: "/inv/products"         },
-        categories:      { name: "Categories"      , path: "/inv/categories"       }
+        categories:      { name: "Categories"      , path: "/inv/categories"       },
+        purchaseOrders:  { name: "Purchase Orders" , path: "/inv/p-orders"         },
     },
     suppliers: {
         list:   { name: "Suppliers List", path: "/sup/list" },

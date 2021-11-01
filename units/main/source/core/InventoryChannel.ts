@@ -133,3 +133,6 @@ export class InventoryChannel extends ActionMessageChannel {
         );
     }
 }
+
+const delayPromiseBy = (pr: Promise<any>, ms: number) =>
+    new Promise(res => setTimeout(res, ms)).then(() => pr);

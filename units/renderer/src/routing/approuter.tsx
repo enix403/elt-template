@@ -6,6 +6,7 @@ import { NotFoundView } from '@/components/NotFoundView';
 
 import { AddRawMaterialView } from '@/features/inventory/AddRawMaterial';
 import { AddProductView } from '@/features/inventory/AddProductView';
+import { PurchaseOrdersView } from '@/features/inventory/PurchaseOrdersView';
 import { AddSupplierView } from '@/features/suppliers/AddSupplierView';
 import { AddCustomerView } from '@/features/customers/AddCustomerView';
 
@@ -18,9 +19,11 @@ export const AppRouter: React.FC<{}> = React.memo(_ => {
             <Switch>
                 <Redirect exact from="/" to={appRoutes.inventory.rawMaterial.path} />
 
-                <Route path={appRoutes.inventory.rawMaterial.path}  component={AddRawMaterialView}  />
-                <Route path={appRoutes.inventory.categories.path}   component={ManageCategoriesView}  />
-                <Route path={appRoutes.inventory.products.path}     component={AddProductView}      />
+                <Route path={appRoutes.inventory.rawMaterial.path}      component={AddRawMaterialView}      />
+                <Route path={appRoutes.inventory.categories.path}       component={ManageCategoriesView}    />
+                <Route path={appRoutes.inventory.products.path}         component={AddProductView}          />
+                <Route path={appRoutes.inventory.purchaseOrders.path}   component={PurchaseOrdersView}      />
+
                 <Route path={appRoutes.suppliers.add.path}          component={AddSupplierView}     />
                 <Route path={appRoutes.customers.add.path}          component={AddCustomerView}     />
 

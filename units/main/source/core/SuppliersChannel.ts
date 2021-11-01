@@ -70,7 +70,8 @@ export class SuppliersChannel extends ActionMessageChannel {
 
                 supObj.info = Reference.create(supInfo);
 
-                await em.persistAndFlush(supObj);
+                rawMat.suppliers.add(supObj);
+                await em.persistAndFlush(rawMat);
             }
         );
 

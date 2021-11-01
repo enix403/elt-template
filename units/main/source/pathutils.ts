@@ -85,7 +85,7 @@ export function configureAssetsPath(isAppPackaged: boolean) {
         runtimePaths.assetsPath = path.join(process.resourcesPath, 'assets');
     }
     else if (IS_RUNNING_DEV) {
-        // If in development we use the actual assets folder (relative to the dev main.js bundle inside main/build-dev)
+        // If in development we use the actual assets folder (relative to the dev main.js bundle inside main/dev_build)
         if (process.env.BUNDLE_COMPILED == 'yes')
             runtimePaths.assetsPath = path.join(__dirname, '..', 'assets');
         else

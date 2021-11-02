@@ -1,22 +1,30 @@
 import React from 'react';
 
 import { NavPageView } from '@/layout/views';
-import { HTMLSelect, FormGroup, Card, Button } from '@blueprintjs/core';
+import {
+    NumericInput,
+    FormGroup,
+    Card,
+    Button,
+} from '@blueprintjs/core';
+import { RefNormalizedInputGroup } from '@/components/form_group_utils';
+import { Controller, useForm } from 'react-hook-form';
 
-import { useRawMaterialList } from '../hooks';
-import { IRawMaterial } from '@shared/object_types';
+type FormData = {
+    firstName: string;
+    lastName: string;
+    age: string;
+};
+
 
 export const PurchaseOrdersView: React.FC = () => {
 
-    const [selectedRawMaterial, setSelectedRawMaterial] = React.useState<IRawMaterial>();
-    const [mats, loading, refreshMats] = useRawMaterialList(allMats => {
-        setSelectedRawMaterial(allMats.length > 0 ? allMats[0] : undefined);
-    });
+    const { register, handleSubmit, control } = useForm<FormData>();
+    const onSubmit = React.useCallback(handleSubmit(data => {
+        console.log(data);
+    }), []);
 
-    const onSelectedRawMaterialChange = React.useCallback(e => {
-        const id = e.target.value;
-        setSelectedRawMaterial(mats.find(mat => mat.id == id));
-    }, [mats]);
+    console.log("re rendering");
 
     return (
         <NavPageView title="Purchase Orders">
@@ -25,37 +33,60 @@ export const PurchaseOrdersView: React.FC = () => {
                     Generate New Purchase Order
                 </h5>
 
-                <p>Loading: {JSON.stringify(loading)}</p>
-
-                <Button
-                    text="Refresh"
-                    intent="primary"
-                    outlined={true}
-                    onClick={() => {setSelectedRawMaterial(undefined); refreshMats()}}
-                />
-
-                <br />
-                <br />
-
-                <FormGroup
-                    label="Select Raw Material"
-                    helperText="The raw material that this vendor supplies"
-                >
-                    {loading ?
-                        <Button disabled={true} fill={true} text="Loading Materials..." /> :
-                        <HTMLSelect
+                <form onSubmit={onSubmit}>
+                    <FormGroup
+                        label="First Name"
+                    >
+                        <RefNormalizedInputGroup
                             fill={true}
-                            value={selectedRawMaterial?.id}
-                            onChange={onSelectedRawMaterialChange}
-                        >
-                            {mats.map(mat =>
-                                <option key={mat.id} value={mat.id}>{mat.name}</option>
-                            )}
-                        </HTMLSelect>
-                    }
-                </FormGroup>
+                            placeholder="Enter firstname"
+                            leftIcon="satellite"
+                            {...register('firstName')}
+                        />
+                    </FormGroup>
+                    <FormGroup
+                        label="Last Name"
+                    >
+                        <RefNormalizedInputGroup
+                            fill={true}
+                            placeholder="Enter lastname"
+                            leftIcon="th-filtered"
+                            {...register('lastName', { required: false })}
+                        />
+                    </FormGroup>
 
-                <p>Selected material is: {selectedRawMaterial?.name}</p>
+                    <FormGroup
+                        label="Age"
+                    >
+                        <Controller
+                            control={control}
+                            name="age"
+                            rules={{
+                                required: true
+                            }}
+                            render={({field}) =>
+                                (<NumericInput
+                                    fill={true}
+                                    min={0}
+                                    leftIcon="panel-stats"
+                                    placeholder="Enter middle age"
+                                    onValueChange={(_, strVal) => field.onChange(strVal)}
+                                    onBlur={field.onBlur}
+                                    value={field.value}
+                                    name={field.name}
+                                    inputRef={field.ref}
+                                    clampValueOnBlur={true}
+                                />)}
+                        />
+                    </FormGroup>
+
+                    <Button
+                        text="Process"
+                        intent="success"
+                        type="submit"
+                    />
+
+                </form>
 
             </Card>
         </NavPageView>

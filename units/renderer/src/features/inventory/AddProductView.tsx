@@ -11,7 +11,6 @@ import {
     ControlGroup,
     Icon
 } from '@blueprintjs/core';
-import { FormGroupWithoutLabel } from '@/components/form_group_utils';
 
 const CategorySelection = () => {
 

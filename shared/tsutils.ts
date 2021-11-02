@@ -5,3 +5,4 @@ export interface IndexableIterator<T> extends Iterable<T> {
 };
 
 export type MirrorObjectShape<T, K = any> = Record<keyof T, K>;
+export type UnpackedCollection<T> = T extends (infer U)[] ? U : T;

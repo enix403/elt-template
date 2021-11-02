@@ -7,7 +7,7 @@ import {
     RawMaterial
 } from '@/entities';
 import { orm, EnttManager } from '@/database';
-import { QueryOrderNumeric } from '@mikro-orm/core';
+import { QueryOrderNumeric, wrap } from '@mikro-orm/core';
 
 import type { ICategory } from '@shared/object_types';
 
@@ -129,7 +129,12 @@ export class InventoryChannel extends ActionMessageChannel {
 
         this.registerHandler(
             AllMessages.Inv.RM.GetAllMaterials,
-            async () => orm.em.fork().find(RawMaterial, {})
+            async (payload) => {
+                const mats = await orm.em.fork().find(
+                    RawMaterial, {}, payload && payload.preloadSuppliers ? ['suppliers'] : undefined);
+
+                return mats.map(m => wrap(m).toObject());
+            }
         );
     }
 }

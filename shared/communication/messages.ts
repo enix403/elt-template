@@ -30,7 +30,7 @@ export namespace AllMessages {
         { static ACTION_NAME = 'inv:rm:create'; }
 
         export class GetAllMaterials
-            extends SimpleMessage<void, Array<IRawMaterial>>
+            extends SimpleMessage<{ preloadSuppliers?: boolean } | void, Array<IRawMaterial & { suppliers?: ISupplier[] }>>
         { static ACTION_NAME = 'inv:rm:all'; }
     };
 

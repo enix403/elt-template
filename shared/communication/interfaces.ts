@@ -49,3 +49,5 @@ export interface MessageFactory<T, K> {
     new(...args: any[]): Message<T, K>;
 };
 
+export type ExtractMsgPayload<T> = T extends Message<infer R, any> ? R : never;
+export type ExtractMsgResult<T> = T extends Message<any, infer R> ? R : never;

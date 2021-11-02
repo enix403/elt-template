@@ -7,7 +7,13 @@ import {
     HTMLSelect,
     HTMLSelectProps
 } from '@blueprintjs/core';
-import { useForm } from 'react-hook-form';
+import {
+    Field,
+    FieldConfig,
+    FastField,
+    FastFieldConfig
+} from 'formik';
+import type * as Yup from 'yup';
 
 export const FlexBoxFormGroup: React.FC<FormGroupProps> = React.memo(props => {
     const { style: overrideStyle, ...restProps } = props;
@@ -38,19 +44,18 @@ export const RefNormalizedHTMLSelect = React.forwardRef((props: HTMLSelectProps,
 });
 
 
-// See https://stackoverflow.com/a/52964723
-// abstract class FormReturnTypeHelper<T> {
-//     Returned = useForm<T>();
-// }
+// `Field` as `FastField` components have buggy built-in typings
+export const WrappedField = Field as React.ComponentType<FieldConfig>;
+export const WrappedFastField = FastField as React.ComponentType<FastFieldConfig<any>>;
 
-// export type PropsWithForm<T, FormType = any> = T & {
-//     formObj: FormReturnTypeHelper<FormType>['Returned'];
-// };
-
-// export function withForm<P extends PropsWithForm<{}, FormType>, FormType>(Component: React.ComponentType<P>)
-// : React.ComponentType<Omit<P, keyof PropsWithForm<{}>>> {
-//     return props => {
-//         const form = useForm<FormType>();
-//         return <Component {...props as any} formObj={form}/>
-//     }
-// }
+export const createYupValidator = (schema: Yup.SchemaOf<any>) => {
+    return (value: any) => {
+        try {
+            schema.validateSync(value);
+            return undefined;
+        }
+        catch (e: any) {
+            return e.message;
+        }
+    };
+};

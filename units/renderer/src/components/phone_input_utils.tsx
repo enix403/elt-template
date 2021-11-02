@@ -22,9 +22,10 @@ export const phone_input_factory = (inputProps: InputGroupProps, otherProps?: an
         <InputGroup
             {...inputProps}
             {...otherProps}
-            value={phoneProps.value}
-            onChange={phoneProps.onChange}
-            disabled={phoneProps.disabled || false}
+            // value={phoneProps.value}
+            // onChange={phoneProps.onChange}
+            // disabled={phoneProps.disabled || false}
+            {...phoneProps}
             inputRef={ref as any} />
     );
 };

@@ -2,29 +2,42 @@ import React from 'react';
 
 import { NavPageView } from '@/layout/views';
 import {
-    NumericInput,
     FormGroup,
     Card,
     Button,
+    InputGroup,
 } from '@blueprintjs/core';
-import { RefNormalizedInputGroup } from '@/components/form_group_utils';
-import { Controller, useForm } from 'react-hook-form';
+import ReactPhoneInput from 'react-phone-number-input/input';
 
-type FormData = {
+import { RefNormalizedInputGroup } from '@/components/form_group_utils';
+import {
+    Formik,
+    Form,
+} from 'formik';
+import * as Yup from 'yup';
+import { createYupValidator, WrappedFastField } from '@/components/form_group_utils';
+import type { MirrorObjectShape } from '@shared/tsutils';
+
+
+interface Values {
     firstName: string;
-    lastName: string;
-    age: string;
+    phone: string;
+    email: string;
 };
 
+const initialValues: Values = {
+    firstName: '',
+    phone: '',
+    email: ''
+};
+
+const validators: MirrorObjectShape<Values> = {
+    firstName: () => undefined,
+    phone: createYupValidator(Yup.string().nullable(false).required("Your phone is required")),
+    email: createYupValidator(Yup.string().email("Enter a valid email").required("Email is required")),
+};
 
 export const PurchaseOrdersView: React.FC = () => {
-
-    const { register, handleSubmit, control } = useForm<FormData>();
-    const onSubmit = React.useCallback(handleSubmit(data => {
-        console.log(data);
-    }), []);
-
-    console.log("re rendering");
 
     return (
         <NavPageView title="Purchase Orders">
@@ -33,60 +46,93 @@ export const PurchaseOrdersView: React.FC = () => {
                     Generate New Purchase Order
                 </h5>
 
-                <form onSubmit={onSubmit}>
-                    <FormGroup
-                        label="First Name"
-                    >
-                        <RefNormalizedInputGroup
-                            fill={true}
-                            placeholder="Enter firstname"
-                            leftIcon="satellite"
-                            {...register('firstName')}
-                        />
-                    </FormGroup>
-                    <FormGroup
-                        label="Last Name"
-                    >
-                        <RefNormalizedInputGroup
-                            fill={true}
-                            placeholder="Enter lastname"
-                            leftIcon="th-filtered"
-                            {...register('lastName', { required: false })}
-                        />
-                    </FormGroup>
-
-                    <FormGroup
-                        label="Age"
-                    >
-                        <Controller
-                            control={control}
-                            name="age"
-                            rules={{
-                                required: true
+                <Formik
+                    initialValues={initialValues}
+                    onSubmit={(values, actions) => {
+                        console.log(values);
+                        actions.setSubmitting(false);
+                    }}
+                >
+                    <Form>
+                        <WrappedFastField
+                            name="firstName"
+                            validate={validators.firstName}
+                        >
+                            {({ field, meta }) => {
+                                const error = meta.touched && meta.error;
+                                return (
+                                    <FormGroup
+                                        label="First Name"
+                                        intent={error ? 'danger' : 'none'}
+                                        helperText={error}
+                                    >
+                                        <InputGroup
+                                            placeholder="Enter First Name"
+                                            {...field}
+                                            intent={error ? 'danger' : 'none'}
+                                            leftIcon="video"
+                                        />
+                                    </FormGroup>
+                                )
                             }}
-                            render={({field}) =>
-                                (<NumericInput
-                                    fill={true}
-                                    min={0}
-                                    leftIcon="panel-stats"
-                                    placeholder="Enter middle age"
-                                    onValueChange={(_, strVal) => field.onChange(strVal)}
-                                    onBlur={field.onBlur}
-                                    value={field.value}
-                                    name={field.name}
-                                    inputRef={field.ref}
-                                    clampValueOnBlur={true}
-                                />)}
-                        />
-                    </FormGroup>
+                        </WrappedFastField>
+                        <WrappedFastField
+                            name="phone"
+                            validate={validators.phone}
+                        >
+                            {({ field, meta, form }) => {
+                                const error = meta.error;
+                                return (
+                                    <FormGroup
+                                        label="Phone number"
+                                        intent={error ? 'danger' : 'none'}
+                                        helperText={error}
+                                    >
+                                        <ReactPhoneInput
+                                            inputComponent={RefNormalizedInputGroup as any}
+                                            defaultCountry={"PK"}
 
-                    <Button
-                        text="Process"
-                        intent="success"
-                        type="submit"
-                    />
+                                            {...field}
+                                            onChange={v => {
+                                                form.setFieldValue(field.name, v, true);
+                                                form.setFieldTouched(field.name, true, true);
+                                                form.validateField(field.name);
+                                            }}
 
-                </form>
+                                            placeholder="Enter Phone"
+                                            intent={error ? 'danger' : 'none'}
+                                            fill={true}
+                                            leftIcon="drawer-right-filled"
+                                        />
+                                    </FormGroup>
+                                )
+                            }}
+                        </WrappedFastField>
+                        <WrappedFastField
+                            name="email"
+                            validate={validators.email}
+                        >
+                            {({ field, meta }) => {
+                                const error = meta.touched && meta.error;
+                                return (
+                                    <FormGroup
+                                        label="Email"
+                                        intent={error ? 'danger' : 'none'}
+                                        helperText={error}
+                                    >
+                                        <InputGroup
+                                            placeholder="Enter email"
+                                            {...field}
+                                            intent={error ? 'danger' : 'none'}
+                                        />
+                                    </FormGroup>
+                                )
+                            }}
+                        </WrappedFastField>
+
+                        <Button type="submit" text="Process" />
+                    </Form>
+                </Formik>
 
             </Card>
         </NavPageView>

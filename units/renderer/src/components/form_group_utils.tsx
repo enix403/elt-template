@@ -44,7 +44,7 @@ export const RefNormalizedHTMLSelect = React.forwardRef((props: HTMLSelectProps,
 });
 
 
-// `Field` as `FastField` components have buggy built-in typings
+// `Field` and `FastField` components have buggy built-in typings
 export const WrappedField = Field as React.ComponentType<FieldConfig>;
 export const WrappedFastField = FastField as React.ComponentType<FastFieldConfig<any>>;
 

@@ -4,7 +4,8 @@ import {
     AllMessages,
     AppChannel,
     ExtractMsgResult,
-    ExtractMsgPayload
+    ExtractMsgPayload,
+    Message,
 } from '@shared/communication';
 import { formatResponseErrorLog, isResponseSuccessful } from '@/utils';
 
@@ -24,21 +25,63 @@ export function useTrackedEffectFunc(
 ) {
     const [loading, setIsLoading] = React.useState(false);
 
-    const effectFunc = useCallback(() => {
+    const effectFunc = () => {
         if (blockWhileLoading && loading)
             return
 
         setIsLoading(true);
 
         callback().finally(() => setIsLoading(false));
-    }, [loading]);
+    };
 
     return [effectFunc, loading] as const;
 };
 
+export function useMessageEffect<T, K>(
+    channelName: AppChannel,
+    message: Message<T, K>,
+    onLoad?: (data: K) => void,
+    isResultArray?: boolean
+) {
+    const initialValue = !isResultArray ? undefined : [] as any;
+
+    const [data, setData] = React.useState<K | undefined>(initialValue);
+
+    const [effectObj, loading] = useTrackedEffectFunc(async () => {
+        setData(initialValue);
+
+        return window.SystemBackend.sendMessage(
+            channelName,
+            message
+        )
+            .then(res => {
+                if (isResponseSuccessful(res)) {
+                    setData(res.data!);
+                    onLoad?.(res.data!);
+                }
+                else {
+                    setData(initialValue);
+                    onLoad?.(initialValue);
+                    console.error("Failed to send message:", formatResponseErrorLog(res));
+                }
+            })
+    });
+
+    const refreshData = useRefreshableEffect(effectObj, []);
+
+    return [data, loading, refreshData] as const;
+}
+
+/* =========================================== */
+/* ============== RAW MATERIALS ============== */
+/* =========================================== */
+
 type RMMsgResult    = ExtractMsgResult<AllMessages.Inv.RM.GetAllMaterials>;
 type RMMsgPayload   = ExtractMsgPayload<AllMessages.Inv.RM.GetAllMaterials>;
 
+/**
+ * @deprecated Use `useMessageEffect()` instead
+ * */
 export function useRawMaterialList(
     onLoad?: (list: RMMsgResult) => void,
     options?: RMMsgPayload

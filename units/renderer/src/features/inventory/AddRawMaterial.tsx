@@ -12,13 +12,14 @@ import {
     Classes,
     Card,
     Spinner,
+    TextArea
 } from '@blueprintjs/core';
 
 import { ChooseCategoryForm } from './commom/ChooseCategory';
 import { AppToaster } from '@//toaster';
 import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
 
-import type { IRawMaterial, ICategoryPreview } from '@shared/object_types';
+import type { ICreateRawMaterial, IRawMaterial, ICategoryPreview } from '@shared/object_types';
 
 type ProductPropNames = 'm_unit' | 'i_unit';
 
@@ -98,6 +99,13 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                     disabled={isSubmitting}
                 />
             </FormGroup>
+            <FormGroup label="Description">
+                <TextArea
+                    placeholder="Enter description"
+                    fill={true}
+                    style={{ resize: 'vertical' }}
+                />
+            </FormGroup>
             <Divider style={{ marginBottom: 10 }} />
 
             <label className={Classes.LABEL}>Select Category</label>
@@ -147,6 +155,7 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                     setIsSubmitting(true);
                     const createMsg = new AllMessages.Inv.RM.CreateMaterial({
                         name: name,
+                        description: '', // will worry about it later
                         category: { id: cat.id },
                         inventory_unit: iUnit,
                         measurement_unit: mUnit,

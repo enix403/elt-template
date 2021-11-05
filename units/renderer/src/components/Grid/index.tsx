@@ -1,32 +1,32 @@
 import * as React from 'react';
 import './grid.scss';
 
-interface GridRowProps extends React.PropsWithChildren<{}> {
-    extraClasses?: string;
-}
-
-export const GridRow = React.memo((props: GridRowProps) => {
+export const GridRow: React.FC<React.HTMLAttributes<HTMLDivElement>> = React.memo(props => {
+    const { className, ...otherProps } = props;
     return (
-        <div className={`row row-sm ${props.extraClasses || ''}`}>{props.children}</div>
+        <div {...otherProps} className={`row row-sm ${className || ''}`} />
     );
 });
 
 type ColSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 'auto';
 type ScreenSize = 'sm' | 'md' | 'lg' | 'xl' | 'none';
 
-interface GridColumnProps extends React.PropsWithChildren<{}> {
+interface GridColumnProps extends React.HTMLAttributes<HTMLDivElement> {
     colSize: ColSize;
     screenSize?: ScreenSize;
-    extraClasses?: string;
 }
 
 export const GridColumn: React.FC<GridColumnProps> = React.memo(props => {
-    let screenSize: ScreenSize = props.screenSize ? props.screenSize : 'md';
-    let screenSpec = screenSize == 'none' ? '' : screenSize + '-';
+
+    const { colSize, screenSize, className, ...otherProps } = props;
+
+    let realScreenSize: ScreenSize = screenSize || 'md';
+    let screenSpec = screenSize == 'none' ? '' : realScreenSize + '-';
 
     return (
-        <div className={`col-${screenSpec}${props.colSize} ${props.extraClasses || ''}`}>
-            {props.children}
-        </div>
+        <div
+            {...otherProps}
+            className={`col-${screenSpec}${colSize} ${className || ''}`}
+        />
     );
 });

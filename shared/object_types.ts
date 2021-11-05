@@ -20,9 +20,14 @@ export interface IRawMaterial {
     category: IDRef;
 };
 
+export type ICreateRawMaterial = WithoutID<IRawMaterial> & {
+    description: string;
+}
+
 export interface ISupplier {
     id: number;
     name: string;
+    materials?: IRawMaterial[];
 }
 
 export interface ISupplierInfo {

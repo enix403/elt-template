@@ -3,12 +3,16 @@ import { ActionMessageChannel } from '@/channel/ActionMessageChannel';
 import { ChannelError } from '@/channel/exceptions';
 
 import {
+    entt_relation_list,
+    entt_field_list,
+
     Supplier,
     SupplierInfo,
     RawMaterial
 } from '@/entities';
 import { orm } from '@/database';
-import { Reference } from '@mikro-orm/core';
+import { Reference, wrap } from '@mikro-orm/core';
+import { logger } from '@/logging';
 
 export class SuppliersChannel extends ActionMessageChannel {
     channelName = AppChannel.Suppliers;
@@ -75,5 +79,21 @@ export class SuppliersChannel extends ActionMessageChannel {
             }
         );
 
+        this.registerHandler(
+            AllMessages.Supl.GetAllSuppliers,
+            async ({ preloadMaterials }) => {
+                const em = orm.em.fork();
+                const supls = await em.find(
+                    Supplier, {},
+                    preloadMaterials ? entt_relation_list<Supplier>('materials') : undefined
+                )
+                // await delay(1000);
+                const ignoredFields = entt_field_list<Supplier>('info');
+                return supls.map(s => wrap(s).toObject(ignoredFields));
+            }
+        );
+
     }
 }
+
+const delay = ms => new Promise(res => setTimeout(res, ms));

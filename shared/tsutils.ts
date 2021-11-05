@@ -6,3 +6,5 @@ export interface IndexableIterator<T> extends Iterable<T> {
 
 export type MirrorObjectShape<T, K = any> = Record<keyof T, K>;
 export type UnpackedCollection<T> = T extends (infer U)[] ? U : T;
+
+export type ToMutableArray<ROArr> = ROArr extends ReadonlyArray<infer R> ? Array<R> : never;

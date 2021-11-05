@@ -48,9 +48,42 @@ html, body {
 .icon-text-sm { margin: 0  3px; }
 .icon-text-md { margin: 0  6px; }
 .icon-text-lg { margin: 0 10px; }
+.header-margin-b-xl { margin-bottom: 25px; }
 .header-margin-b-l { margin-bottom: 15px; }
 .header-margin-b-m { margin-bottom: 9px; }
 .header-margin-b-s { margin-bottom: 6px; }
+
+.header-margin-t-xl { margin-top: 25px; }
+.header-margin-t-l { margin-top: 15px; }
+.header-margin-t-m { margin-top: 9px; }
+.header-margin-t-s { margin-top: 6px; }
+
+.header-margin-v-xl { margin-top: 25px; margin-bottom: 25px; }
+.header-margin-v-l { margin-top: 15px; margin-bottom: 15px; }
+.header-margin-v-m { margin-top: 9px; margin-bottom: 9px; }
+.header-margin-v-s { margin-top: 6px; margin-bottom: 6px; }
+
+.margin-b-xl { margin-bottom: 25px; }
+.margin-b-l { margin-bottom: 15px; }
+.margin-b-m { margin-bottom: 9px; }
+.margin-b-s { margin-bottom: 6px; }
+
+.margin-t-xl { margin-top: 25px; }
+.margin-t-l { margin-top: 15px; }
+.margin-t-m { margin-top: 9px; }
+.margin-t-s { margin-top: 6px; }
+
+.margin-v-xl { @extend .margin-b-xl; @extend .margin-t-xl; }
+.margin-v-l  { @extend .margin-b-l;  @extend .margin-t-l ; }
+.margin-v-m  { @extend .margin-b-m;  @extend .margin-t-m ; }
+.margin-v-s  { @extend .margin-b-s;  @extend .margin-t-s ; }
+
+.action-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
 
 
 @import './tables';

@@ -8,7 +8,7 @@ export type ChannelResponse<T = any> = {
 
 export type SerializedMessage<T> = { action: string; payload: T };
 
-export abstract class Message<T = {}, K = {}> {
+export abstract class Message<T = void, K = void> {
     // This field is here only to make typescript *remember* the given generic argument
     // that is later used for typechecking of message response
     //

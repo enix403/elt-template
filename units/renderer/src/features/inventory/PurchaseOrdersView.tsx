@@ -28,8 +28,6 @@ const fetchMsg = new AllMessages.Supl.GetAllSuppliers({
 
 const jsDateFormatter: DateFormatProps = {
   // note that the native implementation of Date functions differs between browsers
-  // formatDate: date => date.toLocaleDateString(),
-  // parseDate: str => new Date(str),
   formatDate: date => datefns_format(date, "cccc, MMMM do, yyyy"),
   parseDate: str => {
     try { return datefns_parse(str, "d/M/yyyy", new Date()); } catch (e) {}

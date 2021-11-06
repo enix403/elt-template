@@ -3,7 +3,6 @@ import type {
     WithoutID,
     ICategory,
     IRawMaterial,
-    ICreateRawMaterial,
     ISupplier,
     ISupplierInfo
 } from '@shared/object_types';
@@ -31,12 +30,22 @@ export namespace AllMessages {
         { static ACTION_NAME = 'inv:rm:cat:all'; }
 
         export class CreateMaterial
-            extends SimpleMessage<ICreateRawMaterial, void>
+            extends SimpleMessage<Required<WithoutID<IRawMaterial>>, void>
         { static ACTION_NAME = 'inv:rm:create'; }
 
+        export interface IGetAllMaterialsOpts {
+            preloadSuppliers?: boolean;
+            withDescription?: boolean;
+        }
         export class GetAllMaterials
-            extends SimpleMessage<{ preloadSuppliers?: boolean } | void, Array<IRawMaterial & { suppliers?: ISupplier[] }>>
-        { static ACTION_NAME = 'inv:rm:all'; }
+            extends Message<IGetAllMaterialsOpts, Array<IRawMaterial & { suppliers?: ISupplier[] }>>
+        {
+            static ACTION_NAME = 'inv:rm:all';
+            constructor(options?: IGetAllMaterialsOpts) {
+                super();
+                this.payload = options || {};
+            }
+        }
     };
 
     export namespace Supl {
@@ -49,7 +58,7 @@ export namespace AllMessages {
             , void>
         { static ACTION_NAME = 'supl:add'; }
 
-        interface IGetAllSuppliersOpts {
+        export interface IGetAllSuppliersOpts {
             preloadMaterials?: boolean;
         };
         export class GetAllSuppliers

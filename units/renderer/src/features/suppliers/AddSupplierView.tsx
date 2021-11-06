@@ -21,7 +21,7 @@ import {
     Card,
     Icon,
 } from '@blueprintjs/core';
-import { HorizontalSectionDivider } from '@/components/misc_utils';
+import { HorizontalDivider } from '@/components/misc_utils';
 import { CountrySelect } from '@/components/CountrySelect';
 import { ICountry } from '@/components/CountrySelect/countries';
 import { AllMessages, AppChannel } from '@shared/communication';
@@ -342,7 +342,7 @@ const ViewContent = () => {
             </div>
             <SupplierPersonalInformationForm store={store} allDisabled={isSubmitting} />
 
-            <HorizontalSectionDivider />
+            <HorizontalDivider />
 
             <div className="center-text-flow" style={{ margin: '0 0 15px' }}>
                 <Icon size={16} icon="duplicate" />

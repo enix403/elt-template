@@ -32,7 +32,18 @@ export type ModelRelation<T> = {
         ? P : never
 }[keyof T];
 
-// It's kinda ugly to have `['somerelation'] as ModelRelation<SomeEntity>[]` floating everywhere.
-export function entt_relation_list<T extends SimpleEntity>(...rels: ModelRelation<T>[]) { return rels; }
 
-export function entt_field_list<T extends SimpleEntity>(...fields: (keyof T)[]) { return fields; }
+// It's kinda ugly to have `['somerelation'] as ModelRelation<SomeEntity>[]` floating everywhere.
+export function entt_relation_list<T extends SimpleEntity>(
+    ...rels: (ModelRelation<T> | boolean | undefined | null)[]
+): ModelRelation<T>[]
+{
+    return rels.filter(Boolean) as ModelRelation<T>[];
+}
+
+export function entt_field_list<T extends SimpleEntity>(
+    ...fields: ((keyof T) | boolean | undefined | null)[]
+): (keyof T)[]
+{
+    return fields.filter(Boolean) as (keyof T)[];
+}

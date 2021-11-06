@@ -4,10 +4,17 @@
 .bp3-html-select:not(.bp3-minimal) select {
     background-image: none !important;
 }
+.bp3-control-indicator {
+    background-image: none !important;
+}
 
 .bp3-heading {
     margin: 0;
     padding: 0;
+}
+
+.bp3-form-group .bp3-label:not(.txt-wrap) {
+    white-space: nowrap;
 }
 
 /*

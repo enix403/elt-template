@@ -15,14 +15,11 @@ export type ICategoryPreview = TypedOmit<ICategory, 'children'>;
 export interface IRawMaterial {
     id: number;
     name: string;
+    description?: string;
     measurement_unit: string;
     inventory_unit: string;
     category: IDRef;
 };
-
-export type ICreateRawMaterial = WithoutID<IRawMaterial> & {
-    description: string;
-}
 
 export interface ISupplier {
     id: number;

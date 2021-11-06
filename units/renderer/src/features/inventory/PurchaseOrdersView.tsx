@@ -5,36 +5,41 @@ import {
   FormGroup,
   Card,
   Button,
+  Menu,
+  MenuItem,
+  MenuDivider,
   InputGroup,
   HTMLSelect,
-  NumericInput,
-  Tag
+  Classes,
+  Tag,
+  Radio,
+  RadioGroup
 } from '@blueprintjs/core';
-import { DateInput, DateFormatProps } from "@blueprintjs/datetime";
+import classNames from 'classnames';
+import { DateInput, DateFormatProps, DateInputProps } from "@blueprintjs/datetime";
 import datefns_format from 'date-fns/format';
 import datefns_parse from 'date-fns/parse';
 
 import { AllMessages, AppChannel } from '@shared/communication';
 
-import { useMessageEffect } from '../hooks';
 import { GridColumn, GridRow } from '@/components/Grid';
-import { HorizontalSectionDivider } from '@/components/misc_utils';
-import type { UnpackedCollection } from '@shared/tsutils';
-import type { IRawMaterial } from '@shared/object_types';
-
-const fetchMsg = new AllMessages.Supl.GetAllSuppliers({
-  preloadMaterials: true
-});
+import { HorizontalDivider } from '@/components/misc_utils';
 
 const jsDateFormatter: DateFormatProps = {
-  // note that the native implementation of Date functions differs between browsers
   formatDate: date => datefns_format(date, "cccc, MMMM do, yyyy"),
   parseDate: str => {
     try { return datefns_parse(str, "d/M/yyyy", new Date()); } catch (e) {}
 
     return false;
   },
-  placeholder: "DD/MM/YYYY"
+  placeholder: "DD/MM/YYYY",
+};
+
+const commonDateInputProps: Partial<DateInputProps> = {
+  showActionsBar: true,
+  highlightCurrentDay: true,
+  fill: true,
+  popoverProps: { position: 'auto-start' },
 };
 
 const minDate = new Date();
@@ -42,154 +47,185 @@ const maxDate = new Date();
 minDate.setFullYear(minDate.getFullYear() - 5);
 maxDate.setFullYear(maxDate.getFullYear() + 5);
 
-
-export const PurchaseOrdersView: React.FC = () => {
-
-  const [allSupls, suplsLoading, refreshSupls] = useMessageEffect(AppChannel.Suppliers, fetchMsg, data => {
-    if (data.length > 0)
-      setSupplier(data[0]);
-  }, true);
-
-
-  const [supplier, setSupplier] = React.useState<UnpackedCollection<typeof allSupls>>();
-  const handleSupplierChange = React.useCallback(e => {
-    setSupplier(allSupls?.find(sup => sup.id == e.target.value))
-  }, [allSupls]);
-
-  const [count, setCount] = React.useState(1);
-  const handleAdd = React.useCallback(() => setCount(c => c + 1), []);
-  const handleSubtract = React.useCallback(() => setCount(c => c - 1), []);
-
-  const entries: any[] = [];
-  for (let i = 0; i < count; i++)
-    entries.push(<OrderMaterialEntry
-      mats={supplier ? supplier.materials! : []}
-      onRemoveBtnClick={handleSubtract}
-    />);
-
-  return (
-    <NavPageView title="Purchase Orders">
-      <Card elevation={2} style={{ margin: "15px 25px" }}>
-        <h5 className="bp3-heading header-margin-b-l">
-          Generate New Purchase Order
-        </h5>
-
-        <FormGroup
-          label="Select Supplier"
-        >
-          {suplsLoading ?
-            <Button disabled={true} loading={true} fill={true} /> :
-            <HTMLSelect
-              fill={true}
-              onChange={handleSupplierChange}
-              value={supplier?.id}
-            >
-              {allSupls!.map(mat =>
-                <option key={mat.id} value={mat.id}>{mat.name}</option>)}
-            </HTMLSelect>
-          }
-        </FormGroup>
-
-        <HorizontalSectionDivider />
-
-        <div className="action-header margin-b-l">
-          <h6 className="bp3-heading">Material Entries</h6>
-          <Button
-            text="Add"
-            icon="add"
-            intent="primary"
-            outlined={true}
-            onClick={handleAdd}
-          />
-        </div>
-
-        {OrderMaterialEntryHeaders}
-        {!suplsLoading && entries}
-
-        <HorizontalSectionDivider />
-
-        <FormGroup
-          label="Required Delivery Date"
-        >
-          <DateInput
-            {...jsDateFormatter}
-            showActionsBar={true}
-            highlightCurrentDay={true}
-            fill={true}
-            inputProps={{ leftIcon: 'truck' }}
-            popoverProps={{ position: 'auto-start' }}
-            minDate={minDate}
-            maxDate={maxDate}
-          />
-        </FormGroup>
-
-        <Button
-          text="Generate"
-          icon="fork"
-          intent="success"
-          onClick={refreshSupls}
-        />
-
-      </Card>
-    </NavPageView>
-  );
+interface IPurchaseOrdersViewState {
+  radioValue: string;
 };
 
-const OrderMaterialEntryHeaders = (
-  <GridRow>
-    <GridColumn colSize={4}><FormGroup className="margin-b-s" label="Raw Material" /></GridColumn>
-    <GridColumn colSize={3}><FormGroup className="margin-b-s" label="Material Amount" /></GridColumn>
-    <GridColumn colSize={4}><FormGroup className="margin-b-s" label="Total Price" /></GridColumn>
-  </GridRow>
-);
+export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewState> {
 
-interface IOrderMaterialEntryProps {
-  mats: IRawMaterial[];
-  onRemoveBtnClick?: () => void;
-}
+  state: IPurchaseOrdersViewState = {
+    radioValue: 'three'
+  };
 
-const OrderMaterialEntry: React.FC<IOrderMaterialEntryProps> = ({ mats, onRemoveBtnClick }) => {
-  return (
-    <GridRow className="margin-b-s">
-      <GridColumn colSize={4}>
-        <HTMLSelect
-          fill={true}
-        >
-          {mats.map(mat =>
-            <option key={mat.id} value={mat.id}>{mat.name}</option>)}
-        </HTMLSelect>
-      </GridColumn>
-      <GridColumn colSize={3}>
-        <NumericInput
-          placeholder="Enter Amount"
-          fill={true}
-          leftIcon="array-numeric"
-          min={0}
-          minorStepSize={0.0001}
-          clampValueOnBlur={true}
-          rightElement={<Tag intent="primary" minimal={false} >KG</Tag>}
-        />
-      </GridColumn>
-      <GridColumn colSize={4}>
-        <NumericInput
-          placeholder="Enter Price"
-          fill={true}
-          leftIcon="array-boolean"
-          min={0}
-          minorStepSize={0.0001}
-          clampValueOnBlur={true}
-          rightElement={<Tag intent="success" minimal={false} >RS</Tag>}
-        />
-      </GridColumn>
-      <GridColumn colSize={1} className="center-everything">
-        <Button
-          minimal={true}
-          fill={false}
-          intent="danger"
-          icon="remove"
-          onClick={onRemoveBtnClick}
-        />
-      </GridColumn>
-    </GridRow>
-  );
-}
+  handleRadioChange = (e: React.ChangeEvent<any>) => {
+    this.setState({ radioValue: e.target.value });
+  };
+
+  render() {
+    return (
+      <NavPageView title="Purchase Orders">
+        <Card elevation={2} style={{ margin: "15px 25px" }}>
+          <h5 className="bp3-heading header-margin-b-l">
+            Generate New Purchase Order
+
+            <Tag
+              className="icon-text-lg"
+              intent="success"
+              minimal
+              large
+              round
+            >
+              <strong>ORDER NUMBER : 87DA3400</strong>
+            </Tag>
+          </h5>
+
+          <div>
+            <FormGroup
+              label={<>Custom Reference Number: <span className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>(Optional)</span></>}
+            >
+              <InputGroup
+                placeholder="Enter reference number"
+                leftIcon='tag'
+              />
+            </FormGroup>
+          </div>
+
+          {/* ============================ */}
+          {/* ========= Supplier ========= */}
+          {/* ============================ */}
+
+          <div className="flex-row">
+            <FormGroup
+              label="Select Supplier"
+            >
+              {false ?
+                <Button disabled={true} loading={true} fill={true} /> :
+                <HTMLSelect
+                  fill={true}
+                >
+                  <option value={1}>Supplier 1</option>
+                  <option value={2}>Supplier 2</option>
+                  <option value={3}>Supplier 3</option>
+                  <option value={4}>Supplier 4</option>
+                  <option value={5}>Supplier 5</option>
+                </HTMLSelect>
+              }
+            </FormGroup>
+            <FormGroup
+              label="Attention Person"
+            >
+              {false ?
+                <Button disabled={true} loading={true} fill={true} /> :
+                <HTMLSelect
+                  fill={true}
+                >
+                  <option value={1}>Person 1</option>
+                  <option value={2}>Person 2</option>
+                  <option value={3}>Person 3</option>
+                  <option value={4}>Person 4</option>
+                  <option value={5}>Person 5</option>
+                </HTMLSelect>
+              }
+            </FormGroup>
+          </div>
+
+          {/* ============================= */}
+          {/* ========= Item List ========= */}
+          {/* ============================= */}
+
+          <HorizontalDivider />
+
+          <div className="action-header margin-b-l">
+            <h6 className="bp3-heading">Material Entries</h6>
+            <Button
+              text="Add"
+              icon="add"
+              intent="primary"
+              outlined={true}
+            />
+          </div>
+
+          <HorizontalDivider />
+
+          {/* ========================= */}
+          {/* ========= Dates ========= */}
+          {/* ========================= */}
+
+          <div className="flex-row">
+            <FormGroup
+              label="Purchase Order Date"
+            >
+              <DateInput
+                {...jsDateFormatter}
+                {...commonDateInputProps}
+                inputProps={{ leftIcon: 'timeline-events' }}
+                minDate={minDate}
+                maxDate={maxDate}
+              />
+            </FormGroup>
+            <FormGroup
+              label="Required Delivery Date"
+            >
+              <DateInput
+                {...jsDateFormatter}
+                {...commonDateInputProps}
+                inputProps={{ leftIcon: 'truck' }}
+                minDate={minDate}
+                maxDate={maxDate}
+              />
+            </FormGroup>
+          </div>
+
+          {/* ============================ */}
+          {/* ========= Shipment ========= */}
+          {/* ============================ */}
+
+          <div className='flex-row'>
+
+            <RadioGroup
+              label="Shipment Mode"
+              // inline
+              onChange={this.handleRadioChange}
+              selectedValue={this.state.radioValue}
+              className="radio-group"
+            >
+              <Radio label="By Courier" value="1" />
+              <Radio label="By Water" value="2" />
+              <Radio label="By Air" value="3" />
+              <Radio label="By Truck" value="4" />
+              <Radio label="Other" value="other" />
+            </RadioGroup>
+
+            <FormGroup
+              disabled={this.state.radioValue !== 'other'}
+              label="Specify Other Shipment mode"
+            >
+              <InputGroup
+                disabled={this.state.radioValue !== 'other'}
+                placeholder="Specify mode"
+                leftIcon="helicopter"
+                fill={false}
+              />
+            </FormGroup>
+          </div>
+
+
+          {/* ============================ */}
+          {/* ========= Address  ========= */}
+          {/* ============================ */}
+          <label className="bp3-label">Delivery Address</label>
+
+
+          {/* Generate Button */}
+          <Button
+            text="Generate"
+            icon="fork"
+            intent="success"
+            className="margin-t-l"
+          />
+
+        </Card>
+      </NavPageView>
+    );
+  }
+};

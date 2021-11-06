@@ -19,7 +19,7 @@ import { ChooseCategoryForm } from './commom/ChooseCategory';
 import { AppToaster } from '@//toaster';
 import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
 
-import type { ICreateRawMaterial, IRawMaterial, ICategoryPreview } from '@shared/object_types';
+import type { IRawMaterial, ICategoryPreview } from '@shared/object_types';
 
 type ProductPropNames = 'm_unit' | 'i_unit';
 
@@ -80,6 +80,7 @@ const ProductProperties: React.FC<IProductPropertiesProps> = ({ store }) => {
 const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
     const [cat, setCat] = React.useState<ICategoryPreview | null>(null);
     const [name, setName] = React.useState('');
+    const [description, setDescription] = React.useState('');
     const [mUnit, setMUnit] = React.useState('item');
     const [iUnit, setIUnit] = React.useState('carton');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -104,6 +105,8 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                     placeholder="Enter description"
                     fill={true}
                     style={{ resize: 'vertical' }}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
                 />
             </FormGroup>
             <Divider style={{ marginBottom: 10 }} />
@@ -125,7 +128,6 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                     }
                 }}
                 onCategoryChange={cat => {
-                    // console.log(cat);
                     setCat(cat);
                 }}
             />
@@ -155,7 +157,7 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                     setIsSubmitting(true);
                     const createMsg = new AllMessages.Inv.RM.CreateMaterial({
                         name: name,
-                        description: '', // will worry about it later
+                        description: description,
                         category: { id: cat.id },
                         inventory_unit: iUnit,
                         measurement_unit: mUnit,

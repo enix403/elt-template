@@ -7,6 +7,7 @@ import type { IRawMaterial } from "@shared/object_types";
 
 export class RawMaterial extends SimpleEntity implements IRawMaterial {
     name!: string;
+    description!: string;
     measurement_unit!: string;
     inventory_unit!: string;
     category!: IdentifiedReference<RMCategory>;
@@ -19,6 +20,7 @@ export const RawMaterialSchema = new EntitySchema<RawMaterial, SimpleEntity>({
     tableName: 'tbl_raw_materials',
     properties: {
         name: { type: String },
+        description: { type: String },
         measurement_unit: { type: String },
         inventory_unit: { type: String },
         category: {

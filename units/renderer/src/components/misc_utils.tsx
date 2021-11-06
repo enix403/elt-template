@@ -1,6 +1,10 @@
 import React from 'react';
-import { Divider } from '@blueprintjs/core';
+import { Divider, IDividerProps } from '@blueprintjs/core';
+import classNames from 'classnames';
 
-export const HorizontalSectionDivider = React.memo(_ =>
-    <Divider style={{ marginTop: 10, marginBottom: 20 }} />
+export const HorizontalDivider: React.FC<IDividerProps> = React.memo(props =>
+    <Divider
+        {...props}
+        className={classNames('app-divider', props.className)}
+    />
 );

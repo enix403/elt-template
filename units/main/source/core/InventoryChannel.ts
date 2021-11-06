@@ -4,7 +4,9 @@ import { ChannelError } from '@/channel/exceptions';
 
 import {
     RMCategory,
-    RawMaterial
+    RawMaterial,
+    entt_relation_list,
+    entt_field_list,
 } from '@/entities';
 import { orm, EnttManager } from '@/database';
 import { QueryOrderNumeric, wrap } from '@mikro-orm/core';
@@ -105,7 +107,7 @@ export class InventoryChannel extends ActionMessageChannel {
 
         this.registerHandler(
             AllMessages.Inv.RM.CreateMaterial,
-            async ({ name, category, measurement_unit, inventory_unit }) => {
+            async ({ name, category, measurement_unit, inventory_unit, description }) => {
                 const em = orm.em.fork();
 
                 let targetCat: RMCategory;
@@ -118,6 +120,7 @@ export class InventoryChannel extends ActionMessageChannel {
 
                 const mat = em.create(RawMaterial, {
                     name,
+                    description,
                     inventory_unit,
                     measurement_unit,
                     category: targetCat
@@ -129,9 +132,15 @@ export class InventoryChannel extends ActionMessageChannel {
 
         this.registerHandler(
             AllMessages.Inv.RM.GetAllMaterials,
-            async (payload) => {
+            async ({ preloadSuppliers, withDescription }) => {
+
+                const populate = entt_relation_list<RawMaterial>(preloadSuppliers && 'suppliers');
+                const fields = entt_field_list<RawMaterial>('id', 'name', 'category', 'inventory_unit', 'measurement_unit');
+                if (withDescription)
+                    fields.push('description');
+
                 const mats = await orm.em.fork().find(
-                    RawMaterial, {}, payload && payload.preloadSuppliers ? ['suppliers'] : undefined);
+                    RawMaterial, {}, { populate, fields });
 
                 return mats.map(m => wrap(m).toObject());
             }

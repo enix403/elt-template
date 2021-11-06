@@ -61,7 +61,7 @@ $flex-row-spacing: 5px;
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
-    align-items: center;
+    align-items: stretch;
     margin: 0px $flex-row-spacing * -1;
     flex-wrap: wrap;
     > * {
@@ -69,8 +69,13 @@ $flex-row-spacing: 5px;
             left: $flex-row-spacing;
             right: $flex-row-spacing;
         }
-        flex: 1 0 auto;
+        // flex: 1 0 auto;
+        flex: 1;
     }
+}
+
+.flex-grow-full {
+    flex-grow: 1;
 }
 
 .radio-group {

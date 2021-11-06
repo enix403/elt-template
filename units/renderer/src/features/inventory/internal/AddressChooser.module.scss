@@ -1,0 +1,63 @@
+.scroll-window {
+    $window-height: 250px;
+    height: $window-height;
+    max-height: $window-height;
+    min-width: 255px;
+    width: 100%;
+
+    display: inline-block;
+    border: 1px solid rgba(24, 32, 38, 0.2);
+    border-radius: 5px;
+
+    overflow: hidden;
+    padding: 5px 5px 0px 5px;
+}
+
+.container {
+    display: block;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+
+    overflow: auto;
+
+    > .item {
+        padding: 10px 15px;
+        margin-bottom: 5px;
+        border-radius: 7px;
+
+        transition: background-color 0.2s ease-out;
+
+        &:hover {
+            background-color: rgba(167, 182, 194, .3);
+            cursor: default;
+        }
+
+        &.active {
+            color: #fff;
+            // background-color: #7157D9 // indigo / blue;
+            // background-color: #0f9960 // green;
+            background-color: #DB3737 // red;
+            // background-color: #394B59 // dark grey;
+            // background-color: #EB532D // orange / tomato;
+            // background-color: #A854A8 // violet / purple;
+        }
+
+        > .title {
+            display: block;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        > .content {
+            width: 100%;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            padding-left: 25px;
+
+            font-size: 14px;
+        }
+
+    }
+
+}

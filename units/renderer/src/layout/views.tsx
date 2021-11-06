@@ -1,7 +1,10 @@
 import React from 'react';
-import './style.scss'
+import classNames from 'classnames/bind';
+import styles from './style.module.scss';
 
 import { Icon, Card } from '@blueprintjs/core';
+
+const cx = classNames.bind(styles);
 
 export const MockChildBlock = (props: React.PropsWithChildren<{ color?: string }>) => {
     return (
@@ -13,8 +16,8 @@ export const MockChildBlock = (props: React.PropsWithChildren<{ color?: string }
 
 export const SidebarPaddedView = React.memo(({ children }) => {
     return (
-        <div className="content">
-            <div className="content-body">
+        <div className={cx("content")}>
+            <div className={cx("content-body")}>
                 {children}
             </div>
         </div>
@@ -27,7 +30,7 @@ interface NavPageViewProps {
 
 const NavPageViewHeader = ({title}) => {
     return (
-        <Card elevation={1} className='content-body-header-main'>
+        <Card elevation={1} className={cx('content-body-header-main')}>
             <Icon icon="full-circle" color="#0c9fcc" />
             <span style={{ fontSize: 20, fontWeight: 400, marginLeft: 7 }}>
                 {title}

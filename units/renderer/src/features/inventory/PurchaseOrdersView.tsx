@@ -5,10 +5,8 @@ import {
   FormGroup,
   Card,
   Button,
-  Menu,
-  MenuItem,
-  MenuDivider,
   InputGroup,
+  TextArea,
   HTMLSelect,
   Classes,
   Tag,
@@ -21,10 +19,10 @@ import datefns_format from 'date-fns/format';
 import datefns_parse from 'date-fns/parse';
 
 import { AllMessages, AppChannel } from '@shared/communication';
-
-import { GridColumn, GridRow } from '@/components/Grid';
 import { HorizontalDivider } from '@/components/misc_utils';
+import { AddressChooser, IAddressChooserProps, AddrItem } from './internal/AddressChooser';
 
+/* Date stuff */
 const jsDateFormatter: DateFormatProps = {
   formatDate: date => datefns_format(date, "cccc, MMMM do, yyyy"),
   parseDate: str => {
@@ -47,18 +45,80 @@ const maxDate = new Date();
 minDate.setFullYear(minDate.getFullYear() - 5);
 maxDate.setFullYear(maxDate.getFullYear() + 5);
 
+/* Demo addresses */
+const addrs: IAddressChooserProps['items'] = [
+  {
+    id: 1,
+    name: "Main Factory",
+    text: `
+      Street:  Shop-5, Alay Plaza, P.O. Box 1780
+      City:   Capital
+      State/province/area:    Islamabad
+      Phone number  9251-2823316
+      Country calling code  +92
+      Country  Pakistan
+    `
+  },
+  {
+    id: 2,
+    name: "Store 1",
+    text: `
+      Street:  Shop-5, Alay Plaza, P.O. Box 1780
+      City:   Capital
+      State/province/area:    Islamabad
+      Phone number  9251-2823316
+      Country calling code  +92
+      Country  Pakistan
+    `
+  },
+  {
+    id: 3,
+    name: "Another Factory",
+    text: `
+      Street:  Shop-5, Alay Plaza, P.O. Box 1780
+      City:   Capital
+      State/province/area:    Islamabad
+      Phone number  9251-2823316
+      Country calling code  +92
+      Country  Pakistan
+    `
+  },
+  {
+    id: 4,
+    name: "Final Storage",
+    text: `
+      Street:  Shop-5, Alay Plaza, P.O. Box 1780
+      City:   Capital
+      State/province/area:    Islamabad
+      Phone number  9251-2823316
+      Country calling code  +92
+      Country  Pakistan
+    `
+  },
+  { id: 'other', name: "Other", text: "A custom, one time address" }
+];
+
+/* View code */
 interface IPurchaseOrdersViewState {
   radioValue: string;
+  addrItems: AddrItem[],
+  addressValue: AddrItem | null;
 };
 
 export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewState> {
 
   state: IPurchaseOrdersViewState = {
-    radioValue: 'three'
+    radioValue: 'three',
+    addrItems: addrs,
+    addressValue: addrs.length > 0 ? addrs[0] : null
   };
 
   handleRadioChange = (e: React.ChangeEvent<any>) => {
     this.setState({ radioValue: e.target.value });
+  };
+
+  handleAddressChange = (item: AddrItem) => {
+    this.setState({ addressValue: item });
   };
 
   render() {
@@ -213,8 +273,29 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
           {/* ============================ */}
           {/* ========= Address  ========= */}
           {/* ============================ */}
-          <label className="bp3-label">Delivery Address</label>
-
+          <div className="flex-row">
+            <FormGroup label="Delivery Address">
+              <AddressChooser
+                items={this.state.addrItems}
+                activeItem={this.state.addressValue}
+                onItemChange={this.handleAddressChange}
+              />
+            </FormGroup>
+            <FormGroup
+              label={this.state.addressValue?.id == 'other' && "Enter Other Address"}
+              style={{ flexGrow: 1.4 }}
+              contentClassName="flex-grow-full"
+            >
+              {this.state.addressValue?.id == 'other' && <TextArea
+                placeholder="Enter Address"
+                fill={true}
+                style={{
+                  resize: 'vertical',
+                  height: '97%'
+                }}
+              />}
+            </FormGroup>
+          </div>
 
           {/* Generate Button */}
           <Button

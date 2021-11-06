@@ -9,6 +9,7 @@ import {
   TextArea,
   HTMLSelect,
   Classes,
+  Icon,
   Tag,
   Radio,
   RadioGroup
@@ -139,6 +140,22 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             </Tag>
           </h5>
 
+          {/* ================================================  */}
+          {/* ================================================  */}
+          {/* ============= SECTION = Order Info =============  */}
+          {/* ================================================  */}
+          {/* ================================================  */}
+
+          <HorizontalDivider />
+          <div className="center-text-flow margin-b-l margin-t-s">
+            <Icon size={16} icon="third-party" />
+            <h6 className="bp3-heading icon-text-md">Order And Supplier Information</h6>
+          </div>
+
+          {/* ------------------------------------ */}
+          {/* --------- Reference Number --------- */}
+          {/* ------------------------------------ */}
+
           <div>
             <FormGroup
               label={<>Custom Reference Number: <span className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>(Optional)</span></>}
@@ -150,9 +167,9 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             </FormGroup>
           </div>
 
-          {/* ============================ */}
-          {/* ========= Supplier ========= */}
-          {/* ============================ */}
+          {/* ---------------------------- */}
+          {/* --------- Supplier --------- */}
+          {/* ---------------------------- */}
 
           <div className="flex-row">
             <FormGroup
@@ -189,14 +206,19 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             </FormGroup>
           </div>
 
-          {/* ============================= */}
-          {/* ========= Item List ========= */}
-          {/* ============================= */}
+          {/* ========================================================  */}
+          {/* ========================================================  */}
+          {/* ============= SECTION = Required Item List =============  */}
+          {/* ========================================================  */}
+          {/* ========================================================  */}
 
           <HorizontalDivider />
-
           <div className="action-header margin-b-l">
-            <h6 className="bp3-heading">Material Entries</h6>
+            <div className="center-text-flow">
+              <Icon size={16} icon="box" />
+              <h6 className="bp3-heading icon-text-md">Required Items</h6>
+            </div>
+
             <Button
               text="Add"
               icon="add"
@@ -205,11 +227,22 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             />
           </div>
 
+          {/* ======================================================  */}
+          {/* ======================================================  */}
+          {/* ============= SECTION = Shipping Details =============  */}
+          {/* ======================================================  */}
+          {/* ======================================================  */}
+
           <HorizontalDivider />
 
-          {/* ========================= */}
-          {/* ========= Dates ========= */}
-          {/* ========================= */}
+          <div className="center-text-flow margin-t-s margin-b-l">
+            <Icon size={16} icon="airplane" />
+            <h6 className="bp3-heading icon-text-md">Shipping Details</h6>
+          </div>
+
+          {/* ------------------------- */}
+          {/* --------- Dates --------- */}
+          {/* ------------------------- */}
 
           <div className="flex-row">
             <FormGroup
@@ -236,15 +269,14 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             </FormGroup>
           </div>
 
-          {/* ============================ */}
-          {/* ========= Shipment ========= */}
-          {/* ============================ */}
+          {/* ------------------------------- */}
+          {/* -------- Shipment Mode -------- */}
+          {/* ------------------------------- */}
 
           <div className='flex-row'>
 
             <RadioGroup
               label="Shipment Mode"
-              // inline
               onChange={this.handleRadioChange}
               selectedValue={this.state.radioValue}
               className="radio-group"
@@ -270,9 +302,10 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
           </div>
 
 
-          {/* ============================ */}
-          {/* ========= Address  ========= */}
-          {/* ============================ */}
+          {/* ---------------------------- */}
+          {/* ---------- Address --------- */}
+          {/* ---------------------------- */}
+
           <div className="flex-row">
             <FormGroup label="Delivery Address">
               <AddressChooser
@@ -297,7 +330,24 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             </FormGroup>
           </div>
 
-          {/* Generate Button */}
+          {/* ==========================================================  */}
+          {/* ==========================================================  */}
+          {/* ============= SECTION = Terms And Conditions =============  */}
+          {/* ==========================================================  */}
+          {/* ==========================================================  */}
+
+          <HorizontalDivider />
+          <div className="center-text-flow margin-t-s margin-b-l">
+            <Icon size={16} icon="take-action" />
+            <h6 className="bp3-heading icon-text-md">Terms And Conditions</h6>
+          </div>
+          <br />
+
+          {/* ===========================================  */}
+          {/* ===========================================  */}
+          {/* ============= Generate Button =============  */}
+          {/* ===========================================  */}
+          {/* ===========================================  */}
           <Button
             text="Generate"
             icon="fork"

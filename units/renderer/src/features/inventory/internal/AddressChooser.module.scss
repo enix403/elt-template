@@ -27,10 +27,10 @@
         border-radius: 7px;
 
         transition: background-color 0.2s ease-out;
+        cursor: pointer;
 
         &:hover {
             background-color: rgba(167, 182, 194, .3);
-            cursor: default;
         }
 
         &.active {

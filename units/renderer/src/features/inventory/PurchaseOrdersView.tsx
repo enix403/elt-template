@@ -47,7 +47,7 @@ minDate.setFullYear(minDate.getFullYear() - 5);
 maxDate.setFullYear(maxDate.getFullYear() + 5);
 
 /* Demo addresses */
-const addrs: IAddressChooserProps['items'] = [
+const addrs: AddrItem[] = [
   {
     id: 1,
     name: "Main Factory",
@@ -122,6 +122,25 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
     this.setState({ addressValue: item });
   };
 
+  renderMaterialsList() {
+    return (
+      <div className="flex-row">
+        <HTMLSelect>
+          <option value={1}>Test Material</option>
+        </HTMLSelect>
+        <HTMLSelect>
+          <option value={1}>Test Material</option>
+        </HTMLSelect>
+        <HTMLSelect>
+          <option value={1}>Test Material</option>
+        </HTMLSelect>
+        <HTMLSelect>
+          <option value={1}>Test Material</option>
+        </HTMLSelect>
+      </div>
+    );
+  }
+
   render() {
     return (
       <NavPageView title="Purchase Orders">
@@ -135,6 +154,7 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
               minimal
               large
               round
+              multiline
             >
               <strong>ORDER NUMBER : 87DA3400</strong>
             </Tag>
@@ -226,6 +246,8 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
               outlined={true}
             />
           </div>
+
+          {this.renderMaterialsList()}
 
           {/* ======================================================  */}
           {/* ======================================================  */}

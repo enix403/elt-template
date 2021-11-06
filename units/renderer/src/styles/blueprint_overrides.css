@@ -13,7 +13,8 @@
     padding: 0;
 }
 
-.bp3-form-group .bp3-label:not(.txt-wrap) {
+.bp3-radio-group .bp3-label:not(.txt-wrap),
+.bp3-form-group  .bp3-label:not(.txt-wrap) {
     white-space: nowrap;
 }
 

@@ -117,6 +117,10 @@ $flex-row-spacing: 5px;
     }
 }
 
+.no-txt-wrap {
+    white-space: nowrap;
+}
+
 .rounded-tree { border-radius: 4px; overflow: hidden; }
 .icon-text-sm { margin: 0  3px; }
 .icon-text-md { margin: 0  6px; }

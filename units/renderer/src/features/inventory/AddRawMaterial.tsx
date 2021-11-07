@@ -21,7 +21,7 @@ import { AppChannel, CommResultType, AllMessages } from '@shared/communication';
 
 import type { IRawMaterial, ICategoryPreview } from '@shared/object_types';
 
-type ProductPropNames = 'm_unit' | 'i_unit';
+type ProductPropNames = 'm_unit';
 
 type IProductPropertiesProps = {
     store: {
@@ -35,45 +35,23 @@ type IProductPropertiesProps = {
 
 const ProductProperties: React.FC<IProductPropertiesProps> = ({ store }) => {
     return (
-        <GridRow>
-            <GridColumn colSize='auto'>
-                <FormGroup style={{ minWidth: 200 }} label="Measurement Unit">
-                    <HTMLSelect
-                        value={store.m_unit.value}
-                        onChange={e => store.m_unit.setValue(e.target.value)}
-                        fill={true}
-                    >
-                        <option value="item">Individual Item</option>
-                        <option value="mt">Meters</option>
-                        <option value="in">Inches</option>
-                        <option value="kg">Kilograms</option>
-                        <option value="gm">Grams</option>
-                        <option value="lt">Litres</option>
-                        <option value="oz">Ounces</option>
-                    </HTMLSelect>
-                </FormGroup>
-            </GridColumn>
-            <GridColumn colSize='auto'>
-                <FormGroup label="Inventory Unit">
-                    <ControlGroup>
-                        <HTMLSelect
-                            value={store.i_unit.value}
-                            onChange={e => store.i_unit.setValue(e.target.value)}
-                            fill={true}
-                        >
-                            <option value="carton">Carton Of</option>
-                            <option value="tank">Tank Of</option>
-                            <option value="item">Individual Item</option>
-                        </HTMLSelect>
-                        <NumericInput
-                            style={{ maxWidth: 150 }}
-                            placeholder="Enter Amount"
-                            min={0}
-                        />
-                    </ControlGroup>
-                </FormGroup>
-            </GridColumn>
-        </GridRow>
+        <React.Fragment>
+            <FormGroup style={{ minWidth: 200 }} label="Measurement Unit">
+                <HTMLSelect
+                    value={store.m_unit.value}
+                    onChange={e => store.m_unit.setValue(e.target.value)}
+                    fill={true}
+                >
+                    <option value="item">Individual Item</option>
+                    <option value="mt">Meters</option>
+                    <option value="in">Inches</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="gm">Grams</option>
+                    <option value="lt">Litres</option>
+                    <option value="oz">Ounces</option>
+                </HTMLSelect>
+            </FormGroup>
+        </React.Fragment>
     );
 };
 
@@ -82,7 +60,6 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
     const [name, setName] = React.useState('');
     const [description, setDescription] = React.useState('');
     const [mUnit, setMUnit] = React.useState('item');
-    const [iUnit, setIUnit] = React.useState('carton');
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
     return (
@@ -134,7 +111,6 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
             <ProductProperties
                 store={{
                     m_unit: { value: mUnit, setValue: setMUnit },
-                    i_unit: { value: iUnit, setValue: setIUnit },
                 }}
             />
 
@@ -159,7 +135,6 @@ const MaterialForm: React.FC<{ afterCreate?: () => void }> = props => {
                         name: name,
                         description: description,
                         category: { id: cat.id },
-                        inventory_unit: iUnit,
                         measurement_unit: mUnit,
                     });
 
@@ -201,19 +176,19 @@ const RawMaterialList: React.FC<{ rows: IRawMaterial[] }> = ({ rows }) => {
                         <tr className="small">
                             <th>Name</th>
                             <th>Measurement Unit</th>
-                            <th>Inventory Unit</th>
                             <th>Number Of Suppliers</th>
-                            <th>Available Stock</th>
+                            <th>Min Inventory Level</th>
+                            <th>Available Inventory Level</th>
                         </tr>
                     </thead>
                     <tbody>
                         {rows.map(row =>
                             <tr key={row.id}>
                                 <td>{row.name}</td>
-                                <td>{row.measurement_unit}</td>
-                                <td>{row.inventory_unit} of 45</td>
-                                <td>12</td>
-                                <td>40</td>
+                                <td>{row.measurement_unit.toUpperCase()}</td>
+                                <td>{row.suppliersRel?.length}</td>
+                                <td>25</td>
+                                <td>106</td>
                             </tr>
                         )}
                     </tbody>
@@ -231,7 +206,7 @@ export const AddRawMaterialView = React.memo(() => {
         setRowsLoading(true);
         window.SystemBackend.sendMessage(
             AppChannel.Inventory,
-            new AllMessages.Inv.RM.GetAllMaterials()
+            new AllMessages.Inv.RM.GetAllMaterials({ preloadSuppliers: true })
         )
             .then(result => {
                 if (result.type == CommResultType.ChannelResponse)

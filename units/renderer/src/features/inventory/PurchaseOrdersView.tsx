@@ -352,19 +352,6 @@ export class PurchaseOrdersView extends React.Component<{}, IPurchaseOrdersViewS
             </FormGroup>
           </div>
 
-          {/* ==========================================================  */}
-          {/* ==========================================================  */}
-          {/* ============= SECTION = Terms And Conditions =============  */}
-          {/* ==========================================================  */}
-          {/* ==========================================================  */}
-
-          <HorizontalDivider />
-          <div className="center-text-flow margin-t-s margin-b-l">
-            <Icon size={16} icon="take-action" />
-            <h6 className="bp3-heading icon-text-md">Terms And Conditions</h6>
-          </div>
-          <br />
-
           {/* ===========================================  */}
           {/* ===========================================  */}
           {/* ============= Generate Button =============  */}

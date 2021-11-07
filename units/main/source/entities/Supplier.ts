@@ -1,12 +1,12 @@
 import { Collection, EntitySchema, IdentifiedReference } from "@mikro-orm/core";
 import { SimpleEntity } from "./SimpleEntity";
 import { SupplierInfo } from "./SupplierInfo";
-import { RawMaterial } from './RawMaterial';
+import { RelSupplierMaterial } from './RelSupplierMaterial';
 
 export class Supplier extends SimpleEntity {
-    name!: string;
-    info!: IdentifiedReference<SupplierInfo>;
-    materials!: Collection<RawMaterial>;
+    name: string;
+    info: IdentifiedReference<SupplierInfo>;
+    materialsRel: Collection<RelSupplierMaterial>;
 }
 
 export const SupplierSchema = new EntitySchema<Supplier, SimpleEntity>({
@@ -21,10 +21,11 @@ export const SupplierSchema = new EntitySchema<Supplier, SimpleEntity>({
             wrappedReference: true,
             nullable: false,
         },
-        materials: {
-            reference: 'm:n',
-            entity: () => RawMaterial,
-            mappedBy: mat => mat.suppliers
+        materialsRel: {
+            reference: '1:m',
+            entity: () => RelSupplierMaterial,
+            mappedBy: rel => rel.supplier,
+            nullable: false
         }
     }
 });

@@ -1,11 +1,12 @@
 import { Message } from './interfaces';
+import { RequireKeys } from '../tsutils';
 import type {
     WithoutID,
     ICategory,
     IRawMaterial,
     ISupplier,
     ISupplierInfo
-} from '@shared/object_types';
+} from '../object_types';
 
 abstract class SimpleMessage<T, K> extends Message<T, K> {
     constructor(payload: T) {
@@ -30,7 +31,7 @@ export namespace AllMessages {
         { static ACTION_NAME = 'inv:rm:cat:all'; }
 
         export class CreateMaterial
-            extends SimpleMessage<Required<WithoutID<IRawMaterial>>, void>
+            extends SimpleMessage<RequireKeys<WithoutID<IRawMaterial>, 'description'>, void>
         { static ACTION_NAME = 'inv:rm:create'; }
 
         export interface IGetAllMaterialsOpts {
@@ -38,7 +39,7 @@ export namespace AllMessages {
             withDescription?: boolean;
         }
         export class GetAllMaterials
-            extends Message<IGetAllMaterialsOpts, Array<IRawMaterial & { suppliers?: ISupplier[] }>>
+            extends Message<IGetAllMaterialsOpts, Array<IRawMaterial>>
         {
             static ACTION_NAME = 'inv:rm:all';
             constructor(options?: IGetAllMaterialsOpts) {

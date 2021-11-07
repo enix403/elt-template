@@ -2,10 +2,11 @@ import { AppChannel, AllMessages } from '@shared/communication';
 import { ActionMessageChannel } from '@/channel/ActionMessageChannel';
 import { ChannelError } from '@/channel/exceptions';
 
+import { discardArrFalsey } from '@shared/commonutils';
+
 import {
     RMCategory,
     RawMaterial,
-    entt_relation_list,
     entt_field_list,
 } from '@/entities';
 import { orm, EnttManager } from '@/database';
@@ -107,7 +108,7 @@ export class InventoryChannel extends ActionMessageChannel {
 
         this.registerHandler(
             AllMessages.Inv.RM.CreateMaterial,
-            async ({ name, category, measurement_unit, inventory_unit, description }) => {
+            async ({ name, category, measurement_unit, description }) => {
                 const em = orm.em.fork();
 
                 let targetCat: RMCategory;
@@ -121,7 +122,6 @@ export class InventoryChannel extends ActionMessageChannel {
                 const mat = em.create(RawMaterial, {
                     name,
                     description,
-                    inventory_unit,
                     measurement_unit,
                     category: targetCat
                 });
@@ -133,9 +133,9 @@ export class InventoryChannel extends ActionMessageChannel {
         this.registerHandler(
             AllMessages.Inv.RM.GetAllMaterials,
             async ({ preloadSuppliers, withDescription }) => {
+                const populate = discardArrFalsey<string>([preloadSuppliers && 'suppliersRel.supplier']);
 
-                const populate = entt_relation_list<RawMaterial>(preloadSuppliers && 'suppliers');
-                const fields = entt_field_list<RawMaterial>('id', 'name', 'category', 'inventory_unit', 'measurement_unit');
+                const fields = entt_field_list<RawMaterial>('id', 'name', 'category', 'measurement_unit');
                 if (withDescription)
                     fields.push('description');
 

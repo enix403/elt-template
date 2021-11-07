@@ -2,8 +2,8 @@ import { Collection, EntitySchema, IdentifiedReference } from "@mikro-orm/core";
 import { SimpleEntity } from "./SimpleEntity";
 
 export class RMCategory extends SimpleEntity {
-    name!: string;
-    children!: Collection<RMCategory>;
+    name: string;
+    children: Collection<RMCategory>;
     parent?: IdentifiedReference<RMCategory> | undefined;
 }
 

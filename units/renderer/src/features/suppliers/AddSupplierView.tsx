@@ -348,49 +348,89 @@ const ViewContent = () => {
                 <Icon size={16} icon="duplicate" />
                 <h5 className="bp3-heading icon-text-md">Product/Raw Material Information</h5>
             </div>
-            <GridRow>
-                <GridColumn colSize={7}>
-                    <FormGroup
-                        label="Select Raw Material"
-                        helperText="The raw material that this vendor supplies"
-                        disabled={isSubmitting}
-                    >
-                        {isLoading ?
-                            <Button disabled={true} fill={true} text="Loading Materials..." /> :
-                            <HTMLSelect
-                                fill={true}
-                                disabled={isSubmitting}
-                                value={selectedRawMaterial?.id}
-                                onChange={onSelectedRawMaterialChange}
-                            >
-                                {allRawMaterial.map(mat =>
-                                    <option key={mat.id} value={mat.id}>{mat.name}</option>
-                                )}
-                            </HTMLSelect>
-                        }
-                    </FormGroup>
-                </GridColumn>
-                <GridColumn colSize={5}>
-                    <FormGroup
-                        disabled={isSubmitting}
-                        label="Monthly Capacity"
-                        helperText={<>Capacity measured in <strong>{selectedRawMaterial?.measurement_unit.toUpperCase()}</strong></>}
-                    >
-                        <NumericInput
-                            placeholder="Enter Amount"
+            <div className='flex-row'>
+                <FormGroup
+                    label="Select Raw Material"
+                    helperText="The raw material that this vendor supplies"
+                    disabled={isSubmitting}
+                >
+                    {isLoading ?
+                        <Button disabled={true} fill={true} text="Loading Materials..." /> :
+                        <HTMLSelect
                             fill={true}
-                            min={0}
-                            leftIcon="truck"
-                            clampValueOnBlur={true}
                             disabled={isSubmitting}
-                            value={mat_Capacity}
-                            onValueChange={value => {
-                                setmat_Capacity(value);
-                            }}
-                        />
-                    </FormGroup>
-                </GridColumn>
-            </GridRow>
+                            value={selectedRawMaterial?.id}
+                            onChange={onSelectedRawMaterialChange}
+                        >
+                            {allRawMaterial.map(mat =>
+                                <option key={mat.id} value={mat.id}>{mat.name}</option>
+                            )}
+                        </HTMLSelect>
+                    }
+                </FormGroup>
+                <FormGroup
+                    disabled={isSubmitting}
+                    label="Monthly Capacity"
+                    helperText={<>Capacity measured in <strong>{selectedRawMaterial?.measurement_unit.toUpperCase()}</strong></>}
+                >
+                    <NumericInput
+                        placeholder="Enter Amount"
+                        fill={true}
+                        min={0}
+                        leftIcon="scatter-plot"
+                        clampValueOnBlur={true}
+                        disabled={isSubmitting}
+                        value={mat_Capacity}
+                        onValueChange={value => {
+                            setmat_Capacity(value);
+                        }}
+                    />
+                </FormGroup>
+            </div>
+
+            <div className="flex-row">
+                <FormGroup
+                    style={{flex: 2}}
+                    label="Minimum Delivery Days"
+                    disabled={isSubmitting}
+                >
+                    <NumericInput
+                        placeholder="Enter Days"
+                        fill={true}
+                        min={0}
+                        leftIcon="truck"
+                        clampValueOnBlur={true}
+                        disabled={isSubmitting}
+                    />
+                </FormGroup>
+                <FormGroup
+                    label="Payment Term"
+                    disabled={isSubmitting}
+                >
+                    <NumericInput
+                        placeholder="Enter Days"
+                        fill={true}
+                        min={0}
+                        leftIcon="truck"
+                        clampValueOnBlur={true}
+                        disabled={isSubmitting}
+                    />
+                </FormGroup>
+                <FormGroup
+                    label="Maximum Credit Days"
+                    disabled={isSubmitting}
+                >
+                    <NumericInput
+                        placeholder="Enter Days"
+                        fill={true}
+                        min={0}
+                        leftIcon="truck"
+                        clampValueOnBlur={true}
+                        disabled={isSubmitting}
+                    />
+                </FormGroup>
+            </div>
+
             <br />
             <Button
                 text="Add Vendor"

@@ -20,8 +20,8 @@ export function getMDBConfig(): Parameters<typeof MikroORM.init>[0] {
         dbName: storagePath,
         entities: allEntities,
 
-        // debug: IS_RUNNING_DEV && ['query', 'query-params'],
-        debug: IS_RUNNING_DEV && [],
+        debug: IS_RUNNING_DEV && ['query', 'query-params'],
+        // debug: IS_RUNNING_DEV && [],
         logger: msg => logger.verbose(msg),
 
         cache: { enabled: false },

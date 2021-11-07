@@ -17,15 +17,36 @@ export interface IRawMaterial {
     name: string;
     description?: string;
     measurement_unit: string;
-    inventory_unit: string;
     category: IDRef;
+    suppliersRel?: IRelSupplierMaterial[];
 };
 
 export interface ISupplier {
     id: number;
     name: string;
-    materials?: IRawMaterial[];
+    materialsRel?: IRelSupplierMaterial[];
 }
+
+export interface IRelSupplierMaterial {
+    supplier?: ISupplier;
+    material?: IRawMaterial;
+
+    /** @See https://mikro-orm.io/docs/composite-keys/#use-case-3-join-table-with-metadata */
+    // [PrimaryKeyType]: [number, number];
+
+    // -1 if not specified
+    capacity: number;
+
+    // -1 if not specified
+    minDeliveryDays: number;
+
+    // string enum
+    paymentTerms: string;
+
+    // -1 if not specified, only applicable if paymentTerms == credit
+    maxCreditDays: number;
+
+};
 
 export interface ISupplierInfo {
     email: string;

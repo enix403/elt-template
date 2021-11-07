@@ -1,14 +1,15 @@
 import { AppChannel, AllMessages } from '@shared/communication';
 import { ActionMessageChannel } from '@/channel/ActionMessageChannel';
 import { ChannelError } from '@/channel/exceptions';
+import { discardArrFalsey } from '@shared/commonutils';
 
 import {
-    entt_relation_list,
     entt_field_list,
 
     Supplier,
     SupplierInfo,
-    RawMaterial
+    RawMaterial,
+    RelSupplierMaterial
 } from '@/entities';
 import { orm } from '@/database';
 import { Reference, wrap } from '@mikro-orm/core';
@@ -55,7 +56,7 @@ export class SuppliersChannel extends ActionMessageChannel {
                     throw new ChannelError("Invalid Raw Material");
                 }
 
-                const supInfo = orm.em.create(SupplierInfo, {
+                const supInfo = em.create(SupplierInfo, {
                     email: values['email'],
                     countryCode: values['countryCode'],
                     state: values['state'],
@@ -68,14 +69,23 @@ export class SuppliersChannel extends ActionMessageChannel {
                     remarks: values['remarks'] || '',
                 });
 
-                const supObj = orm.em.create(Supplier, {
-                    name: values['name']
-                });
+                const supObj = em.create(Supplier, {});
 
+                supObj.name = values['name'];
                 supObj.info = Reference.create(supInfo);
 
-                rawMat.suppliers.add(supObj);
-                await em.persistAndFlush(rawMat);
+                const relationRow = em.create(RelSupplierMaterial, {
+                    capacity: 0,
+                    maxCreditDays: 71,
+                    minDeliveryDays: 18,
+                    paymentTerms: 'cash'
+                });
+
+                supObj.materialsRel.add(relationRow);
+                rawMat.suppliersRel.add(relationRow);
+
+                // subObj will also be saved thanks to cascading
+                await em.persistAndFlush(relationRow);
             }
         );
 
@@ -85,8 +95,11 @@ export class SuppliersChannel extends ActionMessageChannel {
                 const em = orm.em.fork();
                 const supls = await em.find(
                     Supplier, {},
-                    preloadMaterials ? entt_relation_list<Supplier>('materials') : undefined
+                    {
+                        populate: discardArrFalsey<string>([preloadMaterials && 'materialsRel.material'])
+                    }
                 )
+
                 // await delay(1000);
                 const ignoredFields = entt_field_list<Supplier>('info');
                 return supls.map(s => wrap(s).toObject(ignoredFields));
